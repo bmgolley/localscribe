@@ -234,8 +234,9 @@ class LocalscribeGUI(ttk.Frame):
             self._status_msg = tkinter.Message(
                 self, textvariable=self._status, width=250)
             self._status_msg.grid(column=0, columnspan=3)
-        roster = self.load_download()
+        roster, self.status = self.load_download()
         if not roster:
+            self._status_msg['foreground'] = 'red'
             return
         self._status_msg['foreground'] = 'black'
         self._config.read('config.ini')
@@ -281,49 +282,52 @@ class LocalscribeGUI(ttk.Frame):
         self._server.start()
         atexit.register(self._server.terminate)
 
-    def load_file(self) -> bytes | None:
-        path = tkfiledialog.askopenfilename(
-                defaultextension='.lsroster',
-                filetypes=(('Localscribe Roster', '.lsroster'),)
-            )
-        if path:
-            with open(path, 'rb') as f:
-                roster = f.read()
-            return roster
-        else:
-            return None
-
-    def load_download(self) -> bytes | None:
-        if not self._status_msg:
-            self._status_msg = tkinter.Message(
-                self, textvariable=self._status, width=250)
-            self._status_msg.grid(column=0, columnspan=3)
+    def load_download(self) -> tuple[bytes | None, str]:
         try:
             roster = localscribe_enhanced.download(self.code)
         except ValueError:
             # If no code or an invalid code is provided, use a backup of
             # the last successful download.
-            code_status = (
+            status = (
                 'Download unsuccessful' if self.code else 'No code provided')
             try:
                 with open('roster.bin', 'rb') as f:
                     roster = f.read()
             except FileNotFoundError:
-                self.status = f'{code_status}, no saved data found.'
-                self._status_msg['foreground'] = 'red'
-                return None
+                status = f'{status}, no saved data found.'
+                return None, status
             else:
-                self.status = (
-                    f'{code_status}, loading saved data and starting server.')
+                status = (
+                    f'{status}, loading saved data and starting server.')
         else:
-            self.status = 'Download successful, starting server.'
+            status = 'Download successful, starting server.'
             # Backup downloaded data.
             try:
                 with open('roster.bin', 'wb') as f:
                     f.write(roster)
             except PermissionError:
                 pass
-        return roster
+        return roster, status
+
+    def load_file(self) -> tuple[bytes | None, str]:
+        path = tkfiledialog.askopenfilename(
+                defaultextension='.lsroster',
+                filetypes=(('Localscribe Roster', '.lsroster'),)
+            )
+        roster = None
+        if path:
+            try:
+                with open(path, 'rb') as f:
+                    roster = f.read()
+            except PermissionError:
+                status = 'Insufficient permissions to open file.'
+            except FileNotFoundError:
+                status = 'File not found.'
+            else:
+                status = 'Roster loaded, starting server.'
+        else:
+            status = 'No file selected.'
+        return roster, status
 
     def stop_server(self) -> bool:
         try:
