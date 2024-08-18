@@ -7,6 +7,7 @@ import traceback
 from configparser import ConfigParser
 from pathlib import Path
 from tkinter import constants as tkc
+from tkinter import filedialog as tkfiledialog
 from tkinter import ttk
 from typing import Literal, override
 
@@ -233,31 +234,9 @@ class LocalscribeGUI(ttk.Frame):
             self._status_msg = tkinter.Message(
                 self, textvariable=self._status, width=250)
             self._status_msg.grid(column=0, columnspan=3)
-        try:
-            roster = localscribe_enhanced.download(self.code)
-        except ValueError:
-            # If no code or an invalid code is provided, use a backup of
-            # the last successful download.
-            code_status = (
-                'Download unsuccessful' if self.code else 'No code provided')
-            try:
-                with open('roster.bin', 'rb') as f:
-                    roster = f.read()
-            except FileNotFoundError:
-                self.status = f'{code_status}, no saved data found.'
-                self._status_msg['foreground'] = 'red'
-                return
-            else:
-                self.status = (
-                    f'{code_status}, loading saved data and starting server.')
-        else:
-            self.status = 'Download successful, starting server.'
-            # Backup downloaded data.
-            try:
-                with open('roster.bin', 'wb') as f:
-                    f.write(roster)
-            except PermissionError:
-                pass
+        roster = self.load_download()
+        if not roster:
+            return
         self._status_msg['foreground'] = 'black'
         self._config.read('config.ini')
         try:
@@ -301,6 +280,50 @@ class LocalscribeGUI(ttk.Frame):
         )
         self._server.start()
         atexit.register(self._server.terminate)
+
+    def load_file(self) -> bytes | None:
+        path = tkfiledialog.askopenfilename(
+                defaultextension='.lsroster',
+                filetypes=(('Localscribe Roster', '.lsroster'),)
+            )
+        if path:
+            with open(path, 'rb') as f:
+                roster = f.read()
+            return roster
+        else:
+            return None
+
+    def load_download(self) -> bytes | None:
+        if not self._status_msg:
+            self._status_msg = tkinter.Message(
+                self, textvariable=self._status, width=250)
+            self._status_msg.grid(column=0, columnspan=3)
+        try:
+            roster = localscribe_enhanced.download(self.code)
+        except ValueError:
+            # If no code or an invalid code is provided, use a backup of
+            # the last successful download.
+            code_status = (
+                'Download unsuccessful' if self.code else 'No code provided')
+            try:
+                with open('roster.bin', 'rb') as f:
+                    roster = f.read()
+            except FileNotFoundError:
+                self.status = f'{code_status}, no saved data found.'
+                self._status_msg['foreground'] = 'red'
+                return None
+            else:
+                self.status = (
+                    f'{code_status}, loading saved data and starting server.')
+        else:
+            self.status = 'Download successful, starting server.'
+            # Backup downloaded data.
+            try:
+                with open('roster.bin', 'wb') as f:
+                    f.write(roster)
+            except PermissionError:
+                pass
+        return roster
 
     def stop_server(self) -> bool:
         try:
