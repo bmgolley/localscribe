@@ -9,9 +9,13 @@ from pathlib import Path
 from tkinter import constants as tkc
 from tkinter import filedialog as tkfiledialog
 from tkinter import ttk
-from typing import Literal, override
+from typing import TYPE_CHECKING, Any, Literal, override
 
-import localscribe_enhanced
+import localscribe_enhanced as lse
+
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
 
 
 HORZ = tkc.E + tkc.W
@@ -27,10 +31,13 @@ CONFIG_KEYS = (
     'show_keywords', 'separate_abilities'
 )
 
+AUTOSAVE = Path(lse.AUTOSAVE)
+
 
 class LocalscribeGUI(ttk.Frame):
     master: tkinter.Tk
-    _status_msg: tkinter.Message | None
+    _status_msg: tkinter.Message
+    _file_path: Path | None
     _server: multiprocessing.Process
     """Running server process."""
     _run_btn_text: tkinter.StringVar
@@ -43,8 +50,21 @@ class LocalscribeGUI(ttk.Frame):
     _status: tkinter.StringVar
     _config: ConfigParser
 
-    def __init__(self, master: tkinter.Tk | None = None) -> None:
-        super().__init__(master, padding=(10, 6))
+    def __init__(
+            self, master: tkinter.Tk | None = None,
+            *,
+            code: str | int | None = None,
+            file_path: StrPath | None = None,
+            **kwargs
+        ) -> None:
+        if code is not None and file_path is not None:
+            raise ValueError('cannot simultaneously use code and file path')
+        elif code is not None and not lse.validate_code(code):
+            raise ValueError('invalid code')
+        elif file_path is not None and not validate_file_path(file_path):
+            raise ValueError('invalid file path')
+        kwargs.pop('padding', None)
+        super().__init__(master, padding=(10, 6), **kwargs)
         self.master.title('Localscribe Enhanced')
         self.master.minsize(290, 100)
         self.master.columnconfigure(0, weight=1)
@@ -115,9 +135,20 @@ class LocalscribeGUI(ttk.Frame):
             variable=self._show_keywords
         ).grid(column=1, sticky=tkc.W)
         ttk.Button(
+            self, text='Select File', command=self.select_file).grid(column=1)
+        ttk.Button(
+            self, text='Save File', command=self.save_file).grid(column=1)
+        ttk.Button(
             self, textvariable=self._run_btn_text, command=self.toggle_server
         ).grid(column=1)
-        self._status_msg = None
+        self._status_msg = tkinter.Message(
+            self, textvariable=self._status, width=250)
+        self._status_msg.grid(column=0, columnspan=3)
+        if code:
+            if isinstance(code, int):
+                code = f'{code:08x}'
+            self.code = code
+        self.file_path = file_path
         self.read_config()
 
     @property
@@ -125,8 +156,37 @@ class LocalscribeGUI(ttk.Frame):
         return self._code.get()
 
     @code.setter
-    def code(self, value: str) -> None:
-        self._code.set(value.strip())
+    def code(self, value: str | int | None) -> None:
+        if value is None or value == '':
+            value = ''
+        elif not lse.validate_code(value):
+            self.status = 'Error: invalid code'
+            return
+        elif isinstance(value, int):
+            value = f'{value:08x}'
+            self.file_path = None
+        else:
+            value = value.strip()
+            if value:
+                self.file_path = None
+        self._code.set(value)
+
+    @property
+    def file_path(self) -> Path | None:
+        return self._file_path
+
+    @file_path.setter
+    def file_path(self, value: StrPath | None) -> None:
+        if value is not None:
+            if not validate_file_path(value):
+                self.status = 'Error invalid file path'
+                return
+            self.code = ''
+            if isinstance(value, str):
+                value = value.strip().strip('"\'')
+            value = Path(value)
+            self.status = f'Loaded file {value.name}'
+        self._file_path = value
 
     @property
     def stats_inv_fnp(self) -> bool:
@@ -230,11 +290,8 @@ class LocalscribeGUI(ttk.Frame):
             self._run_btn_text.set('Stop')
 
     def start_server(self) -> None:
-        if not self._status_msg:
-            self._status_msg = tkinter.Message(
-                self, textvariable=self._status, width=250)
-            self._status_msg.grid(column=0, columnspan=3)
-        roster, self.status = self.load_download()
+        roster, self.status = (
+            self.load_file() if self.file_path else self.load_download())
         if not roster:
             self._status_msg['foreground'] = 'red'
             return
@@ -251,7 +308,7 @@ class LocalscribeGUI(ttk.Frame):
         for section, values in self._config.items():
             action, _, keys = section.partition('|')
             action = action.strip()
-            key = localscribe_enhanced.create_filter(keys)
+            key = lse.create_filter(keys)
             match action:
                 case 'AddAbility':
                     add_abilities[key] = dict(values)
@@ -262,7 +319,7 @@ class LocalscribeGUI(ttk.Frame):
                 case 'AddWeaponAbility':
                     weapon, _, ability = keys.rpartition('.')
                     add_weapon_abilites[(weapon, ability)] = dict(values)
-        roster_json = localscribe_enhanced.create_json(
+        roster_json = lse.create_json(
             roster,
             statsInvFNP=self.stats_inv_fnp,
             indentWeaponProfiles=self.indent_weapon_profiles,
@@ -276,7 +333,7 @@ class LocalscribeGUI(ttk.Frame):
             addWeaponAbilities=add_weapon_abilites
         )
         self._server = multiprocessing.Process(
-            target=localscribe_enhanced.run_server, args=(roster_json,),
+            target=lse.run_server, args=(roster_json,),
             daemon=True
         )
         self._server.start()
@@ -284,18 +341,30 @@ class LocalscribeGUI(ttk.Frame):
 
     def load_download(self) -> tuple[bytes | None, str]:
         try:
-            roster = localscribe_enhanced.download(self.code)
+            roster = lse.download(self.code)
         except ValueError:
             # If no code or an invalid code is provided, use a backup of
             # the last successful download.
             status = (
                 'Download unsuccessful' if self.code else 'No code provided')
             try:
-                with open('roster.bin', 'rb') as f:
+                with open(AUTOSAVE, 'rb') as f:
                     roster = f.read()
             except FileNotFoundError:
-                status = f'{status}, no saved data found.'
-                return None, status
+                try:
+                    with open('roster.bin', 'rb') as f:
+                        roster = f.read()
+                except FileExistsError:
+                    status = f'{status}, no saved data found.'
+                    return None, status
+                else:
+                    try:
+                        with open(AUTOSAVE, 'wb') as f:
+                            f.write(roster)
+                    except PermissionError:
+                        pass
+                    status = (
+                        f'{status}, loading saved data and starting server.')
             else:
                 status = (
                     f'{status}, loading saved data and starting server.')
@@ -303,24 +372,28 @@ class LocalscribeGUI(ttk.Frame):
             status = 'Download successful, starting server.'
             # Backup downloaded data.
             try:
-                with open('roster.bin', 'wb') as f:
+                with open(AUTOSAVE, 'wb') as f:
                     f.write(roster)
             except PermissionError:
                 pass
         return roster, status
 
+    def select_file(self) -> None:
+        self.file_path = tkfiledialog.askopenfilename(
+            defaultextension='.lsroster',
+            filetypes=(
+                ('Localscribe Roster', '.lsroster'), ('JSON File', '.json')),
+        )
+
     def load_file(self) -> tuple[bytes | None, str]:
-        path = tkfiledialog.askopenfilename(
-                defaultextension='.lsroster',
-                filetypes=(('Localscribe Roster', '.lsroster'),)
-            )
         roster = None
-        if path:
+        if self.file_path:
+            mode = 'r' if self.file_path.suffix == '.json ' else 'rb'
             try:
-                with open(path, 'rb') as f:
+                with open(self.file_path, mode) as f:
                     roster = f.read()
             except PermissionError:
-                status = 'Insufficient permissions to open file.'
+                status = 'Unable to open file.'
             except FileNotFoundError:
                 status = 'File not found.'
             else:
@@ -328,6 +401,33 @@ class LocalscribeGUI(ttk.Frame):
         else:
             status = 'No file selected.'
         return roster, status
+
+    def save_file(self, roster: bytes | None = None) -> None:
+        if (
+                not roster
+                and not (self.file_path and self.file_path.is_file())
+                and not AUTOSAVE.is_file()
+            ):
+            # notify
+            return
+        path = tkfiledialog.asksaveasfilename(
+            defaultextension='.lsroster',
+            filetypes=(
+                ('Localscribe Roster', '.lsroster'), ('JSON File', '.json'))
+        )
+        if path:
+            mode = 'w' if path.endswith('.json') else 'wb'
+            if roster:
+                with open(path, mode) as f:
+                    f.write(roster)
+            else:
+                prev_path = self.file_path or AUTOSAVE
+                prev_mode = 'r' if prev_path.suffix == '.json' else 'rb'
+                with open(prev_path, prev_mode) as fr, open(path, mode) as fw:
+                    fw.write(fr.read())
+        else:
+            # notify
+            pass
 
     def stop_server(self) -> bool:
         try:
@@ -344,10 +444,37 @@ class LocalscribeGUI(ttk.Frame):
         return super().destroy()
 
 
-if __name__ == '__main__':
-    multiprocessing.freeze_support()
+def validate_file_path(path: StrPath | None) -> bool:
+    if isinstance(path, str):
+        path = path.strip().strip('"\'')
     try:
-        LocalscribeGUI().mainloop()
+        path = Path(path)  # pyright: ignore[reportArgumentType]
+    except (TypeError, ValueError):
+        return False
+    else:
+        return path.is_file() and path.suffix in ('.lsroster', '.json')
+
+
+if __name__ == '__main__':
+    import argparse
+
+
+    multiprocessing.freeze_support()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'source',
+        nargs='?',
+        help='roster file path or army code from yellowscribe.xyx'
+    )
+    args = parser.parse_args()
+    source: str = args.source
+    kwargs: dict[str, Any] = {}
+    if lse.validate_code(source):
+        kwargs['code'] = source
+    elif validate_file_path(source):
+        kwargs['file_path'] = source
+    try:
+        LocalscribeGUI(**kwargs).mainloop()
     except Exception as exc:
         with open('crash.log', 'w') as f:
             traceback.print_exception(exc, file=f)
