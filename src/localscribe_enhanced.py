@@ -19,17 +19,18 @@ options:
 """
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
 import functools
 import json
 import re
 import socketserver
 import urllib.parse
 import urllib.request
+from collections.abc import Iterable, Mapping
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from typing import (
-    TYPE_CHECKING, Callable, ClassVar, Literal, TypedDict, Unpack, cast)
+    TYPE_CHECKING, Callable, ClassVar, Literal, TypedDict, Unpack, cast,
+    overload)
 from urllib.error import HTTPError
 
 
@@ -38,6 +39,8 @@ if TYPE_CHECKING:
 
 
 YS = 'https://yellowscribe.xyz'
+
+AUTOSAVE = '.autosave.lsroster'
 
 
 ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str | Callable[[re.Match]]], ...] = (
@@ -135,7 +138,7 @@ def get_roster(code: str | None = None) -> bytes:
     except ValueError:
         # If no code or an invalid code is provided, use a backup of
         # the last successful download.
-        with open('roster.bin', 'rb') as f:
+        with open(AUTOSAVE, 'rb') as f:
             roster = f.read()
         if code:
             print(
@@ -148,7 +151,7 @@ def get_roster(code: str | None = None) -> bytes:
         print('Download successful, starting server.')
         # Backup downloaded data.
         try:
-            with open('roster.bin', 'wb') as f:
+            with open(AUTOSAVE, 'wb') as f:
                 f.write(roster)
         except PermissionError:
             pass
@@ -165,7 +168,7 @@ def download(code: str) -> bytes:
     Returns
         bytes: JSON roster encoded as UTF-8 (default encoding)
     """
-    if not code or not re.fullmatch(r'[\dA-Fa-f]{8}', code):
+    if not code or not validate_code(code):
         raise ValueError('invalid code')
     params = urllib.parse.urlencode({'id': code})
     url = f'{YS}/get_army_by_id?{params}'
@@ -177,11 +180,28 @@ def download(code: str) -> bytes:
     return roster
 
 
+def validate_code(code: str | int) -> bool:
+    match code:
+        case str():
+            try:
+                code = int(code, base=16)
+            except ValueError:
+                return False
+            else:
+                return 0 <= code <= 0xffff_ffff
+        case int():
+            return 0 <= code <= 0xffff_ffff
+        case None:
+            return False
+        case _:
+            raise TypeError
+
+
 type FilterKeywords = frozenset[frozenset[str]]
 type AbilityChanges = Mapping[FilterKeywords, Mapping[str, str]]
 class LSOptions(TypedDict, total=False):
-    uiHeight: str
-    uiWidth: str
+    uiHeight: str | int
+    uiWidth: str | int
     decorativeNames: bool
     statsInvFNP: bool
     indentWeaponProfiles: bool
@@ -202,7 +222,26 @@ def create_filter(filter_str: str) -> frozenset[frozenset[str]]:
     )
     return keywords
 
-
+@overload
+def create_json(
+        roster: bytes,
+        *,
+        uiHeight: str | int = ...,
+        uiWidth: str = ...,
+        decorativeNames: bool = ...,
+        statsInvFNP: bool = ...,
+        indentWeaponProfiles: bool = ...,
+        shortenWeaponAbilities: bool = ...,
+        separateAbilities: bool = ...,
+        showKeywords: Literal['all', 'filtered'] | None = ...,
+        ignoredKeywords: list[str] = ...,
+        addAbilities: AbilityChanges = ...,
+        replaceAbilities: AbilityChanges = ...,
+        hideAbilities: Mapping[FilterKeywords, Iterable[str]] = ...,
+        addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]] = ...,
+    ) -> Roster: ...
+@overload
+def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster: ...
 def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
     roster_str = functools.reduce(
         lambda x, y: re.sub(*y, x), ROSTER_REPLACE, roster.decode())
@@ -212,6 +251,10 @@ def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
     with open(f'{__file__}/../baseScript_enhanced.lua') as f:
         baseScript = f.read()
     roster_json['baseScript'] = baseScript
+    if (uiheight := kwargs.get('uiHeight')):
+        kwargs['uiHeight'] = str(uiheight)
+    if (uiwidth := kwargs.get('uiWidth')):
+        kwargs['uiWidth'] = str(uiwidth)
     roster_json['decorativeNames'] = kwargs.pop(
         'decorativeNames', roster_json['decorativeNames'] == 'true')
     if kwargs.get('shortenWeaponAbilities'):
