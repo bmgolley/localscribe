@@ -43,7 +43,7 @@ YS = 'https://yellowscribe.xyz'
 AUTOSAVE = '.autosave.lsroster'
 
 
-ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str | Callable[[re.Match]]], ...] = (
+ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile('\N{NBSP}'), ' '),
     # Removes warlord name prefix
     (re.compile(r'(?<="name": ")(.*?)(\()?WL(?:\s|\))'), r'\1\2'),
@@ -113,7 +113,7 @@ class TTSHandler(BaseHTTPRequestHandler):
                 handler_cls._roster = roster.encode()
             case dict():
                 handler_cls._roster = json.dumps(
-                    roster, ensure_ascii=False).encode()
+                    roster, ensure_ascii=False, indent=4).encode()
             case _:
                 raise TypeError
         return handler_cls
@@ -158,13 +158,15 @@ def get_roster(code: str | None = None) -> bytes:
     return roster
 
 
-def download(code: str) -> bytes:
+def download(code: str, *, embed_code: bool = False) -> bytes:
     """Download roster from yellowscribe.xyz.
 
     Args:
         code (str): code provided by Yellowscribe site
+
     Raises:
         ValueError: code has expired or is invalid
+
     Returns
         bytes: JSON roster encoded as UTF-8 (default encoding)
     """
@@ -177,18 +179,24 @@ def download(code: str) -> bytes:
             roster: bytes = r.read()
     except HTTPError as e:
         raise ValueError('code has expired or is invalid') from e
+    if embed_code:
+        roster_json: Roster = json.loads(roster)
+        roster_json['code'] = code
+        roster = json.dumps(roster_json, ensure_ascii=False, indent=4).encode()
     return roster
 
 
-def validate_code(code: str | int) -> bool:
+def validate_code(code: str | int | None) -> bool:
     match code:
+        case str() if len(code) != 8:
+            return False
         case str():
             try:
                 code = int(code, base=16)
             except ValueError:
                 return False
             else:
-                return 0 <= code <= 0xffff_ffff
+                return 0<= code <= 0xffff_ffff
         case int():
             return 0 <= code <= 0xffff_ffff
         case None:
@@ -406,17 +414,18 @@ def modify_weapons(
         # unit_name = re.sub(
         #     r'.*\((.*)\)$', lambda m: m[1] if m[1] else m[0], unit['name'])
         unit_names = {unit['name']}
-        if (names := re.match(r'(.*)\s\((.*)\)$', unit['name'])):
+        if (names := re.match(r'(.+)\s\((.+)\)$', unit['name'])):
             unit_names.update(names.groups())
         for unit_weapon, weapon_changes in changes.items():
+            unit_name, weapon_name = unit_weapon
             if (
-                    (not unit_weapon[0] or unit_weapon[0] in unit_names)
-                    and (profile := unit['weapons'].get(unit_weapon[1]))
+                    (not unit_name or unit_name in unit_names)
+                    and (profile := unit['weapons'].get(weapon_name))
                 ):
                 for key, value in weapon_changes.items():
                     if key in profile:
                         if not value:
-                            print(f'Weapon {unit_weapon[0]}.{unit_weapon[1]} changed property {key} missing value.')
+                            print(f'Weapon {unit_name}.{weapon_name} changed property {key} missing value.')
                             continue
                         profile[key] = value
                     else:
@@ -433,6 +442,8 @@ def modify_weapons(
                             if not value:
                                 if key in abilities:
                                     continue
+                                elif desc_str:
+                                    abilities = f'{abilities}, {key}\n{desc_str}'
                                 else:
                                     abilities = f'{abilities}, {key}'
                             elif desc_str:
@@ -444,13 +455,12 @@ def modify_weapons(
                                     if abl.startswith(f'{key}:'):
                                         desc[i] = mod_ability
                                         break
-                                    else:
-                                        desc.append(mod_ability)
-                                abilities = (
-                                    f'{', '.join(abilities)}\n{', '.join(desc)}')
+                                else:
+                                    desc.append(mod_ability)
+                                abilities = f'{abilities}\n{', '.join(desc)}'
+                            elif key not in abilities:
+                                abilities = f'{abilities}, {key}\n{mod_ability}'
                             else:
-                                if key not in abilities:
-                                    abilities = f'{abilities}, {key}'
                                 abilities = f'{abilities}\n{mod_ability}'
                             profile['abilities'] = abilities
 
