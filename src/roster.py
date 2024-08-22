@@ -14,6 +14,7 @@ class Roster(TypedDict):
     showKeywords: NotRequired[str]
     ignoredKeywords: NotRequired[list[str]]
     shortenWeaponAbilities: NotRequired[bool]
+    code: NotRequired[str]
 
 
 class Unit(TypedDict):
