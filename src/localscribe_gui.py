@@ -62,14 +62,14 @@ class LocalscribeGUI(ttk.Frame):
             self, master: tkinter.Tk | None = None,
             *,
             code: str | int | None = None,
-            file_path: StrPath | None = None,
+            filepath: StrPath | None = None,
             **kwargs
         ) -> None:
-        if (code or code == 0) and file_path:
+        if (code or code == 0) and filepath:
             raise ValueError('cannot simultaneously use code and file path')
         elif (code or code == 0) and not lse.validate_code(code):
             raise ValueError('invalid code')
-        elif file_path and not validate_file_path(file_path):
+        elif filepath and not validate_file_path(filepath):
             raise ValueError('invalid file path')
         kwargs['padding'] = (10, 6)
         super().__init__(master, **kwargs)
@@ -152,7 +152,7 @@ class LocalscribeGUI(ttk.Frame):
             if isinstance(code, int):
                 code = f'{code:08x}'
             self.code = code
-        self.filepath = file_path
+        self.filepath = filepath
         self.read_config()
 
     @property
@@ -161,26 +161,28 @@ class LocalscribeGUI(ttk.Frame):
 
     @code.setter
     def code(self, value: str | int | None) -> None:
-        if not value and value != 0:
-            value = ''
-        elif not lse.validate_code(value):
-            self.status = 'Error: invalid code'
-            return
-        elif isinstance(value, int):
-            value = f'{value:08x}'
-            self.filepath = None
-        else:
-            value = value.strip()
-            if value:
-                self.filepath = None
-        self._code.set(value)
+        self._set_code(value)
 
     def _set_code(
-            self, code: str | int | None, *, clear_filepath = True) -> None:
-        filepath = self.filepath
-        self.code = code
-        if not clear_filepath:
-            self._filepath = filepath
+            self,
+            code: str | int | None,
+            *,
+            clear_filepath: bool = True
+        ) -> None:
+        if not code and code != 0:
+            code = ''
+        elif not lse.validate_code(code):
+            self.status = 'Error: invalid code'
+            return
+        elif isinstance(code, int):
+            code = f'{code:08x}'
+            if clear_filepath:
+                self.filepath = None
+        else:
+            code = code.strip()
+            if code and clear_filepath:
+                self.filepath = None
+        self._code.set(code)
 
     @property
     def filepath(self) -> Path | None:
@@ -188,16 +190,21 @@ class LocalscribeGUI(ttk.Frame):
 
     @filepath.setter
     def filepath(self, value: StrPath | None) -> None:
-        if value is not None:
-            if not validate_file_path(value):
+        self._set_filepath(value)
+
+    def _set_filepath(
+            self, filepath: StrPath | None, *, clear_code: bool = True):
+        if filepath is not None:
+            if not validate_file_path(filepath):
                 self.status = 'Error: invalid file path'
                 return
-            self.code = ''
-            if isinstance(value, str):
-                value = value.strip().strip('"\'')
-            value = Path(value)
-            self.status = f'Loaded file {value.name}'
-        self._filepath = value
+            if clear_code:
+                self.code = ''
+            if isinstance(filepath, str):
+                filepath = filepath.strip().strip('"\'')
+            filepath = Path(filepath)
+            self.status = f'Loaded file {filepath.name}'
+        self._filepath = filepath
 
     @property
     def stats_inv_fnp(self) -> bool:
@@ -309,7 +316,7 @@ class LocalscribeGUI(ttk.Frame):
             self._run_btn_text.set('Stop')
 
     def start_server(self) -> None:
-        if self.filepath or self._check_autosave_code():
+        if self._check_autosave_code():
             roster, self.status = self.load_file()
         else:
             roster, self.status = self.download()
@@ -404,10 +411,11 @@ class LocalscribeGUI(ttk.Frame):
 
     def load_file(self) -> tuple[bytes | None, str]:
         roster = None
-        if self.filepath:
-            mode = 'r' if self.filepath.suffix == '.json ' else 'rb'
+        filepath = self.filepath or AUTOSAVE
+        if filepath:
+            mode = 'r' if filepath.suffix == '.json ' else 'rb'
             try:
-                with open(self.filepath, mode) as f:
+                with open(filepath, mode) as f:
                     roster = f.read()
             except PermissionError:
                 status = 'Unable to open file.'
@@ -445,6 +453,8 @@ class LocalscribeGUI(ttk.Frame):
                 prev_mode = 'r' if prev_path.suffix == '.json' else 'rb'
                 with open(prev_path, prev_mode) as fr, open(path, mode) as fw:
                     fw.write(fr.read())
+                if self.filepath:
+                    self._set_filepath(path, clear_code=False)
         else:
             # notify
             pass
@@ -504,7 +514,7 @@ if __name__ == '__main__':
     if lse.validate_code(source):
         kwargs['code'] = source
     elif validate_file_path(source):
-        kwargs['file_path'] = source
+        kwargs['filepath'] = source
     try:
         LocalscribeGUI(**kwargs).mainloop()
     except Exception as exc:
