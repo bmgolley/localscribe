@@ -8,7 +8,7 @@ from typing import NotRequired, TypedDict
 
 class TTSMod(TypedDict):
     SaveName: str
-    EpochTime: int
+    EpochTime: NotRequired[int]
     Date: str
     VersionNumber: str
     GameMode: str
@@ -28,7 +28,7 @@ class TTSMod(TypedDict):
     Hands: Hands
     ComponentTags: ComponentTags
     Turns: Turns
-    CameraStates: NotRequired[list[CameraState | None]]
+    CameraStates: NotRequired[list[CameraState]]
     DecalPallet: list
     LuaScript: str
     LuaScriptState: str
