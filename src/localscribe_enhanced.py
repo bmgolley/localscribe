@@ -25,7 +25,7 @@ import re
 import socketserver
 import urllib.parse
 import urllib.request
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Buffer
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from typing import (
@@ -158,20 +158,22 @@ def get_roster(code: str | None = None) -> bytes:
     return roster
 
 
-def download(code: str, *, embed_code: bool = False) -> bytes:
+def download(code: str | int, *, embed_code: bool = False) -> bytes:
     """Download roster from yellowscribe.xyz.
 
     Args:
-        code (str): code provided by Yellowscribe site
+        code (str | int): Code provided by Yellowscribe site.
 
     Raises:
-        ValueError: code has expired or is invalid
+        ValueError: Code has expired or is invalid.
 
     Returns
-        bytes: JSON roster encoded as UTF-8 (default encoding)
+        bytes: JSON roster encoded as UTF-8 (default encoding).
     """
     if not code or not validate_code(code):
         raise ValueError('invalid code')
+    if isinstance(code, int):
+        code = f'{code:08x}'
     params = urllib.parse.urlencode({'id': code})
     url = f'{YS}/get_army_by_id?{params}'
     try:
@@ -187,6 +189,21 @@ def download(code: str, *, embed_code: bool = False) -> bytes:
 
 
 def validate_code(code: str | int | None) -> bool:
+    """Determine if the provided code could be vaild.
+
+    This does not check if there is currently a roster with this code,
+    only if the entry is an 8-character hexidecimal string or a positive
+    integer of with 8 or fewer hexidecimal digits.
+
+    Args:
+        code (str | int | None): Code to check.
+
+    Raises:
+        TypeError: Provided type is not valid.
+
+    Returns:
+        bool: If this is a valid Yellowscibe code.
+    """
     match code:
         case str() if len(code) != 8:
             return False
@@ -196,39 +213,59 @@ def validate_code(code: str | int | None) -> bool:
             except ValueError:
                 return False
             else:
-                return 0<= code <= 0xffff_ffff
+                return 0 <= code <= 0xffff_ffff
         case int():
             return 0 <= code <= 0xffff_ffff
         case None:
             return False
         case _:
-            raise TypeError
+            raise TypeError(
+                f"{code.__class__.__name__!r} is not a valid code type")
 
 
 type FilterKeywords = frozenset[frozenset[str]]
 type AbilityChanges = Mapping[FilterKeywords, Mapping[str, str]]
 class LSOptions(TypedDict, total=False):
     uiHeight: str | int
+    """UI height in pixels."""
     uiWidth: str | int
+    """UI width in pixels."""
     decorativeNames: bool
+    """"""
     statsInvFNP: bool
+    """Add invulnerable saves and Feel No Pains to the stats line."""
     indentWeaponProfiles: bool
+    """Display multi-profile weapons in the tooltip with each profile
+    indented under the weapon name.
+
+    This is instead of displaying them as two separate weapons."""
     shortenWeaponAbilities: bool
+    """Shorten weapon abilities in tooltips.
+
+    E.g. Rapid Fire 3 becomes RF3, Anti-fly 2+ becomes Af2+"""
     separateAbilities: bool
+    """Separate unit abilities and model abilities on the tooltip."""
     showKeywords: Literal['all', 'filtered'] | None
+    """Show all or a filtered list or keywords on a unit tooltip."""
     ignoredKeywords: list[str]
+    """Keywords to ignore on a unit tooltip."""
     addAbilities: AbilityChanges
+    """"""
     replaceAbilities: AbilityChanges
+    """"""
     hideAbilities: Mapping[FilterKeywords, Iterable[str]]
+    """"""
     addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]]
+    """"""
 
 
 def create_filter(filter_str: str) -> frozenset[frozenset[str]]:
     keywords = frozenset(
         frozenset(ks for k in fs.split('+') if (ks := k.strip()))
-        for f in filter_str.strip().split(',') if (fs := f.strip())
+        for f in filter_str.split(',') if (fs := f.strip())
     )
     return keywords
+
 
 @overload
 def create_json(
@@ -247,7 +284,38 @@ def create_json(
         replaceAbilities: AbilityChanges = ...,
         hideAbilities: Mapping[FilterKeywords, Iterable[str]] = ...,
         addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]] = ...,
-    ) -> Roster: ...
+    ) -> Roster:
+    """_summary_
+
+    Args:
+        roster (bytes): _description_
+        uiHeight (str | int, optional): UI height in pixels.
+        uiWidth (str, optional): UI width in pixels.
+        decorativeNames (bool, optional): _description_. Defaults to ....
+        statsInvFNP (bool, optional): Add invulnerable saves and Feel \
+            No Pains to the stats line.
+        indentWeaponProfiles (bool, optional): Display multi-profile \
+            weapons in the tooltip with each profile indented under \
+            the weapon name.
+        shortenWeaponAbilities (bool, optional): Shorten weapon \
+            abilities in tooltips.
+        separateAbilities (bool, optional): Separate unit abilities \
+            and model abilities on the tooltip.
+        showKeywords (Literal['all', 'filtered'] | None, optional): \
+            Show all or a filtered list or keywords on a unit tooltip.
+        ignoredKeywords (list[str], optional): Keywords to ignore on a \
+            unit tooltip.
+        addAbilities (AbilityChanges, optional): _description_. Defaults to ....
+        replaceAbilities (AbilityChanges, optional): _description_. Defaults to ....
+        hideAbilities (Mapping[FilterKeywords, Iterable[str]], optional): _description_. Defaults to ....
+        addWeaponAbilities (Mapping[tuple[str  |  None, str], Mapping[str, str]], optional): _description_. Defaults to ....
+
+    Raises:
+        ValueError: _description_
+
+    Returns:
+        Roster: _description_
+    """
 @overload
 def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster: ...
 def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
@@ -323,10 +391,10 @@ def modify_abilities(
     if not any((add, replace, hide)):
         return
     for unit in roster['armyData'].values():
-        unit_name = re.sub(
-            r'.*\((.*)\)$', lambda m: m[1] if m[1] else m[0], unit['name'])
         key = set(unit['factionKeywords']).union(
-            unit['keywords'], {unit['name'], unit_name})
+            unit['keywords'], {unit['name']})
+        if (names := re.match(r'(.+)\s\((.+)\)$', unit['name'])):
+            key.update(names.groups())
         if add:
             for add_key, add_abilities in add.items():
                 if not add_key or any(k <= key for k in add_key):
