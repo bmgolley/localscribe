@@ -19,18 +19,29 @@ options:
 """
 from __future__ import annotations
 
+
+__all__ = (
+    'create_filter',
+    'create_json',
+    'download',
+    'run_server',
+    'validate_code',
+    'AUTOSAVE'
+)
+
 import functools
 import json
 import re
 import socketserver
 import urllib.parse
 import urllib.request
-from collections.abc import Iterable, Mapping, Buffer
+from collections import Counter
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
+from itertools import chain
 from typing import (
-    TYPE_CHECKING, Callable, ClassVar, Literal, TypedDict, Unpack, cast,
-    overload)
+    TYPE_CHECKING, ClassVar, Iterable, Literal, Mapping, TypedDict, Unpack,
+    cast, overload)
 from urllib.error import HTTPError
 
 
@@ -170,7 +181,7 @@ def download(code: str | int, *, embed_code: bool = False) -> bytes:
     Returns
         bytes: JSON roster encoded as UTF-8 (default encoding).
     """
-    if not code or not validate_code(code):
+    if not validate_code(code):
         raise ValueError('invalid code')
     if isinstance(code, int):
         code = f'{code:08x}'
@@ -220,7 +231,7 @@ def validate_code(code: str | int | None) -> bool:
             return False
         case _:
             raise TypeError(
-                f"{code.__class__.__name__!r} is not a valid code type")
+                f'{code.__class__.__name__!r} is not a valid code type')
 
 
 type FilterKeywords = frozenset[frozenset[str]]
@@ -257,6 +268,8 @@ class LSOptions(TypedDict, total=False):
     """"""
     addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]]
     """"""
+    addWeaponsToNames: bool
+    cleanProfiles: bool
 
 
 def create_filter(filter_str: str) -> frozenset[frozenset[str]]:
@@ -284,6 +297,8 @@ def create_json(
         replaceAbilities: AbilityChanges = ...,
         hideAbilities: Mapping[FilterKeywords, Iterable[str]] = ...,
         addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]] = ...,
+        addWeaponsToNames: bool = ...,
+        cleanProfiles: bool = ...,
     ) -> Roster:
     """_summary_
 
@@ -309,6 +324,8 @@ def create_json(
         replaceAbilities (AbilityChanges, optional): _description_. Defaults to ....
         hideAbilities (Mapping[FilterKeywords, Iterable[str]], optional): _description_. Defaults to ....
         addWeaponAbilities (Mapping[tuple[str  |  None, str], Mapping[str, str]], optional): _description_. Defaults to ....
+        addWeaponsToNames (bool, optional): _description_. Defaults to ....
+        cleanProfiles (bool, optional): _description_. Defaults to ....
 
     Raises:
         ValueError: _description_
@@ -343,7 +360,11 @@ def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
         replace=kwargs.pop('replaceAbilities', None),
         hide=kwargs.pop('hideAbilities', None)
     )
-    modify_weapons(roster_json, kwargs.pop('addWeaponAbilities'))
+    modify_weapons(roster_json, kwargs.pop('addWeaponAbilities', None))
+    if kwargs.pop('addWeaponsToNames', None):
+        add_weapons_to_names(roster_json)
+    if kwargs.pop('cleanProfiles', None):
+        clean_profiles(roster_json)
     roster_json.update(kwargs)  # pyright: ignore[reportArgumentType,reportCallIssue]
     return roster_json
 
@@ -375,7 +396,7 @@ def shorten_weapon_abilities(roster: Roster) -> None:
                 if (ab := WEAPON_P.fullmatch(a.strip()))
             ]
             if (n := short_list.count('*')) > 1:
-                for _ in range(n- 1):
+                for _ in range(n - 1):
                     short_list.remove('*')
             short_list.sort(key=lambda x: x == '*')
             weapon['shortAbilities'] = ','.join(short_list).replace(' ', '')
@@ -457,6 +478,7 @@ def separate_abilities(roster: Roster) -> None:
         unit_abilities: set[str] = set.intersection(
             *(set(m['abilities']) for m in models))
         model_abilities: set[str] = all_abilities - unit_abilities
+
         def key(s: str):
             try:
                 return core_abilities.index(s)
@@ -465,6 +487,7 @@ def separate_abilities(roster: Roster) -> None:
                     return len(core_abilities) + abilities.index(s)
                 except ValueError:
                     return len(core_abilities) + len(abilities)
+
         unit['unitAbilities'] = sorted(
             unit_abilities - model_abilities, key=key)
         for model in models:
@@ -476,8 +499,10 @@ def separate_abilities(roster: Roster) -> None:
 
 def modify_weapons(
         roster: Roster,
-        changes: Mapping[tuple[str | None, str], Mapping[str, str]]
+        changes: Mapping[tuple[str | None, str], Mapping[str, str]] | None
     ):
+    if not changes:
+        return
     for unit in roster['armyData'].values():
         # unit_name = re.sub(
         #     r'.*\((.*)\)$', lambda m: m[1] if m[1] else m[0], unit['name'])
@@ -531,6 +556,62 @@ def modify_weapons(
                             else:
                                 abilities = f'{abilities}\n{mod_ability}'
                             profile['abilities'] = abilities
+
+
+def add_weapons_to_names(roster: Roster) -> None:
+    for unit in roster['armyData'].values():
+        size = unit['models']['totalNumberOfModels']
+        if len(models := list(unit['models']['models'].values())) > 1:
+            uuids = list(unit['models']['models'])
+            if models[0]['number'] == 1:
+                del models[0]
+                del uuids[0]
+            count = Counter(
+                chain.from_iterable(
+                    (weapon['name'],)*model['number']
+                    for model in models for weapon in model['weapons'])
+            )
+            model_weapons = {
+                uuid: set(
+                    weapon['name'].partition(' - ')[0]
+                    for weapon in model['weapons']
+                    if count[weapon['name']] < size/2
+                ) for uuid, model in zip(uuids, models)
+                if ' |\N{NBSP}' not in model['name']
+            }
+            for uuid, weapons in model_weapons.items():
+                model = unit['models']['models'][uuid]
+                if len(weapons) == 1:
+                    weapon = next(iter(weapons))
+                    model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
+                elif weapons:
+                    print(unit['name'], model['name'], weapons)
+        else:
+            continue
+
+
+def clean_profiles(roster: Roster) -> None:
+    """Remove duplicate model profiles.
+
+    Romve duplicate model profiles where the only difference is wargear
+    appended to the model name.
+
+    Args:
+        roster (Roster): Localscribe roster.
+    """
+    for unit in roster['armyData'].values():
+        if len(profiles := tuple(unit['modelProfiles'])) > 1:
+            for profile in profiles:
+                if (
+                        (name:= profile.rpartition(' w/ ')[0])
+                        and (model_profile := unit['modelProfiles'].get(name))
+                        and all(
+                            unit['modelProfiles'][profile][k]
+                                == model_profile[k]
+                            for k in ('m', 't', 'sv', 'w', 'ld', 'oc')
+                        )
+                    ):
+                    del unit['modelProfiles'][profile]
 
 
 def run_server(roster: bytes | str | Roster) -> None:

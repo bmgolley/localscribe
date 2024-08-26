@@ -46,7 +46,7 @@ class Model(TypedDict):
     name: str
     abilities: list[str]
     weapons: list[ModelWeapon]
-    number: str
+    number: int
     modelAbilities: NotRequired[list[str]]
 
 
@@ -75,4 +75,4 @@ class WeaponProfile(TypedDict):
 
 class ModelWeapon(TypedDict):
     name: str
-    number: str
+    number: int

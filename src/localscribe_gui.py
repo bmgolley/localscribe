@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+
+__all__ = ('LocalscribeGUI', 'validate_filepath')
+
 import atexit
 import json
 import multiprocessing
 import tkinter
 import traceback
 from configparser import ConfigParser
+from fnmatch import fnmatch
 from pathlib import Path
 from tkinter import constants as tkc
 from tkinter import filedialog as tkfiledialog
@@ -28,11 +32,13 @@ VERT = tkc.N + tkc.S
 FILL = HORZ + VERT
 """Stretch to fill the availible space."""
 
-
-CONFIG_KEYS = (
+BOOL_KEYS = (
     'stats_inv_fnp', 'indent_weapon_profiles', 'shorten_abilites',
-    'show_keywords', 'separate_abilities'
+    'separate_abilities', 'add_weapons_to_names',
+    'clean_profiles',
 )
+
+CONFIG_KEYS = BOOL_KEYS + ('show_keywords',)
 
 AUTOSAVE = Path(lse.AUTOSAVE)
 
@@ -54,6 +60,8 @@ class LocalscribeGUI(ttk.Frame):
     _indent_weapon_profiles: tkinter.BooleanVar
     _shorten_weapon_abilities: tkinter.BooleanVar
     _separate_abilities: tkinter.BooleanVar
+    _add_weapons_to_names: tkinter.BooleanVar
+    _clean_profiles: tkinter.BooleanVar
     _show_keywords: tkinter.StringVar
     _status: tkinter.StringVar
     _config: ConfigParser
@@ -69,7 +77,7 @@ class LocalscribeGUI(ttk.Frame):
             raise ValueError('cannot simultaneously use code and file path')
         elif (code or code == 0) and not lse.validate_code(code):
             raise ValueError('invalid code')
-        elif filepath and not validate_file_path(filepath):
+        elif filepath and not validate_filepath(filepath):
             raise ValueError('invalid file path')
         kwargs['padding'] = (10, 6)
         super().__init__(master, **kwargs)
@@ -86,6 +94,8 @@ class LocalscribeGUI(ttk.Frame):
         self._indent_weapon_profiles = tkinter.BooleanVar()
         self._shorten_weapon_abilities = tkinter.BooleanVar()
         self._separate_abilities = tkinter.BooleanVar()
+        self._add_weapons_to_names = tkinter.BooleanVar()
+        self._clean_profiles = tkinter.BooleanVar()
         self._show_keywords = tkinter.StringVar()
         self._status = tkinter.StringVar()
         self._run_btn_text = tkinter.StringVar(value='Run')
@@ -117,6 +127,18 @@ class LocalscribeGUI(ttk.Frame):
             command=lambda: self.update_config('separate_abilities'),
             text='Seperate model and unit abilities',
             variable=self._separate_abilities
+        ).grid(column=1, sticky=tkc.W)
+        ttk.Checkbutton(
+            self,
+            command=lambda: self.update_config('add_weapon_to_name'),
+            text='Add special weapons to model names',
+            variable=self._add_weapons_to_names
+        ).grid(column=1, sticky=tkc.W)
+        ttk.Checkbutton(
+            self,
+            command=lambda: self.update_config('clean_profiles'),
+            text='Remove duplicate model profile entries',
+            variable=self._clean_profiles
         ).grid(column=1, sticky=tkc.W)
         ttk.Label(self, text='Show keywords in unit tooltip:').grid(column=1)
         ttk.Radiobutton(
@@ -195,13 +217,13 @@ class LocalscribeGUI(ttk.Frame):
     def _set_filepath(
             self, filepath: StrPath | None, *, clear_code: bool = True):
         if filepath is not None:
-            if not validate_file_path(filepath):
+            if not validate_filepath(filepath):
                 self.status = 'Error: invalid file path'
                 return
             if clear_code:
                 self.code = ''
             if isinstance(filepath, str):
-                filepath = filepath.strip().strip('"\'')
+                filepath = filepath.strip(' "\'')
             filepath = Path(filepath)
             self.status = f'Loaded file {filepath.name}'
         self._filepath = filepath
@@ -237,6 +259,22 @@ class LocalscribeGUI(ttk.Frame):
     @separate_abilities.setter
     def separate_abilities(self, value: bool) -> None:
         self._separate_abilities.set(value)
+
+    @property
+    def add_weapons_to_names(self) -> bool:
+        return self._add_weapons_to_names.get()
+
+    @add_weapons_to_names.setter
+    def add_weapons_to_names(self, value: bool) -> None:
+        self._add_weapons_to_names.set(value)
+
+    @property
+    def clean_profiles(self) -> bool:
+        return self._clean_profiles.get()
+
+    @clean_profiles.setter
+    def clean_profiles(self, value: bool) -> None:
+        self._clean_profiles.set(value)
 
     @property
     def show_keywords(self) -> Literal['all', 'filtered'] | None:
@@ -275,10 +313,7 @@ class LocalscribeGUI(ttk.Frame):
         self._config.optionxform = lambda optionstr: (
             o if (o := optionstr.casefold()) in CONFIG_KEYS else optionstr)
         self._config.read(config_path)
-        for attr in (
-                'stats_inv_fnp', 'indent_weapon_profiles',
-                'shorten_weapon_abilities', 'separate_abilities'
-            ):
+        for attr in BOOL_KEYS:
             setattr(
                 self, attr, self._config['General'].getboolean(attr, False))
         try:
@@ -358,7 +393,9 @@ class LocalscribeGUI(ttk.Frame):
             addAbilities=add_abilities,
             replaceAbilities=replace_abilities,
             hideAbilities=hide_abilities,
-            addWeaponAbilities=add_weapon_abilites
+            addWeaponAbilities=add_weapon_abilites,
+            addWeaponsToNames=self.add_weapons_to_names,
+            cleanProfiles=self.clean_profiles,
         )
         self._server = multiprocessing.Process(
             target=lse.run_server, args=(roster_json,),
@@ -382,15 +419,15 @@ class LocalscribeGUI(ttk.Frame):
                 try:
                     with open('roster.bin', 'rb') as f:
                         roster = f.read()
-                except FileExistsError:
+                except FileNotFoundError:
                     status = f'{status}, no saved data found.'
                     return None, status
                 else:
                     try:
                         with open(AUTOSAVE, 'wb') as f:
                             f.write(roster)
-                    except PermissionError:
-                        pass
+                    except PermissionError as e:
+                        print(e)
                     status = (
                         f'{status}, loading saved data and starting server.')
             else:
@@ -413,9 +450,8 @@ class LocalscribeGUI(ttk.Frame):
         roster = None
         filepath = self.filepath or AUTOSAVE
         if filepath:
-            mode = 'r' if filepath.suffix == '.json ' else 'rb'
             try:
-                with open(filepath, mode) as f:
+                with open(filepath, 'rb') as f:
                     roster = f.read()
             except PermissionError:
                 status = 'Unable to open file.'
@@ -437,21 +473,19 @@ class LocalscribeGUI(ttk.Frame):
             return
         path = tkfiledialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
         if path:
-            mode = 'w' if path.endswith('.json') else 'wb'
-            if roster:
-                with open(path, mode) as f:
-                    f.write(roster)
-            elif (
-                    not self.filepath
-                    and not self._check_autosave_code()
-                    and (roster := self.download()[0])
+            if (
+                    roster
+                    or (
+                        not self.filepath
+                        and not self._check_autosave_code()
+                        and (roster := self.download()[0])
+                    )
                 ):
-                with open(path, mode) as f:
+                with open(path, 'wb') as f:
                     f.write(roster)
             else:
                 prev_path = self.filepath or AUTOSAVE
-                prev_mode = 'r' if prev_path.suffix == '.json' else 'rb'
-                with open(prev_path, prev_mode) as fr, open(path, mode) as fw:
+                with open(prev_path, 'rb') as fr, open(path, 'wb') as fw:
                     fw.write(fr.read())
                 if self.filepath:
                     self._set_filepath(path, clear_code=False)
@@ -484,17 +518,19 @@ class LocalscribeGUI(ttk.Frame):
         return super().destroy()
 
 
-def validate_file_path(path: StrPath | None) -> bool:
+def validate_filepath(path: StrPath | None) -> bool:
     if path is None:
         return False
     elif isinstance(path, str):
-        path = path.strip().strip('"\'')
+        path = path.strip(' "\'')
     try:
         path = Path(path)
     except (TypeError, ValueError):
         return False
     else:
-        return path.is_file() and path.suffix in ('.lsroster', '.json')
+        valid_name = any(
+            fnmatch(path.name, p) for p in ('*.lsroster', '*.json'))
+        return path.is_file() and valid_name
 
 
 if __name__ == '__main__':
@@ -513,7 +549,7 @@ if __name__ == '__main__':
     kwargs: dict[str, Any] = {}
     if lse.validate_code(source):
         kwargs['code'] = source
-    elif validate_file_path(source):
+    elif validate_filepath(source):
         kwargs['filepath'] = source
     try:
         LocalscribeGUI(**kwargs).mainloop()
