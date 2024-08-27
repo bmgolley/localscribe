@@ -367,8 +367,11 @@ class LocalscribeGUI(ttk.Frame):
         add_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         replace_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         hide_abilities: dict[frozenset[frozenset[str]], set[str]] = {}
-        add_weapon_abilites: dict[tuple[str | None, str], dict[str, str]] = {}
+        modify_weapons: dict[tuple[str | None, str], dict[str, str]] = {}
+        default_weapons: dict[frozenset[frozenset[str]], set[str]] = {}
         for section, values in self._config.items():
+            if not values:
+                continue
             action, _, keys = section.partition('|')
             action = action.strip()
             key = lse.create_filter(keys)
@@ -379,9 +382,11 @@ class LocalscribeGUI(ttk.Frame):
                     replace_abilities[key] = dict(values)
                 case 'HideAbility':
                     hide_abilities[key] = set(values.keys())
-                case 'AddWeaponAbility':
+                case 'ModifyWeapon':
                     weapon, _, ability = keys.rpartition('.')
-                    add_weapon_abilites[(weapon, ability)] = dict(values)
+                    modify_weapons[(weapon, ability)] = dict(values)
+                case 'DefaultWeapons':
+                    default_weapons[key] = set(values.keys())
         roster_json = lse.create_json(
             roster,
             statsInvFNP=self.stats_inv_fnp,
@@ -393,8 +398,9 @@ class LocalscribeGUI(ttk.Frame):
             addAbilities=add_abilities,
             replaceAbilities=replace_abilities,
             hideAbilities=hide_abilities,
-            addWeaponAbilities=add_weapon_abilites,
+            modifyWeapons=modify_weapons,
             addWeaponsToNames=self.add_weapons_to_names,
+            defaultWeapons=default_weapons,
             cleanProfiles=self.clean_profiles,
         )
         self._server = multiprocessing.Process(
