@@ -351,7 +351,7 @@ class LocalscribeGUI(ttk.Frame):
             self._run_btn_text.set('Stop')
 
     def start_server(self) -> None:
-        if self._check_autosave_code():
+        if self._check_file_code():
             roster, self.status = self.load_file()
         else:
             roster, self.status = self.download()
@@ -411,6 +411,11 @@ class LocalscribeGUI(ttk.Frame):
         atexit.register(self._server.terminate)
 
     def download(self) -> tuple[bytes | None, str]:
+        """Download roster with current code.
+
+        Returns:
+            tuple[bytes | None, str]: Roster, status string
+        """
         try:
             roster = lse.download(self.code, embed_code=True)
         except ValueError:
@@ -456,14 +461,17 @@ class LocalscribeGUI(ttk.Frame):
         roster = None
         filepath = self.filepath or AUTOSAVE
         if filepath:
+            mode = 'r' if fnmatch(filepath.name, '*.json') else 'rb'
             try:
-                with open(filepath, 'rb') as f:
+                with open(filepath, mode) as f:
                     roster = f.read()
             except PermissionError:
                 status = 'Unable to open file.'
             except FileNotFoundError:
                 status = 'File not found.'
             else:
+                if isinstance(roster, str):
+                    roster = roster.encode()
                 status = 'Roster loaded, starting server.'
         else:
             status = 'No file selected.'
@@ -478,21 +486,32 @@ class LocalscribeGUI(ttk.Frame):
             # notify
             return
         path = tkfiledialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
-        if path:
+        if validate_filepath(path, False):
+            mode = 'w' if fnmatch(path, '*.json') else 'wb'
             if (
                     roster
                     or (
                         not self.filepath
-                        and not self._check_autosave_code()
+                        and not self._check_file_code()
                         and (roster := self.download()[0])
                     )
                 ):
-                with open(path, 'wb') as f:
-                    f.write(roster)
+                with open(path, mode) as f:
+                    if mode == 'w':
+                        f.write(roster.decode())
+                    else:
+                        f.write(roster)
             else:
                 prev_path = self.filepath or AUTOSAVE
-                with open(prev_path, 'rb') as fr, open(path, 'wb') as fw:
-                    fw.write(fr.read())
+                prev_mode = 'r' if fnmatch(prev_path.name, '*.json') else 'rb'
+                with open(prev_path, prev_mode) as fr, open(path, mode) as fw:
+                    match prev_mode, mode:
+                        case 'r', 'wb':
+                            fw.write(fr.read().encode())
+                        case 'rb', 'w':
+                            fw.write(fr.read().decode())
+                        case _:
+                            fw.write(fr.read())
                 if self.filepath:
                     self._set_filepath(path, clear_code=False)
         else:
@@ -508,11 +527,18 @@ class LocalscribeGUI(ttk.Frame):
             atexit.unregister(self._server.terminate)
             return True
 
-    def _check_autosave_code(self) -> bool:
+    def _check_file_code(self, file: StrPath = AUTOSAVE) -> bool:
+        """Compare the current code with the code in the provided file.
+
+        Uses the autosave if no file is provided.
+
+        Returns:
+            bool: File exists amd codes match.
+        """
         if not self.code:
             return False
         try:
-            with open(AUTOSAVE, 'rb') as f:
+            with open(file, 'rb') as f:
                 roster: Roster = json.load(f)
         except FileNotFoundError:
             return False
@@ -524,7 +550,7 @@ class LocalscribeGUI(ttk.Frame):
         return super().destroy()
 
 
-def validate_filepath(path: StrPath | None) -> bool:
+def validate_filepath(path: StrPath | None, exists: bool = True) -> bool:
     if path is None:
         return False
     elif isinstance(path, str):
@@ -536,7 +562,7 @@ def validate_filepath(path: StrPath | None) -> bool:
     else:
         valid_name = any(
             fnmatch(path.name, p) for p in ('*.lsroster', '*.json'))
-        return path.is_file() and valid_name
+        return (not exists or path.is_file()) and valid_name
 
 
 if __name__ == '__main__':
