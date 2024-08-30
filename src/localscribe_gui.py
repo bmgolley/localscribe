@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 from __future__ import annotations
 
 
@@ -383,8 +384,10 @@ class LocalscribeGUI(ttk.Frame):
                 case 'HideAbility':
                     hide_abilities[key] = set(values.keys())
                 case 'ModifyWeapon':
-                    weapon, _, ability = keys.rpartition('.')
-                    modify_weapons[(weapon, ability)] = dict(values)
+                    unit_model, _, weapon = keys.rpartition('.')
+                    unit, _, model = unit_model.partition('.')
+                    # modify_weapons[(unit, model, weapon)] = dict(values)
+                    modify_weapons[(unit, weapon)] = dict(values)
                 case 'DefaultWeapons':
                     default_weapons[key] = set(values.keys())
         roster_json = lse.create_json(
