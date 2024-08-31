@@ -51,7 +51,7 @@ FILE_DIALOG_KWARGS = {
 
 class LocalscribeGUI(ttk.Frame):
     master: tkinter.Tk
-    _status_msg_widget: tkinter.Message | None
+    _status_msg_widget: tkinter.Message
     _filepath: Path | None
     _server: multiprocessing.Process
     """Running server process."""
@@ -82,14 +82,11 @@ class LocalscribeGUI(ttk.Frame):
             raise ValueError('invalid file path')
         kwargs['padding'] = (10, 6)
         super().__init__(master, **kwargs)
-        self.master.title('Localscribe Enhanced')
-        self.master.minsize(290, 100)
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.columnconfigure(0, weight=0, minsize=50)
-        self.columnconfigure(1, weight=0)
-        self.columnconfigure(2, weight=0, minsize=50)
-        self.grid(sticky=FILL)
+        if code or code == 0:
+            if isinstance(code, int):
+                code = f'{code:08x}'
+            self.code = code
+        self.filepath = filepath
         self._code = tkinter.StringVar()
         self._stats_inv_fnp = tkinter.BooleanVar()
         self._indent_weapon_profiles = tkinter.BooleanVar()
@@ -100,82 +97,86 @@ class LocalscribeGUI(ttk.Frame):
         self._show_keywords = tkinter.StringVar()
         self._status = tkinter.StringVar()
         self._run_btn_text = tkinter.StringVar(value='Run')
-        ttk.Label(self, text='Enter Code').grid(columnspan=3)
-        code_box = ttk.Entry(self, textvariable=self._code)
+        self.master.title('Localscribe Enhanced')
+        self.master.minsize(290, 310)
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)
+        self.grid(sticky=FILL)
+        frame = ttk.Frame(self)
+        ttk.Button(
+            frame, text='Select File', command=self.select_file
+        ).grid(column=0, sticky=HORZ)
+        ttk.Button(
+            frame, text='Save File', command=self.save_file
+        ).grid(column=1, row=0, sticky=HORZ)
+        ttk.Label(frame, text='Enter Code').grid(columnspan=2)
+        code_box = ttk.Entry(frame, textvariable=self._code)
         code_box.bind(
             '<Button-3>', lambda _: self._set_code(code_box.clipboard_get()))
-        code_box.grid(column=1, sticky=HORZ)
+        code_box.grid(columnspan=2, sticky=HORZ)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('stats_inv_fnp'),
             text='Show Invuln/FNP in stat line',
-            variable=self._stats_inv_fnp
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._stats_inv_fnp,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('indent_weapon_profiles'),
             text='Indent weapon profiles',
-            variable=self._indent_weapon_profiles
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._indent_weapon_profiles,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('shorten_weapon_abilities'),
             text='Shorten weapon abilities',
-            variable=self._shorten_weapon_abilities
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._shorten_weapon_abilities,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('separate_abilities'),
             text='Seperate model and unit abilities',
-            variable=self._separate_abilities
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._separate_abilities,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('add_weapon_to_name'),
             text='Add special weapons to model names',
-            variable=self._add_weapons_to_names
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._add_weapons_to_names,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('clean_profiles'),
             text='Remove duplicate model profile entries',
-            variable=self._clean_profiles
-        ).grid(column=1, sticky=tkc.W)
-        ttk.Label(self, text='Show keywords in unit tooltip:').grid(column=1)
+            variable=self._clean_profiles,
+        ).grid(columnspan=2, sticky=tkc.W)
+        ttk.Label(
+            frame, text='Show keywords in unit tooltip:').grid(columnspan=2)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='All',
             value='all',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='Filtered',
             value='filtered',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='None',
             value='',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Button(
-            self, text='Select File', command=self.select_file).grid(column=1)
-        ttk.Button(
-            self, text='Save File', command=self.save_file).grid(column=1)
-        ttk.Button(
-            self, textvariable=self._run_btn_text, command=self.toggle_server
-        ).grid(column=1)
-        self._status_msg_widget = None
-        if code or code == 0:
-            if isinstance(code, int):
-                code = f'{code:08x}'
-            self.code = code
-        self.filepath = filepath
+            frame, textvariable=self._run_btn_text, command=self.toggle_server
+        ).grid(columnspan=2, sticky=HORZ)
+        frame.grid(padx=20, sticky=FILL)
         self.read_config()
 
     @property
@@ -296,11 +297,14 @@ class LocalscribeGUI(ttk.Frame):
 
     @property
     def _status_msg(self) -> tkinter.Message:
-        if not self._status_msg_widget:
+        try:
+            return self._status_msg_widget
+        except AttributeError:
+            ttk.Separator(self).grid(pady=(8, 0), sticky=HORZ)
             self._status_msg_widget = tkinter.Message(
                 self, textvariable=self._status, width=250)
-            self._status_msg_widget.grid(column=0, columnspan=3)
-        return self._status_msg_widget
+            self._status_msg_widget.grid(column=0)
+            return self._status_msg_widget
 
     def read_config(self) -> None:
         config_path = Path('config.ini')
@@ -338,6 +342,7 @@ class LocalscribeGUI(ttk.Frame):
                 text[i] = f'{option} = {self._config['General'][option]}\n'
                 break
         else:
+            # notify
             return
         with open('config.ini', 'w') as f:
             f.writelines(text)
