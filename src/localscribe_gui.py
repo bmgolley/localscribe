@@ -13,8 +13,7 @@ from configparser import ConfigParser
 from fnmatch import fnmatch
 from pathlib import Path
 from tkinter import constants as tkc
-from tkinter import filedialog as tkfiledialog
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
 from typing import TYPE_CHECKING, Any, Literal, override
 
 import localscribe_enhanced as lse
@@ -74,14 +73,17 @@ class LocalscribeGUI(ttk.Frame):
             filepath: StrPath | None = None,
             **kwargs
         ) -> None:
-        if (code or code == 0) and filepath:
-            raise ValueError('cannot simultaneously use code and file path')
-        elif (code or code == 0) and not lse.validate_code(code):
-            raise ValueError('invalid code')
-        elif filepath and not validate_filepath(filepath):
-            raise ValueError('invalid file path')
         kwargs['padding'] = (10, 6)
         super().__init__(master, **kwargs)
+        if (code or code == 0) and filepath:
+            messagebox.showwarning(
+                'Invalid Arguments',
+                'Cannot simultaneously use code and file path.',
+            )
+        elif (code or code == 0) and not lse.validate_code(code):
+            messagebox.showwarning('Invalid Argument', 'Invalid code.')
+        elif filepath and not validate_filepath(filepath):
+            messagebox.showwarning('Invalid Argument', 'Invalid file path.')
         if code or code == 0:
             if isinstance(code, int):
                 code = f'{code:08x}'
@@ -227,7 +229,8 @@ class LocalscribeGUI(ttk.Frame):
             if isinstance(filepath, str):
                 filepath = filepath.strip(' "\'')
             filepath = Path(filepath)
-            self.status = f'Loaded file {filepath.name}'
+            self._status_msg
+            self.status = f'{filepath.name} selected.'
         self._filepath = filepath
 
     @property
@@ -342,7 +345,10 @@ class LocalscribeGUI(ttk.Frame):
                 text[i] = f'{option} = {self._config['General'][option]}\n'
                 break
         else:
-            # notify
+            messagebox.showwarning(
+                'Invalid Configuration',
+                f'Invalid configuration option "{option=}".',
+            )
             return
         with open('config.ini', 'w') as f:
             f.writelines(text)
@@ -357,7 +363,7 @@ class LocalscribeGUI(ttk.Frame):
             self._run_btn_text.set('Stop')
 
     def start_server(self) -> None:
-        if self._check_file_code():
+        if (self.filepath and not self.code) or self._check_file_code():
             roster, self.status = self.load_file()
         else:
             roster, self.status = self.download()
@@ -463,7 +469,7 @@ class LocalscribeGUI(ttk.Frame):
         return roster, status
 
     def select_file(self) -> None:
-        self.filepath = tkfiledialog.askopenfilename(**FILE_DIALOG_KWARGS)
+        self.filepath = filedialog.askopenfilename(**FILE_DIALOG_KWARGS)
 
     def load_file(self) -> tuple[bytes | None, str]:
         roster = None
@@ -480,7 +486,8 @@ class LocalscribeGUI(ttk.Frame):
             else:
                 if isinstance(roster, str):
                     roster = roster.encode()
-                status = 'Roster loaded, starting server.'
+                name = 'Autosave' if filepath == AUTOSAVE else filepath.name
+                status = f'{name} loaded, starting server.'
         else:
             status = 'No file selected.'
         return roster, status
@@ -491,9 +498,9 @@ class LocalscribeGUI(ttk.Frame):
                 and not (self.filepath and self.filepath.is_file())
                 and not AUTOSAVE.is_file()
             ):
-            # notify
+            messagebox.showinfo(message='No file selected.')
             return
-        path = tkfiledialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
+        path = filedialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
         if validate_filepath(path, False):
             mode = 'w' if fnmatch(path, '*.json') else 'wb'
             if (
@@ -522,9 +529,13 @@ class LocalscribeGUI(ttk.Frame):
                             fw.write(fr.read())
                 if self.filepath:
                     self._set_filepath(path, clear_code=False)
+        elif path:
+            messagebox.showerror(
+                'Invalid File',
+                f'Path "{path}" is not a valid file path.',
+            )
         else:
-            # notify
-            pass
+            messagebox.showinfo(message='Save cancelled.')
 
     def stop_server(self) -> bool:
         try:
