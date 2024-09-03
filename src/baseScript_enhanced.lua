@@ -398,6 +398,13 @@ function changeModelWoundCount(mod, target, absolute)
     end
     newWounds = math.max(math.min(newWounds, maxWounds), 0)
     local newName = name:gsub('%d+/%d+', newWounds..'/'..maxWounds, 1)
+
+    local function isTitanic()
+        local leader = getModelUnitLeader(self)
+        local unitData = leader.getTable('unitData')  ---@type UnitData
+        -- return unitData.keywords:find('Titanic') and true or false
+    end
+
     local tooltip  ---@type string
     local newColor  ---@type WoundColor
     if newWounds == 0 then
@@ -405,6 +412,13 @@ function changeModelWoundCount(mod, target, absolute)
         if maxWounds > 1 then
             tooltip = target.getDescription()
             tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%]([BW]S:%s*%d%+)%[%-%]', '%1')
+            if isTitanic() then
+                tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%](OC)%[%-%]', '%1', 1)
+                local ocStr = tooltip:match('%['..WOUNDCOLOR.damaged..'%](%d+)%[%-%]')
+                oc = tonumber(ocStr)  --[[@as integer]]
+                local newOC = oc*2
+                tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%]'..ocStr..'%[%-%]', newOC, 1)
+            end
             target.setDescription(tooltip)
         end
         if isCurrentlyCheckingCoherency and prevWounds then
@@ -427,8 +441,22 @@ function changeModelWoundCount(mod, target, absolute)
                 tooltip = target.getDescription()
                 if damaged and (prevWounds > damagedCutoff or prevWounds == 0) then
                     tooltip = tooltip:gsub('[BW]S:%s*%d%+', '['..WOUNDCOLOR.damaged..']%1[-]')
+                    if isTitanic() then
+                        tooltip = tooltip:gsub('(%s+)(OC%[%-%])', '%1%['..WOUNDCOLOR.damaged..'%]%2%[%-%]', 1)
+                        local ocStr = tooltip:match('^.-\n.-(%d+)')
+                        oc = tonumber(ocStr)  --[[@as integer]]
+                        local newOC = oc/2
+                        tooltip = tooltip:gsub('^.-\n.-(%d+)','%['..WOUNDCOLOR.damaged..'%]'..newOC..'%[%-%]')
+                    end
                 elseif not damaged and prevWounds <= damagedCutoff then
                     tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%]([BW]S:%s*%d%+)%[%-%]', '%1')
+                    if isTitanic() then
+                        tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%](OC)%[%-%]', '%1', 1)
+                        local ocStr = tooltip:match('%['..WOUNDCOLOR.damaged..'%](%d+)%[%-%]')
+                        oc = tonumber(ocStr)  --[[@as integer]]
+                        local newOC = oc*2
+                        tooltip = tooltip:gsub('%['..WOUNDCOLOR.damaged..'%]'..ocStr..'%[%-%]', newOC, 1)
+                    end
                 end
                 target.setDescription(tooltip)
             else

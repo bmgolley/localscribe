@@ -1,16 +1,28 @@
+#! /usr/bin/env python3
 from __future__ import annotations
 
+
+__all__ = ('LocalscribeGUI', 'validate_filepath')
+
 import atexit
+import json
 import multiprocessing
 import tkinter
 import traceback
 from configparser import ConfigParser
+from fnmatch import fnmatch
 from pathlib import Path
 from tkinter import constants as tkc
-from tkinter import ttk
-from typing import Literal, override
+from tkinter import filedialog, messagebox, ttk
+from typing import TYPE_CHECKING, Any, Literal, override
 
-import localscribe_enhanced
+import localscribe_enhanced as lse
+
+
+if TYPE_CHECKING:
+    from _typeshed import StrPath
+
+    from roster import Roster
 
 
 HORZ = tkc.E + tkc.W
@@ -20,16 +32,26 @@ VERT = tkc.N + tkc.S
 FILL = HORZ + VERT
 """Stretch to fill the availible space."""
 
-
-CONFIG_KEYS = (
+BOOL_KEYS = (
     'stats_inv_fnp', 'indent_weapon_profiles', 'shorten_abilites',
-    'show_keywords', 'separate_abilities'
+    'separate_abilities', 'add_weapons_to_names',
+    'clean_profiles',
 )
+
+CONFIG_KEYS = BOOL_KEYS + ('show_keywords',)
+
+AUTOSAVE = Path(lse.AUTOSAVE)
+
+FILE_DIALOG_KWARGS = {
+    'defaultextension': '.lsroster',
+    'filetypes': (('Localscribe Roster', '.lsroster'), ('JSON File', '.json')),
+}
 
 
 class LocalscribeGUI(ttk.Frame):
     master: tkinter.Tk
-    _status_msg: tkinter.Message | None
+    _status_msg_widget: tkinter.Message
+    _filepath: Path | None
     _server: multiprocessing.Process
     """Running server process."""
     _run_btn_text: tkinter.StringVar
@@ -38,85 +60,128 @@ class LocalscribeGUI(ttk.Frame):
     _indent_weapon_profiles: tkinter.BooleanVar
     _shorten_weapon_abilities: tkinter.BooleanVar
     _separate_abilities: tkinter.BooleanVar
+    _add_weapons_to_names: tkinter.BooleanVar
+    _clean_profiles: tkinter.BooleanVar
     _show_keywords: tkinter.StringVar
     _status: tkinter.StringVar
     _config: ConfigParser
+    _debug: bool
 
-    def __init__(self, master: tkinter.Tk | None = None) -> None:
-        super().__init__(master, padding=(10, 6))
-        self.master.title('Localscribe Enhanced')
-        self.master.minsize(290, 100)
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.columnconfigure(0, weight=0, minsize=50)
-        self.columnconfigure(1, weight=0)
-        self.columnconfigure(2, weight=0, minsize=50)
-        self.grid(sticky=FILL)
+    def __init__(
+            self, master: tkinter.Tk | None = None,
+            *,
+            code: str | int | None = None,
+            filepath: StrPath | None = None,
+            debug: bool = False,
+            **kwargs
+        ) -> None:
+        kwargs['padding'] = (10, 6)
+        super().__init__(master, **kwargs)
+        if (code or code == 0) and filepath:
+            messagebox.showwarning(
+                'Invalid Arguments',
+                'Cannot simultaneously use code and file path.',
+            )
+        elif (code or code == 0) and not lse.validate_code(code):
+            messagebox.showwarning('Invalid Argument', 'Invalid code.')
+        elif filepath and not validate_filepath(filepath):
+            messagebox.showwarning('Invalid Argument', 'Invalid file path.')
+        if code or code == 0:
+            if isinstance(code, int):
+                code = f'{code:08x}'
+            self.code = code
+        self.filepath = filepath
+        self._debug = debug
         self._code = tkinter.StringVar()
         self._stats_inv_fnp = tkinter.BooleanVar()
         self._indent_weapon_profiles = tkinter.BooleanVar()
         self._shorten_weapon_abilities = tkinter.BooleanVar()
         self._separate_abilities = tkinter.BooleanVar()
+        self._add_weapons_to_names = tkinter.BooleanVar()
+        self._clean_profiles = tkinter.BooleanVar()
         self._show_keywords = tkinter.StringVar()
         self._status = tkinter.StringVar()
         self._run_btn_text = tkinter.StringVar(value='Run')
-        ttk.Label(self, text='Enter Code').grid(columnspan=3)
-        code_box = ttk.Entry(self, textvariable=self._code)
+        self.master.title('Localscribe Enhanced')
+        self.master.minsize(290, 310)
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)
+        self.grid(sticky=FILL)
+        frame = ttk.Frame(self)
+        ttk.Button(
+            frame, text='Select File', command=self.select_file
+        ).grid(column=0, sticky=HORZ)
+        ttk.Button(
+            frame, text='Save File', command=self.save_file
+        ).grid(column=1, row=0, sticky=HORZ)
+        ttk.Label(frame, text='Enter Code').grid(columnspan=2)
+        code_box = ttk.Entry(frame, textvariable=self._code)
         code_box.bind(
-            '<Button-3>',
-            lambda _: self._code.set(code_box.clipboard_get().strip())
-        )
-        code_box.grid(column=1, sticky=HORZ)
+            '<Button-3>', lambda _: self._set_code(code_box.clipboard_get()))
+        code_box.grid(columnspan=2, sticky=HORZ)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('stats_inv_fnp'),
             text='Show Invuln/FNP in stat line',
-            variable=self._stats_inv_fnp
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._stats_inv_fnp,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('indent_weapon_profiles'),
             text='Indent weapon profiles',
-            variable=self._indent_weapon_profiles
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._indent_weapon_profiles,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('shorten_weapon_abilities'),
             text='Shorten weapon abilities',
-            variable=self._shorten_weapon_abilities
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._shorten_weapon_abilities,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            self,
+            frame,
             command=lambda: self.update_config('separate_abilities'),
             text='Seperate model and unit abilities',
-            variable=self._separate_abilities
-        ).grid(column=1, sticky=tkc.W)
-        ttk.Label(self, text='Show keywords in unit tooltip:').grid(column=1)
+            variable=self._separate_abilities,
+        ).grid(columnspan=2, sticky=tkc.W)
+        ttk.Checkbutton(
+            frame,
+            command=lambda: self.update_config('add_weapon_to_name'),
+            text='Add special weapons to model names',
+            variable=self._add_weapons_to_names,
+        ).grid(columnspan=2, sticky=tkc.W)
+        ttk.Checkbutton(
+            frame,
+            command=lambda: self.update_config('clean_profiles'),
+            text='Remove duplicate model profile entries',
+            variable=self._clean_profiles,
+        ).grid(columnspan=2, sticky=tkc.W)
+        ttk.Label(
+            frame, text='Show keywords in unit tooltip:').grid(columnspan=2)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='All',
             value='all',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='Filtered',
             value='filtered',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            self,
+            frame,
             command=lambda: self.update_config('show_keywords'),
             text='None',
             value='',
-            variable=self._show_keywords
-        ).grid(column=1, sticky=tkc.W)
+            variable=self._show_keywords,
+        ).grid(columnspan=2, sticky=tkc.W)
         ttk.Button(
-            self, textvariable=self._run_btn_text, command=self.toggle_server
-        ).grid(column=1)
-        self._status_msg = None
+            frame, textvariable=self._run_btn_text, command=self.toggle_server
+        ).grid(columnspan=2, sticky=HORZ)
+        frame.grid(padx=20, sticky=FILL)
         self.read_config()
 
     @property
@@ -124,8 +189,52 @@ class LocalscribeGUI(ttk.Frame):
         return self._code.get()
 
     @code.setter
-    def code(self, value: str) -> None:
-        self._code.set(value.strip())
+    def code(self, value: str | int | None) -> None:
+        self._set_code(value)
+
+    def _set_code(
+            self,
+            code: str | int | None,
+            *,
+            clear_filepath: bool = True
+        ) -> None:
+        if not code and code != 0:
+            code = ''
+        elif not lse.validate_code(code):
+            self.status = 'Error: invalid code'
+            return
+        elif isinstance(code, int):
+            code = f'{code:08x}'
+            if clear_filepath:
+                self.filepath = None
+        else:
+            code = code.strip()
+            if code and clear_filepath:
+                self.filepath = None
+        self._code.set(code)
+
+    @property
+    def filepath(self) -> Path | None:
+        return self._filepath
+
+    @filepath.setter
+    def filepath(self, value: StrPath | None) -> None:
+        self._set_filepath(value)
+
+    def _set_filepath(
+            self, filepath: StrPath | None, *, clear_code: bool = True):
+        if filepath is not None:
+            if not validate_filepath(filepath):
+                self.status = 'Error: invalid file path'
+                return
+            if clear_code:
+                self.code = ''
+            if isinstance(filepath, str):
+                filepath = filepath.strip(' "\'')
+            filepath = Path(filepath)
+            self._status_msg
+            self.status = f'{filepath.name} selected.'
+        self._filepath = filepath
 
     @property
     def stats_inv_fnp(self) -> bool:
@@ -160,6 +269,22 @@ class LocalscribeGUI(ttk.Frame):
         self._separate_abilities.set(value)
 
     @property
+    def add_weapons_to_names(self) -> bool:
+        return self._add_weapons_to_names.get()
+
+    @add_weapons_to_names.setter
+    def add_weapons_to_names(self, value: bool) -> None:
+        self._add_weapons_to_names.set(value)
+
+    @property
+    def clean_profiles(self) -> bool:
+        return self._clean_profiles.get()
+
+    @clean_profiles.setter
+    def clean_profiles(self, value: bool) -> None:
+        self._clean_profiles.set(value)
+
+    @property
     def show_keywords(self) -> Literal['all', 'filtered'] | None:
         return self._show_keywords.get() or None  # pyright: ignore[reportReturnType]
 
@@ -173,8 +298,19 @@ class LocalscribeGUI(ttk.Frame):
         return self._status.get()
 
     @status.setter
-    def status(self, status: str) -> None:
-        self._status.set(status)
+    def status(self, value: str) -> None:
+        self._status.set(value)
+
+    @property
+    def _status_msg(self) -> tkinter.Message:
+        try:
+            return self._status_msg_widget
+        except AttributeError:
+            ttk.Separator(self).grid(pady=(8, 0), sticky=HORZ)
+            self._status_msg_widget = tkinter.Message(
+                self, textvariable=self._status, width=250)
+            self._status_msg_widget.grid(column=0)
+            return self._status_msg_widget
 
     def read_config(self) -> None:
         config_path = Path('config.ini')
@@ -188,10 +324,7 @@ class LocalscribeGUI(ttk.Frame):
         self._config.optionxform = lambda optionstr: (
             o if (o := optionstr.casefold()) in CONFIG_KEYS else optionstr)
         self._config.read(config_path)
-        for attr in (
-                'stats_inv_fnp', 'indent_weapon_profiles',
-                'shorten_weapon_abilities', 'separate_abilities'
-            ):
+        for attr in BOOL_KEYS:
             setattr(
                 self, attr, self._config['General'].getboolean(attr, False))
         try:
@@ -215,6 +348,10 @@ class LocalscribeGUI(ttk.Frame):
                 text[i] = f'{option} = {self._config['General'][option]}\n'
                 break
         else:
+            messagebox.showwarning(
+                'Invalid Configuration',
+                f'Invalid configuration option "{option=}".',
+            )
             return
         with open('config.ini', 'w') as f:
             f.writelines(text)
@@ -229,35 +366,13 @@ class LocalscribeGUI(ttk.Frame):
             self._run_btn_text.set('Stop')
 
     def start_server(self) -> None:
-        if not self._status_msg:
-            self._status_msg = tkinter.Message(
-                self, textvariable=self._status, width=250)
-            self._status_msg.grid(column=0, columnspan=3)
-        try:
-            roster = localscribe_enhanced.download(self.code)
-        except ValueError:
-            # If no code or an invalid code is provided, use a backup of
-            # the last successful download.
-            code_status = (
-                'Download unsuccessful' if self.code else 'No code provided')
-            try:
-                with open('roster.bin', 'rb') as f:
-                    roster = f.read()
-            except FileNotFoundError:
-                self.status = f'{code_status}, no saved data found.'
-                self._status_msg['foreground'] = 'red'
-                return
-            else:
-                self.status = (
-                    f'{code_status}, loading saved data and starting server.')
+        if (self.filepath and not self.code) or self._check_file_code():
+            roster, self.status = self.load_file()
         else:
-            self.status = 'Download successful, starting server.'
-            # Backup downloaded data.
-            try:
-                with open('roster.bin', 'wb') as f:
-                    f.write(roster)
-            except PermissionError:
-                pass
+            roster, self.status = self.download()
+        if not roster:
+            self._status_msg['foreground'] = 'red'
+            return
         self._status_msg['foreground'] = 'black'
         self._config.read('config.ini')
         try:
@@ -267,11 +382,14 @@ class LocalscribeGUI(ttk.Frame):
         add_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         replace_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         hide_abilities: dict[frozenset[frozenset[str]], set[str]] = {}
-        add_weapon_abilites: dict[tuple[str | None, str], dict[str, str]] = {}
+        modify_weapons: dict[tuple[str | None, str | None, str], dict[str, str]] = {}
+        default_weapons: dict[frozenset[frozenset[str]], set[str]] = {}
         for section, values in self._config.items():
+            if not values:
+                continue
             action, _, keys = section.partition('|')
             action = action.strip()
-            key = localscribe_enhanced.create_filter(keys)
+            key = lse.create_filter(keys)
             match action:
                 case 'AddAbility':
                     add_abilities[key] = dict(values)
@@ -279,10 +397,14 @@ class LocalscribeGUI(ttk.Frame):
                     replace_abilities[key] = dict(values)
                 case 'HideAbility':
                     hide_abilities[key] = set(values.keys())
-                case 'AddWeaponAbility':
-                    weapon, _, ability = keys.rpartition('.')
-                    add_weapon_abilites[(weapon, ability)] = dict(values)
-        roster_json = localscribe_enhanced.create_json(
+                case 'ModifyWeapon':
+                    unit_model, _, weapon = keys.rpartition('.')
+                    unit, _, model = unit_model.partition('.')
+                    modify_weapons[(unit, model, weapon)] = dict(values)
+                    # modify_weapons[(unit, weapon)] = dict(values)
+                case 'DefaultWeapons':
+                    default_weapons[key] = set(values.keys())
+        roster_json = lse.create_json(
             roster,
             statsInvFNP=self.stats_inv_fnp,
             indentWeaponProfiles=self.indent_weapon_profiles,
@@ -293,14 +415,146 @@ class LocalscribeGUI(ttk.Frame):
             addAbilities=add_abilities,
             replaceAbilities=replace_abilities,
             hideAbilities=hide_abilities,
-            addWeaponAbilities=add_weapon_abilites
+            modifyWeapons=modify_weapons,
+            addWeaponsToNames=self.add_weapons_to_names,
+            defaultWeapons=default_weapons,
+            cleanProfiles=self.clean_profiles,
         )
         self._server = multiprocessing.Process(
-            target=localscribe_enhanced.run_server, args=(roster_json,),
+            target=lse.run_server, args=(roster_json,),
             daemon=True
         )
+        if self._debug:
+            with open('roster.json', 'w', encoding='utf-8') as f:
+                json.dump(roster_json, f, ensure_ascii=False, indent=4)
         self._server.start()
         atexit.register(self._server.terminate)
+
+    def download(self) -> tuple[bytes | None, str]:
+        """Download roster with current code.
+
+        Returns:
+            tuple[bytes | None, str]: Roster, status string
+        """
+        try:
+            roster = lse.download(self.code, embed_code=True)
+        except ValueError:
+            # If no code or an invalid code is provided, use a backup of
+            # the last successful download.
+            status = (
+                'Download unsuccessful' if self.code else 'No code provided')
+            try:
+                with open(AUTOSAVE, 'rb') as f:
+                    roster = f.read()
+            except FileNotFoundError:
+                try:
+                    with open('roster.bin', 'rb') as f:
+                        roster = f.read()
+                except FileNotFoundError:
+                    status = f'{status}, no saved data found.'
+                    return None, status
+                else:
+                    try:
+                        with open(AUTOSAVE, 'wb') as f:
+                            f.write(roster)
+                    except PermissionError as e:
+                        print(e)
+                    status = (
+                        f'{status}, loading saved data and starting server.')
+            else:
+                status = (
+                    f'{status}, loading saved data and starting server.')
+        else:
+            status = 'Download successful, starting server.'
+            # Backup downloaded data.
+            try:
+                with open(AUTOSAVE, 'wb') as f:
+                    f.write(roster)
+            except PermissionError:
+                pass
+        return roster, status
+
+    def select_file(self) -> None:
+        self.filepath = filedialog.askopenfilename(**FILE_DIALOG_KWARGS)
+
+    def load_file(self) -> tuple[bytes | None, str]:
+        roster = None
+        filepath = self.filepath or AUTOSAVE
+        if filepath:
+            mode = 'r' if fnmatch(filepath.name, '*.json') else 'rb'
+            try:
+                with open(filepath, mode) as f:
+                    roster = f.read()
+            except PermissionError:
+                status = 'Unable to open file.'
+            except FileNotFoundError:
+                status = 'File not found.'
+            else:
+                if isinstance(roster, str):
+                    roster = roster.encode()
+                name = 'Autosave' if filepath == AUTOSAVE else filepath.name
+                status = f'{name} loaded, starting server.'
+        else:
+            status = 'No file selected.'
+        return roster, status
+
+    def save_file(self, roster: bytes | None = None) -> None:
+        if (
+                not roster
+                and not (self.filepath and self.filepath.is_file())
+                and not AUTOSAVE.is_file()
+            ):
+            messagebox.showinfo(message='No file selected.')
+            return
+        path = filedialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
+        if validate_filepath(path, False):
+            if fnmatch(path, '*.json'):
+                mode = 'w'
+                kw: dict[str, Any] = {'encoding': 'utf-8'}
+            else:
+                mode = 'wb'
+                kw = {}
+            if (
+                    roster
+                    or (
+                        not self.filepath
+                        and not self._check_file_code()
+                        and (roster := self.download()[0])
+                    )
+                ):
+                with open(path, mode, **kw) as f:
+                    if kw == 'w':
+                        f.write(roster.decode())
+                    else:
+                        f.write(roster)
+            else:
+                prev_path = self.filepath or AUTOSAVE
+                if fnmatch(prev_path.name, '*.json'):
+                    prev_mode = 'r'
+                    prev_kw: dict[str, Any] = {'encoding': 'utf-8'}
+                else:
+                    prev_mode = 'rb'
+                    prev_kw = {}
+                with (
+                        open(prev_path, prev_mode, **prev_kw) as fr,
+                        open(path, mode, **kw) as fw
+                    ):
+                    match prev_mode, mode:
+                        case 'r', 'wb':
+                            fw.write(fr.read().encode())
+                        case 'rb', 'w':
+                            fw.write(fr.read().decode())
+                        case _:
+                            fw.write(fr.read())
+                if self.filepath:
+                    self._set_filepath(path, clear_code=False)
+        elif path:
+            messagebox.showerror(
+                'Invalid File',
+                f'Path "{path}" is not a valid file path.',
+            )
+        else:
+            messagebox.showinfo(message='Save cancelled.')
 
     def stop_server(self) -> bool:
         try:
@@ -311,16 +565,65 @@ class LocalscribeGUI(ttk.Frame):
             atexit.unregister(self._server.terminate)
             return True
 
+    def _check_file_code(self, file: StrPath = AUTOSAVE) -> bool:
+        """Compare the current code with the code in the provided file.
+
+        Uses the autosave if no file is provided.
+
+        Returns:
+            bool: File exists amd codes match.
+        """
+        if not self.code:
+            return False
+        try:
+            with open(file, 'rb') as f:
+                roster: Roster = json.load(f)
+        except FileNotFoundError:
+            return False
+        return self.code == roster.get('code')
+
     @override
     def destroy(self):
         self.stop_server()
         return super().destroy()
 
 
-if __name__ == '__main__':
-    multiprocessing.freeze_support()
+def validate_filepath(path: StrPath | None, exists: bool = True) -> bool:
+    if path is None:
+        return False
+    elif isinstance(path, str):
+        path = path.strip(' "\'')
     try:
-        LocalscribeGUI().mainloop()
+        path = Path(path)
+    except (TypeError, ValueError):
+        return False
+    else:
+        valid_name = any(
+            fnmatch(path.name, p) for p in ('*.lsroster', '*.json'))
+        return (not exists or path.is_file()) and valid_name
+
+
+if __name__ == '__main__':
+    import argparse
+
+
+    multiprocessing.freeze_support()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'source',
+        nargs='?',
+        help='roster file path or army code from yellowscribe.xyx'
+    )
+    parser.add_argument('-d', '--debug', action='store_true')
+    args = parser.parse_args()
+    source: str = args.source
+    kwargs: dict[str, Any] = {'debug': args.debug}
+    if lse.validate_code(source):
+        kwargs['code'] = source
+    elif validate_filepath(source):
+        kwargs['filepath'] = source
+    try:
+        LocalscribeGUI(**kwargs).mainloop()
     except Exception as exc:
         with open('crash.log', 'w') as f:
             traceback.print_exception(exc, file=f)

@@ -19,28 +19,42 @@ options:
 """
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+
+__all__ = (
+    'create_filter',
+    'create_json',
+    'download',
+    'run_server',
+    'validate_code',
+    'AUTOSAVE'
+)
+
 import functools
 import json
 import re
 import socketserver
 import urllib.parse
 import urllib.request
+from collections import Counter
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
+from itertools import chain
 from typing import (
-    TYPE_CHECKING, Callable, ClassVar, Literal, TypedDict, Unpack, cast)
+    TYPE_CHECKING, ClassVar, Iterable, Literal, Mapping, TypedDict, Unpack,
+    cast, overload)
 from urllib.error import HTTPError
 
 
 if TYPE_CHECKING:
-    from roster import Roster
+    from roster import ModelProfile, Roster, Unit
 
 
 YS = 'https://yellowscribe.xyz'
 
+AUTOSAVE = '.autosave.lsroster'
 
-ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str | Callable[[re.Match]]], ...] = (
+
+ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile('\N{NBSP}'), ' '),
     # Removes warlord name prefix
     (re.compile(r'(?<="name": ")(.*?)(\()?WL(?:\s|\))'), r'\1\2'),
@@ -110,7 +124,7 @@ class TTSHandler(BaseHTTPRequestHandler):
                 handler_cls._roster = roster.encode()
             case dict():
                 handler_cls._roster = json.dumps(
-                    roster, ensure_ascii=False).encode()
+                    roster, ensure_ascii=False, indent=4).encode()
             case _:
                 raise TypeError
         return handler_cls
@@ -135,7 +149,7 @@ def get_roster(code: str | None = None) -> bytes:
     except ValueError:
         # If no code or an invalid code is provided, use a backup of
         # the last successful download.
-        with open('roster.bin', 'rb') as f:
+        with open(AUTOSAVE, 'rb') as f:
             roster = f.read()
         if code:
             print(
@@ -148,25 +162,29 @@ def get_roster(code: str | None = None) -> bytes:
         print('Download successful, starting server.')
         # Backup downloaded data.
         try:
-            with open('roster.bin', 'wb') as f:
+            with open(AUTOSAVE, 'wb') as f:
                 f.write(roster)
         except PermissionError:
             pass
     return roster
 
 
-def download(code: str) -> bytes:
+def download(code: str | int, *, embed_code: bool = False) -> bytes:
     """Download roster from yellowscribe.xyz.
 
     Args:
-        code (str): code provided by Yellowscribe site
+        code (str | int): Code provided by Yellowscribe site.
+
     Raises:
-        ValueError: code has expired or is invalid
+        ValueError: Code has expired or is invalid.
+
     Returns
-        bytes: JSON roster encoded as UTF-8 (default encoding)
+        bytes: JSON roster encoded as UTF-8 (default encoding).
     """
-    if not code or not re.fullmatch(r'[\dA-Fa-f]{8}', code):
+    if not validate_code(code):
         raise ValueError('invalid code')
+    if isinstance(code, int):
+        code = f'{code:08x}'
     params = urllib.parse.urlencode({'id': code})
     url = f'{YS}/get_army_by_id?{params}'
     try:
@@ -174,35 +192,162 @@ def download(code: str) -> bytes:
             roster: bytes = r.read()
     except HTTPError as e:
         raise ValueError('code has expired or is invalid') from e
+    if embed_code:
+        roster_json: Roster = json.loads(roster)
+        roster_json['code'] = code
+        roster = json.dumps(roster_json, ensure_ascii=False, indent=4).encode()
     return roster
 
 
-type FilterKeywords = frozenset[frozenset[str]]
-type AbilityChanges = Mapping[FilterKeywords, Mapping[str, str]]
+def validate_code(code: str | int | None) -> bool:
+    """Determine if the provided code could be vaild.
+
+    This does not check if there is currently a roster with this code,
+    only if the entry is an 8-character hexidecimal string or a positive
+    integer of with 8 or fewer hexidecimal digits.
+
+    Args:
+        code (str | int | None): Code to check.
+
+    Raises:
+        TypeError: Provided type is not valid.
+
+    Returns:
+        bool: If this is a valid Yellowscibe code.
+    """
+    match code:
+        case str() if len(code) != 8:
+            return False
+        case str():
+            try:
+                code = int(code, base=16)
+            except ValueError:
+                return False
+            else:
+                return 0 <= code <= 0xffff_ffff
+        case int():
+            return 0 <= code <= 0xffff_ffff
+        case None:
+            return False
+        case _:
+            raise TypeError(
+                f'{code.__class__.__name__!r} is not a valid code type')
+
+
+type KeywordFilters = frozenset[frozenset[str]]
+type AbilityChanges = Mapping[KeywordFilters, Mapping[str, str]]
+type UnitModelWeapon = tuple[str | None, str | None, str]
 class LSOptions(TypedDict, total=False):
-    uiHeight: str
-    uiWidth: str
+    uiHeight: str | int
+    """UI height in pixels."""
+    uiWidth: str | int
+    """UI width in pixels."""
     decorativeNames: bool
+    """"""
     statsInvFNP: bool
+    """Add invulnerable saves and Feel No Pains to the stats line."""
     indentWeaponProfiles: bool
+    """Display multi-profile weapons in the tooltip with each profile
+    indented under the weapon name.
+
+    This is instead of displaying them as two separate weapons."""
     shortenWeaponAbilities: bool
+    """Shorten weapon abilities in tooltips.
+
+    E.g. Rapid Fire 3 becomes RF3, Anti-fly 2+ becomes Af2+"""
     separateAbilities: bool
+    """Separate unit abilities and model abilities on the tooltip."""
     showKeywords: Literal['all', 'filtered'] | None
+    """Show all or a filtered list or keywords on a unit tooltip."""
     ignoredKeywords: list[str]
+    """Keywords to ignore on a unit tooltip."""
     addAbilities: AbilityChanges
+    """"""
     replaceAbilities: AbilityChanges
-    hideAbilities: Mapping[FilterKeywords, Iterable[str]]
-    addWeaponAbilities: Mapping[tuple[str | None, str], Mapping[str, str]]
+    """"""
+    hideAbilities: Mapping[KeywordFilters, Iterable[str]]
+    """"""
+    modifyWeapons: Mapping[UnitModelWeapon, Mapping[str, str]]
+    """"""
+    addWeaponsToNames: bool
+    defaultWeapons: Mapping[KeywordFilters, Iterable[str]]
+    cleanProfiles: bool
+    renameModels: Literal['base', 'decorative'] | None
 
 
-def create_filter(filter_str: str) -> frozenset[frozenset[str]]:
+def create_filter(filter_str: str) -> KeywordFilters:
+    """_summary_
+
+    Args:
+        filter_str (str): _description_
+
+    Returns:
+        frozenset[frozenset[str]]: _description_
+    """
     keywords = frozenset(
         frozenset(ks for k in fs.split('+') if (ks := k.strip()))
-        for f in filter_str.strip().split(',') if (fs := f.strip())
+        for f in filter_str.split(',') if (fs := f.strip())
     )
     return keywords
 
 
+@overload
+def create_json(
+        roster: bytes,
+        *,
+        uiHeight: str | int = ...,
+        uiWidth: str = ...,
+        decorativeNames: bool = ...,
+        statsInvFNP: bool = ...,
+        indentWeaponProfiles: bool = ...,
+        shortenWeaponAbilities: bool = ...,
+        separateAbilities: bool = ...,
+        showKeywords: Literal['all', 'filtered'] | None = ...,
+        ignoredKeywords: list[str] = ...,
+        addAbilities: AbilityChanges = ...,
+        replaceAbilities: AbilityChanges = ...,
+        hideAbilities: Mapping[KeywordFilters, Iterable[str]] = ...,
+        modifyWeapons: Mapping[UnitModelWeapon, Mapping[str, str]] = ...,
+        addWeaponsToNames: bool = ...,
+        defaultWeapons: Mapping[KeywordFilters, Iterable[str]] = ...,
+        cleanProfiles: bool = ...,
+        renameModels: Literal['base', 'decorative'] | None = ...,
+    ) -> Roster:
+    """_summary_
+
+    Args:
+        roster (bytes): _description_
+        uiHeight (str | int, optional): UI height in pixels.
+        uiWidth (str, optional): UI width in pixels.
+        decorativeNames (bool, optional): _description_. Defaults to ....
+        statsInvFNP (bool, optional): Add invulnerable saves and Feel \
+            No Pains to the stats line.
+        indentWeaponProfiles (bool, optional): Display multi-profile \
+            weapons in the tooltip with each profile indented under \
+            the weapon name.
+        shortenWeaponAbilities (bool, optional): Shorten weapon \
+            abilities in tooltips.
+        separateAbilities (bool, optional): Separate unit abilities \
+            and model abilities on the tooltip.
+        showKeywords (Literal['all', 'filtered'] | None, optional): \
+            Show all or a filtered list or keywords on a unit tooltip.
+        ignoredKeywords (list[str], optional): Keywords to ignore on a \
+            unit tooltip.
+        addAbilities (AbilityChanges, optional): _description_. Defaults to ....
+        replaceAbilities (AbilityChanges, optional): _description_. Defaults to ....
+        hideAbilities (Mapping[FilterKeywords, Iterable[str]], optional): _description_. Defaults to ....
+        modifyWeapon (Mapping[tuple[str  |  None, str], Mapping[str, str]], optional): _description_. Defaults to ....
+        addWeaponsToNames (bool, optional): _description_. Defaults to ....
+        cleanProfiles (bool, optional): _description_. Defaults to ....
+
+    Raises:
+        ValueError: _description_
+
+    Returns:
+        Roster: _description_
+    """
+@overload
+def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster: ...
 def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
     roster_str = functools.reduce(
         lambda x, y: re.sub(*y, x), ROSTER_REPLACE, roster.decode())
@@ -212,6 +357,10 @@ def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
     with open(f'{__file__}/../baseScript_enhanced.lua') as f:
         baseScript = f.read()
     roster_json['baseScript'] = baseScript
+    if (uiheight := kwargs.get('uiHeight')):
+        kwargs['uiHeight'] = str(uiheight)
+    if (uiwidth := kwargs.get('uiWidth')):
+        kwargs['uiWidth'] = str(uiwidth)
     roster_json['decorativeNames'] = kwargs.pop(
         'decorativeNames', roster_json['decorativeNames'] == 'true')
     if kwargs.get('shortenWeaponAbilities'):
@@ -224,7 +373,12 @@ def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster:
         replace=kwargs.pop('replaceAbilities', None),
         hide=kwargs.pop('hideAbilities', None)
     )
-    modify_weapons(roster_json, kwargs.pop('addWeaponAbilities'))
+    modify_weapons(roster_json, kwargs.pop('modifyWeapons', None))
+    default_weapons = kwargs.pop('defaultWeapons', None)
+    if kwargs.pop('addWeaponsToNames', None):
+        add_weapons_to_names(roster_json, default_weapons)
+    if kwargs.pop('cleanProfiles', None):
+        clean_profiles(roster_json)
     roster_json.update(kwargs)  # pyright: ignore[reportArgumentType,reportCallIssue]
     return roster_json
 
@@ -256,10 +410,22 @@ def shorten_weapon_abilities(roster: Roster) -> None:
                 if (ab := WEAPON_P.fullmatch(a.strip()))
             ]
             if (n := short_list.count('*')) > 1:
-                for _ in range(n- 1):
+                for _ in range(n - 1):
                     short_list.remove('*')
             short_list.sort(key=lambda x: x == '*')
             weapon['shortAbilities'] = ','.join(short_list).replace(' ', '')
+
+
+def get_names(source: Unit | ModelProfile) -> set[str]:
+    names = {source['name']}
+    if (name_m := re.match(r'(.+)\s\((.+)\)$', source['name'])):
+        names.update(name_m.groups())
+    return names
+
+
+def unit_key(unit: Unit) -> set[str]:
+    key = get_names(unit).union(unit['factionKeywords'], unit['keywords'])
+    return key
 
 
 def modify_abilities(
@@ -267,15 +433,12 @@ def modify_abilities(
         *,
         add: AbilityChanges | None = None,
         replace: AbilityChanges | None = None,
-        hide: Mapping[FilterKeywords, Iterable[str]] | None = None
+        hide: Mapping[KeywordFilters, Iterable[str]] | None = None
     ) -> None:
     if not any((add, replace, hide)):
         return
     for unit in roster['armyData'].values():
-        unit_name = re.sub(
-            r'.*\((.*)\)$', lambda m: m[1] if m[1] else m[0], unit['name'])
-        key = set(unit['factionKeywords']).union(
-            unit['keywords'], {unit['name'], unit_name})
+        key = unit_key(unit)
         if add:
             for add_key, add_abilities in add.items():
                 if not add_key or any(k <= key for k in add_key):
@@ -338,6 +501,7 @@ def separate_abilities(roster: Roster) -> None:
         unit_abilities: set[str] = set.intersection(
             *(set(m['abilities']) for m in models))
         model_abilities: set[str] = all_abilities - unit_abilities
+
         def key(s: str):
             try:
                 return core_abilities.index(s)
@@ -346,6 +510,7 @@ def separate_abilities(roster: Roster) -> None:
                     return len(core_abilities) + abilities.index(s)
                 except ValueError:
                     return len(core_abilities) + len(abilities)
+
         unit['unitAbilities'] = sorted(
             unit_abilities - model_abilities, key=key)
         for model in models:
@@ -354,28 +519,60 @@ def separate_abilities(roster: Roster) -> None:
                 key=model['abilities'].index
             )
 
-
 def modify_weapons(
         roster: Roster,
-        changes: Mapping[tuple[str | None, str], Mapping[str, str]]
+        changes: Mapping[UnitModelWeapon, Mapping[str, str]] | None
     ):
+    if not changes:
+        return
     for unit in roster['armyData'].values():
-        # unit_name = re.sub(
-        #     r'.*\((.*)\)$', lambda m: m[1] if m[1] else m[0], unit['name'])
-        unit_names = {unit['name']}
-        if (names := re.match(r'(.*)\s\((.*)\)$', unit['name'])):
-            unit_names.update(names.groups())
+        unit_names = get_names(unit)
+        weapon_map = {w.casefold(): w for w in unit['weapons']}
         for unit_weapon, weapon_changes in changes.items():
+            unit_name, model_name, weapon_name = unit_weapon
             if (
-                    (not unit_weapon[0] or unit_weapon[0] in unit_names)
-                    and (profile := unit['weapons'].get(unit_weapon[1]))
+                    (not unit_name or unit_name in unit_names)
+                    and (n := weapon_map.get(weapon_name.casefold()))
+                    and (profile := unit['weapons'].get(n))
                 ):
+                try:
+                    name = next(
+                        v for k, v in weapon_changes.items()
+                        if k.casefold() == 'name'
+                    )
+                except StopIteration:
+                    name = None
+                # if model_name:
+                #     found = False
+                #     for model in unit['models']['models'].values():
+                #         if model['name'] == model_name:
+                #             for weapon in model['weapons']:
+                #                 if (
+                #                         weapon['name'].casefold()
+                #                         == weapon_name.casefold()
+                #                     ):
+                #                     weapon['name'] = name or f'{weapon['name']}*'
+                #                     found = True
+                #     if not found:
+                #         continue
+                #     profile = profile.copy()
+                #     if not name:
+                #         name = f'{profile['name']} ({model_name})'
+                #         profile['name'] = name
+                #     unit['weapons'][name] = profile
                 for key, value in weapon_changes.items():
-                    if key in profile:
+                    if (cikey := key.casefold()) in ('ws', 'bs'):
+                        cikey = 'bsws'
+                    if cikey in profile:
                         if not value:
-                            print(f'Weapon {unit_weapon[0]}.{unit_weapon[1]} changed property {key} missing value.')
+                            print(f'Weapon {unit_name}.{weapon_name} changed property {key} missing value.')
                             continue
-                        profile[key] = value
+                        if cikey == 'name':
+                            for model in unit['models']['models'].values():
+                                for weapon in model['weapons']:
+                                    if weapon['name'] == profile['name']:
+                                        weapon['name'] = value
+                        profile[cikey] = value
                     else:
                         if key not in (sa := profile['shortAbilities']):
                             sa = f'{sa}, {key}' if sa != '-' else key
@@ -383,13 +580,15 @@ def modify_weapons(
                         mod_ability = f'{key}: {value}'
                         if profile['abilities'] == '-':
                             profile['abilities'] = (
-                                mod_ability if value else key)
+                                f'{key}\n{mod_ability}' if value else key)
                         else:
                             abilities, _, desc_str = (
                                 profile['abilities'].partition('\n'))
                             if not value:
                                 if key in abilities:
                                     continue
+                                elif desc_str:
+                                    abilities = f'{abilities}, {key}\n{desc_str}'
                                 else:
                                     abilities = f'{abilities}, {key}'
                             elif desc_str:
@@ -401,15 +600,116 @@ def modify_weapons(
                                     if abl.startswith(f'{key}:'):
                                         desc[i] = mod_ability
                                         break
-                                    else:
-                                        desc.append(mod_ability)
-                                abilities = (
-                                    f'{', '.join(abilities)}\n{', '.join(desc)}')
+                                else:
+                                    desc.append(mod_ability)
+                                abilities = f'{abilities}\n{', '.join(desc)}'
+                            elif key not in abilities:
+                                abilities = f'{abilities}, {key}\n{mod_ability}'
                             else:
-                                if key not in abilities:
-                                    abilities = f'{abilities}, {key}'
                                 abilities = f'{abilities}\n{mod_ability}'
                             profile['abilities'] = abilities
+
+
+def add_weapons_to_names(
+        roster: Roster,
+        default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
+    ) -> None:
+
+    def weapon_name(name: str, ci: bool = True) -> str:
+        name = name.partition(' - ')[0].strip()
+        if ci:
+            name = name.casefold()
+        return name
+
+    if not default_weapons:
+        default_weapons = {}
+    for unit in roster['armyData'].values():
+        if len(models := list(unit['models']['models'].values())) > 1:
+            half = unit['models']['totalNumberOfModels']/2
+            key = unit_key(unit)
+            unit_defaults = set(
+                chain.from_iterable(
+                    (weapon_name(w) for w in weapons)
+                    for filters, weapons in default_weapons.items()
+                    if not filters or any(k <= key for k in filters)
+                )
+            )
+            if models[0]['number'] == 1:
+                del models[0]
+            count = Counter(
+                chain.from_iterable(
+                    (weapon_name(weapon['name']),)*model['number']
+                    for model in models for weapon in model['weapons'])
+            )
+            model_weapons = (
+                (
+                    model,
+                    set(
+                        weapon_name(weapon['name'], False) for weapon in model['weapons']
+                        if (name := weapon_name(weapon['name']))
+                            not in unit_defaults
+                        and count[name] < half
+                    ),
+                ) for model in models
+                if ' |\N{NBSP}' not in model['name']
+            )
+            for model, weapons in model_weapons:
+                if len(weapons) == 1:
+                    weapon = next(iter(weapons))
+                    model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
+                elif weapons:
+                    print(unit['name'], model['name'], weapons)
+        else:
+            continue
+
+
+def clean_profiles(roster: Roster) -> None:
+    """Remove duplicate model profiles.
+
+    Remove duplicate model profiles where the only difference is wargear
+    appended to the model name.
+
+    Args:
+        roster (Roster): Localscribe roster.
+    """
+    for unit in roster['armyData'].values():
+        if len(profiles := tuple(unit['modelProfiles'])) > 1:
+            for profile in profiles:
+                if (
+                        (name := profile.rpartition(' w/ ')[0])
+                        and (model_profile := unit['modelProfiles'].get(name))
+                        and all(
+                            unit['modelProfiles'][profile][k]
+                                == model_profile[k]
+                            for k in ('m', 't', 'sv', 'w', 'ld', 'oc')
+                        )
+                    ):
+                    del unit['modelProfiles'][profile]
+
+
+def rename_models(
+        roster: Roster, naming: Literal['base', 'decorative'] | None) -> None:
+    def _rename_base(name: str) -> str:
+        name = name.partition('|')[0].partition('(')[0].strip()
+        return name
+
+    def _rename_decorative(name: str) -> str:
+        name = re.sub(r'^.+ \((.+)\)(?=\s*\\w|\s*\||$)', r'\1', name)
+        return name
+
+    if not naming:
+        return
+    elif naming == 'base':
+        rename = _rename_base
+    else:
+        rename = _rename_decorative
+    for unit in roster['armyData'].values():
+        for model in unit['models']['models'].values():
+            model['name'] = rename(model['name'])
+        if naming == 'base':
+            for profile in unit['modelProfiles'].values():
+                profile['name'] = rename(profile['name'])
+
 
 
 def run_server(roster: bytes | str | Roster) -> None:

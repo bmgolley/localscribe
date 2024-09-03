@@ -861,7 +861,7 @@ function placeUnit(unit, startX, startZ, startY)
             weapon.range = 'N/A'
         end
     end
-    local leaderData = formatLeaderScript(unit)
+    local leaderData = formatLeaderScript(unit)  ---@type string?
     for _, model in pairs(unit.models.models) do
         --local currentModelObj = getObjectFromGUID(model.associatedModel)
         -- I dont remember why I'm passing the data as an object instead of just as arguments
