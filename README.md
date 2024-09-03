@@ -1,6 +1,6 @@
 # Localscribe Enhanced
 
-A tool for creating WH40k units on Tabletop Simulator.
+A tool for creating WH40k units on Tabletop Simulator. This is derived from the Yellowscribe TTS mod.
 
 ## Features
 
@@ -57,11 +57,6 @@ Adds a "Keywords" section to the bottom of a unit's tooltip. "All" adds all keyw
 ### Config
 
 Options are saved in a "config.ini" file. Add or remove keywords to ignore in the "IgnoredKeywords" section. If this file does not exist, it will be created at launch. The options can be edited while the program is running, but if the server is running changes will not take effect until the server is restarted.
-
-
-## Other
-
-TTSMapSort.exe is a Python program that will sort 40k maps from the workshop into individual folders based on battle size.
 
 
 ## Source
