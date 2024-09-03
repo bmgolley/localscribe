@@ -44,7 +44,7 @@ AUTOSAVE = Path(lse.AUTOSAVE)
 
 FILE_DIALOG_KWARGS = {
     'defaultextension': '.lsroster',
-    'filetypes': (('Localscribe Roster', '.lsroster'), ('JSON File', '.json'))
+    'filetypes': (('Localscribe Roster', '.lsroster'), ('JSON File', '.json')),
 }
 
 
@@ -65,12 +65,14 @@ class LocalscribeGUI(ttk.Frame):
     _show_keywords: tkinter.StringVar
     _status: tkinter.StringVar
     _config: ConfigParser
+    _debug: bool
 
     def __init__(
             self, master: tkinter.Tk | None = None,
             *,
             code: str | int | None = None,
             filepath: StrPath | None = None,
+            debug: bool = False,
             **kwargs
         ) -> None:
         kwargs['padding'] = (10, 6)
@@ -89,6 +91,7 @@ class LocalscribeGUI(ttk.Frame):
                 code = f'{code:08x}'
             self.code = code
         self.filepath = filepath
+        self._debug = debug
         self._code = tkinter.StringVar()
         self._stats_inv_fnp = tkinter.BooleanVar()
         self._indent_weapon_profiles = tkinter.BooleanVar()
@@ -295,8 +298,8 @@ class LocalscribeGUI(ttk.Frame):
         return self._status.get()
 
     @status.setter
-    def status(self, status: str) -> None:
-        self._status.set(status)
+    def status(self, value: str) -> None:
+        self._status.set(value)
 
     @property
     def _status_msg(self) -> tkinter.Message:
@@ -379,7 +382,7 @@ class LocalscribeGUI(ttk.Frame):
         add_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         replace_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
         hide_abilities: dict[frozenset[frozenset[str]], set[str]] = {}
-        modify_weapons: dict[tuple[str | None, str], dict[str, str]] = {}
+        modify_weapons: dict[tuple[str | None, str | None, str], dict[str, str]] = {}
         default_weapons: dict[frozenset[frozenset[str]], set[str]] = {}
         for section, values in self._config.items():
             if not values:
@@ -397,8 +400,8 @@ class LocalscribeGUI(ttk.Frame):
                 case 'ModifyWeapon':
                     unit_model, _, weapon = keys.rpartition('.')
                     unit, _, model = unit_model.partition('.')
-                    # modify_weapons[(unit, model, weapon)] = dict(values)
-                    modify_weapons[(unit, weapon)] = dict(values)
+                    modify_weapons[(unit, model, weapon)] = dict(values)
+                    # modify_weapons[(unit, weapon)] = dict(values)
                 case 'DefaultWeapons':
                     default_weapons[key] = set(values.keys())
         roster_json = lse.create_json(
@@ -421,6 +424,9 @@ class LocalscribeGUI(ttk.Frame):
             target=lse.run_server, args=(roster_json,),
             daemon=True
         )
+        if self._debug:
+            with open('roster.json', 'w', encoding='utf-8') as f:
+                json.dump(roster_json, f, ensure_ascii=False, indent=4)
         self._server.start()
         atexit.register(self._server.terminate)
 
@@ -502,7 +508,12 @@ class LocalscribeGUI(ttk.Frame):
             return
         path = filedialog.asksaveasfilename(**FILE_DIALOG_KWARGS)
         if validate_filepath(path, False):
-            mode = 'w' if fnmatch(path, '*.json') else 'wb'
+            if fnmatch(path, '*.json'):
+                mode = 'w'
+                kw: dict[str, Any] = {'encoding': 'utf-8'}
+            else:
+                mode = 'wb'
+                kw = {}
             if (
                     roster
                     or (
@@ -511,15 +522,23 @@ class LocalscribeGUI(ttk.Frame):
                         and (roster := self.download()[0])
                     )
                 ):
-                with open(path, mode) as f:
-                    if mode == 'w':
+                with open(path, mode, **kw) as f:
+                    if kw == 'w':
                         f.write(roster.decode())
                     else:
                         f.write(roster)
             else:
                 prev_path = self.filepath or AUTOSAVE
-                prev_mode = 'r' if fnmatch(prev_path.name, '*.json') else 'rb'
-                with open(prev_path, prev_mode) as fr, open(path, mode) as fw:
+                if fnmatch(prev_path.name, '*.json'):
+                    prev_mode = 'r'
+                    prev_kw: dict[str, Any] = {'encoding': 'utf-8'}
+                else:
+                    prev_mode = 'rb'
+                    prev_kw = {}
+                with (
+                        open(prev_path, prev_mode, **prev_kw) as fr,
+                        open(path, mode, **kw) as fw
+                    ):
                     match prev_mode, mode:
                         case 'r', 'wb':
                             fw.write(fr.read().encode())
@@ -595,9 +614,10 @@ if __name__ == '__main__':
         nargs='?',
         help='roster file path or army code from yellowscribe.xyx'
     )
+    parser.add_argument('-d', '--debug', action='store_true')
     args = parser.parse_args()
     source: str = args.source
-    kwargs: dict[str, Any] = {}
+    kwargs: dict[str, Any] = {'debug': args.debug}
     if lse.validate_code(source):
         kwargs['code'] = source
     elif validate_filepath(source):
