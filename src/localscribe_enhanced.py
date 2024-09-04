@@ -528,6 +528,9 @@ def modify_weapons(
         changes: Mapping[UnitModelWeapon, Mapping[str, str]] | None
     ):
 
+    def ismodifier(string: str) -> bool:
+        return string.removeprefix('-').isdecimal()
+
     def update_abilities(key: str, abilities: str) -> str:
         if key not in abilities:
             if key.rpartition(' ')[2].isdecimal():
@@ -598,35 +601,48 @@ def modify_weapons(
                             value = value.removeprefix('+')
                             if key == 'number':
                                 value = profile[cikey] + int(value)
-                            elif (prev := cast(str, profile[cikey])).isdecimal():
-                                if value.isdecimal():
+                            elif ismodifier(prev := cast(str, profile[cikey])):
+                                if ismodifier(value):
                                     value = int(prev) + int(value)
                                 else:
                                     value = f'{value}+{prev}'
                             elif '+' in prev:
-                                dice, _, mod = prev.rpartition('+')
-                                if value.isdecimal():
-                                    mod = int(mod) + int(value)
+                                prev_dice, _, prev_mod = prev.partition('+')
+                                if ismodifier(value):
+                                    mod = int(prev_mod) + int(value)
+                                    dice = prev_dice
                                 else:
-                                    num, _, size = value.partition('D')
                                     prev_num, _, prev_size = (
-                                        dice.partition('D'))
+                                        prev_dice.partition('D'))
+                                    if '+' in value:
+                                        dice, _, mod = value.partition('+')
+                                        num, _, size = dice.partition('D')
+                                    else:
+                                        num, _, size = value.partition('D')
+                                        dice = mod = 0
                                     if size != prev_size:
                                         print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
                                         continue
                                     num = int(prev_num) + int(num)
                                     dice = f'{num}D{size}'
+                                    mod = int(prev_mod) + int(mod)
                                 value = f'{dice}+{mod}'
-                            elif value.isdecimal():
+                            elif ismodifier(value):
                                 value = f'{prev}+{value}'
                             else:
-                                num, _, size = value.partition('D')
-                                prev_num, _, prev_size = dice.partition('D')
+                                if '+' in value:
+                                    dice, _, mod = value.partition('+')
+                                    num, _, size = dice.partition('D')
+                                else:
+                                    num, _, size = value.partition('D')
+                                    dice = mod = 0
+                                prev_num, _, prev_size = prev_dice.partition('D')
                                 if size != prev_size:
                                     print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
                                     continue
                                 num = int(prev_num) + int(num)
                                 dice = f'{num}D{size}'
+                                mod = int(prev_mod) + int(mod)
                                 value = f'{dice}+{mod}'
                         profile[cikey] = value
                     else:
@@ -708,6 +724,9 @@ def add_weapons_to_names(
             for model, weapons in model_weapons:
                 if len(weapons) == 1:
                     weapon = next(iter(weapons))
+                    model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
+                elif len(names := {w.partition('-')[0].strip() for w in weapons}) == 1:
+                    weapon = next(iter(names))
                     model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
                 elif weapons:
                     print(unit['name'], model['name'], weapons)
