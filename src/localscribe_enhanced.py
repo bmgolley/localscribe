@@ -54,20 +54,22 @@ YS = 'https://yellowscribe.xyz'
 AUTOSAVE = '.autosave.lsroster'
 
 
-ROSTER_REPLACE: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile('\N{NBSP}'), ' '),
+ROSTER_REPLACE: tuple[tuple[str, str], ...] = (
+    ('\N{NBSP}', ' '),
     # Removes warlord name prefix
-    (re.compile(r'(?<="name": ")(.*?)(\()?WL(?:\s|\))'), r'\1\2'),
+    (r'(?<="name": ")(.*?)(\()?WL(?:\s|\))', r'\1\2'),
     # Changes Unit w/ Gear to Unit | Gear
-    (re.compile(r'(?<="name": ")([^"]+?) w/ ([^"]+)(?=")'), fr'\1 |{chr(0xa0)}\2'),
+    (r'(?<="name": ")([^"]+?) w/ ([^"]+)(?=")', '\\1 |\N{NBSP}\\2'),
     # Capitalizes psychic in ability names
-    (re.compile(r'(\(|, )psychic\)'), r'\1Psychic)'),
+    (r'(\(|, )psychic\)', r'\1Psychic)'),
     # Capitalizes aura in ability names
-    (re.compile(r'\(aura(?=\)|,)'), r'(Aura'),
+    (r'\(aura(?=\)|,)', r'(Aura'),
     # Removes extra space in Anti- weapon ability
-    (re.compile(r'\b([Aa]nti-)\s(?=\w)'), r'\1'),
+    (r'\b([Aa]nti-)\s(?=\w)', r'\1'),
     # Fix missing number for Rapid Fire weapons
-    (re.compile(r'(?<=bilities": ")(.*?Rapid Fire)(?! \d)'), r'\1 1')
+    (r'(?<=bilities": ")(.*?Rapid Fire)(?! \d)', r'\1 1'),
+    # Remove extranious quote for range of N/A
+    (r'"range": "N/A″"', r'"range": "N/A"'),
 )
 """Tuple of string replacements"""
 
@@ -174,6 +176,8 @@ def download(code: str | int, *, embed_code: bool = False) -> bytes:
 
     Args:
         code (str | int): Code provided by Yellowscribe site.
+        embed_code (bool, optional): Embed the Yellowscribe code in \
+            the returned roster. Defaults to False.
 
     Raises:
         ValueError: Code has expired or is invalid.
@@ -285,7 +289,7 @@ def create_filter(filter_str: str) -> KeywordFilters:
         frozenset[frozenset[str]]: _description_
     """
     keywords = frozenset(
-        frozenset(ks for k in fs.split('+') if (ks := k.strip()))
+        frozenset(ks for k in fs.split('&') if (ks := k.strip()))
         for f in filter_str.split(',') if (fs := f.strip())
     )
     return keywords
@@ -523,6 +527,24 @@ def modify_weapons(
         roster: Roster,
         changes: Mapping[UnitModelWeapon, Mapping[str, str]] | None
     ):
+
+    def update_abilities(key: str, abilities: str) -> str:
+        if key not in abilities:
+            if key.rpartition(' ')[2].isdecimal():
+                key_abl = key.rpartition(' ')[0]
+                if key_abl in abilities:
+                    abilities_list = [a.strip() for a in abilities.split(',')]
+                    for i, abl in enumerate(abilities_list):
+                        if abl.startswith(key_abl):
+                            abilities_list[i] = key
+                            break
+                    abilities = ', '.join(abilities_list)
+                else:
+                    abilities = f'{abilities}, {key}'
+            else:
+                abilities = f'{abilities}, {key}'
+        return abilities
+
     if not changes:
         return
     for unit in roster['armyData'].values():
@@ -572,11 +594,46 @@ def modify_weapons(
                                 for weapon in model['weapons']:
                                     if weapon['name'] == profile['name']:
                                         weapon['name'] = value
+                        elif value.startswith('+'):
+                            value = value.removeprefix('+')
+                            if key == 'number':
+                                value = profile[cikey] + int(value)
+                            elif (prev := cast(str, profile[cikey])).isdecimal():
+                                if value.isdecimal():
+                                    value = int(prev) + int(value)
+                                else:
+                                    value = f'{value}+{prev}'
+                            elif '+' in prev:
+                                dice, _, mod = prev.rpartition('+')
+                                if value.isdecimal():
+                                    mod = int(mod) + int(value)
+                                else:
+                                    num, _, size = value.partition('D')
+                                    prev_num, _, prev_size = (
+                                        dice.partition('D'))
+                                    if size != prev_size:
+                                        print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
+                                        continue
+                                    num = int(prev_num) + int(num)
+                                    dice = f'{num}D{size}'
+                                value = f'{dice}+{mod}'
+                            elif value.isdecimal():
+                                value = f'{prev}+{value}'
+                            else:
+                                num, _, size = value.partition('D')
+                                prev_num, _, prev_size = dice.partition('D')
+                                if size != prev_size:
+                                    print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
+                                    continue
+                                num = int(prev_num) + int(num)
+                                dice = f'{num}D{size}'
+                                value = f'{dice}+{mod}'
                         profile[cikey] = value
                     else:
-                        if key not in (sa := profile['shortAbilities']):
-                            sa = f'{sa}, {key}' if sa != '-' else key
-                            profile['shortAbilities'] = sa
+                        if (sa := profile['shortAbilities']) == '-':
+                            profile['shortAbilities'] = key
+                        else:
+                            profile['shortAbilities'] = update_abilities(key, sa)
                         mod_ability = f'{key}: {value}'
                         if profile['abilities'] == '-':
                             profile['abilities'] = (
@@ -587,15 +644,14 @@ def modify_weapons(
                             if not value:
                                 if key in abilities:
                                     continue
-                                elif desc_str:
-                                    abilities = f'{abilities}, {key}\n{desc_str}'
                                 else:
-                                    abilities = f'{abilities}, {key}'
+                                    abilities = update_abilities(key, abilities)
+                                    if desc_str:
+                                        abilities = f'{abilities}\n{desc_str}'
                             elif desc_str:
                                 desc = [d.strip() for d in desc_str.split(',')]
                                 mod_ability = f'{key}: {value}'
-                                if key not in abilities:
-                                    abilities = f'{abilities}, {key}'
+                                abilities = update_abilities(key, abilities)
                                 for i, abl in enumerate(desc):
                                     if abl.startswith(f'{key}:'):
                                         desc[i] = mod_ability
@@ -603,9 +659,8 @@ def modify_weapons(
                                 else:
                                     desc.append(mod_ability)
                                 abilities = f'{abilities}\n{', '.join(desc)}'
-                            elif key not in abilities:
-                                abilities = f'{abilities}, {key}\n{mod_ability}'
                             else:
+                                abilities = update_abilities(key, abilities)
                                 abilities = f'{abilities}\n{mod_ability}'
                             profile['abilities'] = abilities
 
@@ -615,11 +670,8 @@ def add_weapons_to_names(
         default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
     ) -> None:
 
-    def weapon_name(name: str, ci: bool = True) -> str:
-        name = name.partition(' - ')[0].strip()
-        if ci:
-            name = name.casefold()
-        return name
+    def weapon_name(name: str) -> str:
+        return name.partition(' - ')[0].strip()
 
     if not default_weapons:
         default_weapons = {}
@@ -629,7 +681,7 @@ def add_weapons_to_names(
             key = unit_key(unit)
             unit_defaults = set(
                 chain.from_iterable(
-                    (weapon_name(w) for w in weapons)
+                    (weapon_name(w).casefold() for w in weapons)
                     for filters, weapons in default_weapons.items()
                     if not filters or any(k <= key for k in filters)
                 )
@@ -645,8 +697,8 @@ def add_weapons_to_names(
                 (
                     model,
                     set(
-                        weapon_name(weapon['name'], False) for weapon in model['weapons']
-                        if (name := weapon_name(weapon['name']))
+                        name for weapon in model['weapons']
+                        if (name := weapon_name(weapon['name'])).casefold()
                             not in unit_defaults
                         and count[name] < half
                     ),
@@ -676,12 +728,12 @@ def clean_profiles(roster: Roster) -> None:
         if len(profiles := tuple(unit['modelProfiles'])) > 1:
             for profile in profiles:
                 if (
-                        (name := profile.rpartition(' w/ ')[0])
-                        and (model_profile := unit['modelProfiles'].get(name))
+                        (base := profile.rpartition(' w/ ')[0])
+                        and (base_profile := unit['modelProfiles'].get(base))
                         and all(
                             unit['modelProfiles'][profile][k]
-                                == model_profile[k]
-                            for k in ('m', 't', 'sv', 'w', 'ld', 'oc')
+                                == base_profile[k]
+                            for k in base_profile if k != 'name'
                         )
                     ):
                     del unit['modelProfiles'][profile]
@@ -753,30 +805,6 @@ if __name__ == '__main__':
     # Parse command-line arguments and extract army code.
     args = parser.parse_args()
     code: str = args.code
-
-    # Download roster using provided code.
-    # try:
-    #     roster = download(code)
-    # except ValueError:
-    #     # If no code or an invalid code is provided, use a backup of
-    #     # the last successful download.
-    #     with open('roster.bin', 'rb') as f:
-    #         roster = f.read()
-    #     if code:
-    #         print(
-    #             'Download unsuccessful, loading saved data and starting'
-    #             ' server.'
-    #         )
-    #     else:
-    #         print('No code provided, loading saved data and starting server.')
-    # else:
-    #     print('Download successful, starting server.')
-    #     # Backup downloaded data.
-    #     try:
-    #         with open('roster.bin', 'wb') as f:
-    #             f.write(roster)
-    #     except PermissionError:
-    #         pass
 
     roster = get_roster(code)
     roster_json = create_json(roster, **vars(args))
