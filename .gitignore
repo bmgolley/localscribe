@@ -169,3 +169,4 @@ make/
 
 config.ini
 *.lsroster
+roster.json
