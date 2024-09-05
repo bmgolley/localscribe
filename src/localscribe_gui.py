@@ -200,9 +200,9 @@ class LocalscribeGUI(ttk.Frame):
         ) -> None:
         if not code and code != 0:
             code = ''
-        elif not lse.validate_code(code):
-            self.status = 'Error: invalid code'
-            return
+        # elif not lse.validate_code(code):
+        #     self.status = 'Error: invalid code'
+        #     return
         elif isinstance(code, int):
             code = f'{code:08x}'
             if clear_filepath:
@@ -368,6 +368,10 @@ class LocalscribeGUI(ttk.Frame):
     def start_server(self) -> None:
         if (self.filepath and not self.code) or self._check_file_code():
             roster, self.status = self.load_file()
+        elif self.code and not lse.validate_code(self.code):
+            messagebox.showerror(
+                'Invalid Code', 'Provided code is not a valid code.')
+            return
         else:
             roster, self.status = self.download()
         if not roster:
@@ -401,7 +405,6 @@ class LocalscribeGUI(ttk.Frame):
                     unit_model, _, weapon = keys.rpartition('.')
                     unit, _, model = unit_model.partition('.')
                     modify_weapons[(unit, model, weapon)] = dict(values)
-                    # modify_weapons[(unit, weapon)] = dict(values)
                 case 'DefaultWeapons':
                     default_weapons[key] = set(values.keys())
         roster_json = lse.create_json(

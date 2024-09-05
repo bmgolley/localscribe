@@ -725,9 +725,6 @@ def add_weapons_to_names(
                 if len(weapons) == 1:
                     weapon = next(iter(weapons))
                     model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
-                elif len(names := {w.partition('-')[0].strip() for w in weapons}) == 1:
-                    weapon = next(iter(names))
-                    model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
                 elif weapons:
                     print(unit['name'], model['name'], weapons)
         else:
