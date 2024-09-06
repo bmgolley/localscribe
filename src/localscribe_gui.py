@@ -486,9 +486,14 @@ class LocalscribeGUI(ttk.Frame):
         roster = None
         filepath = self.filepath or AUTOSAVE
         if filepath:
-            mode = 'r' if fnmatch(filepath.name, '*.json') else 'rb'
+            if fnmatch(filepath.name, '*.json'):
+                mode = 'r'
+                kw: dict[str, Any] = {'encoding': 'utf-8'}
+            else:
+                mode = 'rb'
+                kw = {}
             try:
-                with open(filepath, mode) as f:
+                with open(filepath, mode, **kw) as f:
                     roster = f.read()
             except PermissionError:
                 status = 'Unable to open file.'
