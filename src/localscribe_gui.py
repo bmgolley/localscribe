@@ -452,20 +452,8 @@ class LocalscribeGUI(ttk.Frame):
                 with open(AUTOSAVE, 'rb') as f:
                     roster = f.read()
             except FileNotFoundError:
-                try:
-                    with open('roster.bin', 'rb') as f:
-                        roster = f.read()
-                except FileNotFoundError:
-                    status = f'{status}, no saved data found.'
-                    return None, status
-                else:
-                    try:
-                        with open(AUTOSAVE, 'wb') as f:
-                            f.write(roster)
-                    except PermissionError as e:
-                        print(e)
-                    status = (
-                        f'{status}, loading saved data and starting server.')
+                status = f'{status}, no saved data found.'
+                return None, status
             else:
                 status = (
                     f'{status}, loading saved data and starting server.')
