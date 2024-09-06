@@ -385,11 +385,11 @@ class LocalscribeGUI(ttk.Frame):
             ignored_keywords = self._config.options('IgnoredKeywords')
         except KeyError:
             ignored_keywords = []
-        add_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
-        replace_abilities: dict[frozenset[frozenset[str]], dict[str, str]] = {}
-        hide_abilities: dict[frozenset[frozenset[str]], set[str]] = {}
-        modify_weapons: dict[tuple[str | None, str | None, str], dict[str, str]] = {}
-        default_weapons: dict[frozenset[frozenset[str]], set[str]] = {}
+        add_abilities: lse.AbilityChanges = {}
+        replace_abilities: lse.AbilityChanges = {}
+        hide_abilities: dict[lse.KeywordFilters, set[str]] = {}
+        modify_weapons: dict[lse.UnitModelWeapon, dict[str, str]] = {}
+        default_weapons: dict[lse.KeywordFilters, set[str]] = {}
         for section, values in self._config.items():
             if not values:
                 continue
@@ -426,9 +426,7 @@ class LocalscribeGUI(ttk.Frame):
             cleanProfiles=self.clean_profiles,
         )
         self._server = multiprocessing.Process(
-            target=lse.run_server, args=(roster_json,),
-            daemon=True
-        )
+            target=lse.run_server, args=(roster_json,), daemon=True)
         if self._debug:
             with open('roster.json', 'w', encoding='utf-8') as f:
                 json.dump(roster_json, f, ensure_ascii=False, indent=4)
