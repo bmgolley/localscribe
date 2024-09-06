@@ -106,6 +106,8 @@ class LocalscribeGUI(ttk.Frame):
         self.master.minsize(290, 310)
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
         self.grid(sticky=FILL)
         frame = ttk.Frame(self)
         ttk.Button(
