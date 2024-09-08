@@ -367,7 +367,7 @@ class LocalscribeGUI(ttk.Frame):
             self.start_server()
             self._run_btn_text.set('Stop')
 
-    def start_server(self) -> None:
+    def create_json(self) -> Roster | None:
         if (self.filepath and not self.code) or self._check_file_code():
             roster, self.status = self.load_file()
         elif self.code and not lse.validate_code(self.code):
@@ -425,6 +425,11 @@ class LocalscribeGUI(ttk.Frame):
             defaultWeapons=default_weapons,
             cleanProfiles=self.clean_profiles,
         )
+        return roster_json
+
+    def start_server(self) -> None:
+        if not (roster_json := self.create_json()):
+            return
         self._server = multiprocessing.Process(
             target=lse.run_server, args=(roster_json,), daemon=True)
         if self._debug:
