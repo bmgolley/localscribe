@@ -40,13 +40,13 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler
 from itertools import chain
 from typing import (
-    TYPE_CHECKING, ClassVar, Iterable, Literal, Mapping, TypedDict, Unpack,
-    cast, overload)
+    TYPE_CHECKING, ClassVar, Iterable, Iterator, Literal, Mapping, TypedDict,
+    Unpack, cast, overload)
 from urllib.error import HTTPError
 
 
 if TYPE_CHECKING:
-    from roster import ModelProfile, Roster, Unit
+    from roster import Model, ModelProfile, Roster, Unit
 
 
 YS = 'https://yellowscribe.xyz'
@@ -681,54 +681,67 @@ def modify_weapons(
                             profile['abilities'] = abilities
 
 
+def get_weapon_name(name: str) -> str:
+    return name.partition(' - ')[0].strip()
+
+
+def find_unique_weapons(
+        unit: Unit,
+        default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
+    ) -> Iterator[tuple[Model, str]]:
+    if not default_weapons:
+        default_weapons = {}
+    if len(models := list(unit['models']['models'].values())) > 1:
+        half = unit['models']['totalNumberOfModels']/2
+        key = unit_key(unit)
+        unit_defaults = set(
+            chain.from_iterable(
+                (get_weapon_name(w).casefold() for w in weapons)
+                for filters, weapons in default_weapons.items()
+                if not filters or any(k <= key for k in filters)
+            )
+        )
+        if models[0]['number'] == 1:
+            del models[0]
+        count = Counter(
+            chain.from_iterable(
+                (get_weapon_name(weapon['name']),)*model['number']
+                for model in models for weapon in model['weapons'])
+        )
+        model_weapons = tuple(
+            (
+                model,
+                set(
+                    name for weapon in model['weapons']
+                    if (name := get_weapon_name(weapon['name'])).casefold()
+                        not in unit_defaults
+                    and count[name] < half
+                ),
+            ) for model in models
+            if ' |\N{NBSP}' not in model['name']
+        )
+        unique = (
+            (model, next(iter(weapons)))
+            for model, weapons in model_weapons if len(weapons) == 1
+        )
+        for model, weapons in model_weapons:
+            if len(weapons) > 1:
+                print(unit['name'], model['name'], weapons)
+    else:
+        unique = iter(())
+    return unique
+
+
 def add_weapons_to_names(
         roster: Roster,
         default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
     ) -> None:
 
-    def weapon_name(name: str) -> str:
-        return name.partition(' - ')[0].strip()
-
     if not default_weapons:
         default_weapons = {}
     for unit in roster['armyData'].values():
-        if len(models := list(unit['models']['models'].values())) > 1:
-            half = unit['models']['totalNumberOfModels']/2
-            key = unit_key(unit)
-            unit_defaults = set(
-                chain.from_iterable(
-                    (weapon_name(w).casefold() for w in weapons)
-                    for filters, weapons in default_weapons.items()
-                    if not filters or any(k <= key for k in filters)
-                )
-            )
-            if models[0]['number'] == 1:
-                del models[0]
-            count = Counter(
-                chain.from_iterable(
-                    (weapon_name(weapon['name']),)*model['number']
-                    for model in models for weapon in model['weapons'])
-            )
-            model_weapons = (
-                (
-                    model,
-                    set(
-                        name for weapon in model['weapons']
-                        if (name := weapon_name(weapon['name'])).casefold()
-                            not in unit_defaults
-                        and count[name] < half
-                    ),
-                ) for model in models
-                if ' |\N{NBSP}' not in model['name']
-            )
-            for model, weapons in model_weapons:
-                if len(weapons) == 1:
-                    weapon = next(iter(weapons))
-                    model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
-                elif weapons:
-                    print(unit['name'], model['name'], weapons)
-        else:
-            continue
+        for model, weapon in find_unique_weapons(unit, default_weapons):
+            model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
 
 
 def clean_profiles(roster: Roster) -> None:
