@@ -466,7 +466,10 @@ class LocalscribeGUI(ttk.Frame):
         return roster, status
 
     def select_file(self) -> None:
-        self.filepath = filedialog.askopenfilename(**FILE_DIALOG_KWARGS)
+        filepath = filedialog.askopenfilename(**FILE_DIALOG_KWARGS)
+        if self.filepath != filepath:
+            self.stop_server()
+        self.filepath = filepath
 
     def load_file(self) -> tuple[bytes | None, str]:
         roster = None
