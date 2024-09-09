@@ -523,13 +523,26 @@ def separate_abilities(roster: Roster) -> None:
                 key=model['abilities'].index
             )
 
+
+def split_dice_str(value: str):
+    if '+' in value:
+        dice, _, mod = value.partition('+')
+    elif 'D' in value:
+        dice, mod = value, 0
+    else:
+        dice, mod = '', value
+    num, _, size = dice.partition('D')
+    if not num:
+        num = 0
+    if not size:
+        size = 0
+    return int(num), int(size), int(mod)
+
+
 def modify_weapons(
         roster: Roster,
         changes: Mapping[UnitModelWeapon, Mapping[str, str]] | None
     ):
-
-    def ismodifier(string: str) -> bool:
-        return string.removeprefix('-').isdecimal()
 
     def update_abilities(key: str, abilities: str) -> str:
         if key not in abilities:
@@ -601,49 +614,20 @@ def modify_weapons(
                             value = value.removeprefix('+')
                             if key == 'number':
                                 value = profile[cikey] + int(value)
-                            elif ismodifier(prev := cast(str, profile[cikey])):
-                                if ismodifier(value):
-                                    value = int(prev) + int(value)
-                                else:
-                                    value = f'{value}+{prev}'
-                            elif '+' in prev:
-                                prev_dice, _, prev_mod = prev.partition('+')
-                                if ismodifier(value):
-                                    mod = int(prev_mod) + int(value)
-                                    dice = prev_dice
-                                else:
-                                    prev_num, _, prev_size = (
-                                        prev_dice.partition('D'))
-                                    if '+' in value:
-                                        dice, _, mod = value.partition('+')
-                                        num, _, size = dice.partition('D')
-                                    else:
-                                        num, _, size = value.partition('D')
-                                        dice = mod = 0
-                                    if size != prev_size:
-                                        print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
-                                        continue
-                                    num = int(prev_num) + int(num)
-                                    dice = f'{num}D{size}'
-                                    mod = int(prev_mod) + int(mod)
-                                value = f'{dice}+{mod}'
-                            elif ismodifier(value):
-                                value = f'{prev}+{value}'
                             else:
-                                if '+' in value:
-                                    dice, _, mod = value.partition('+')
-                                    num, _, size = dice.partition('D')
-                                else:
-                                    num, _, size = value.partition('D')
-                                    dice = mod = 0
-                                prev_num, _, prev_size = prev_dice.partition('D')
-                                if size != prev_size:
+                                prev: str = profile[cikey]
+                                prev_num, prev_size, prev_mod = split_dice_str(prev)
+                                num, size, mod = split_dice_str(value)
+                                if size and prev_size and size != prev_size:
                                     print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
                                     continue
-                                num = int(prev_num) + int(num)
-                                dice = f'{num}D{size}'
-                                mod = int(prev_mod) + int(mod)
-                                value = f'{dice}+{mod}'
+                                mod += prev_mod
+                                if size or (size := prev_size):
+                                    num += prev_num
+                                    dice = f'{num}D{size}'
+                                    value = f'{dice}+{mod}'
+                                else:
+                                    value = str(mod)
                         profile[cikey] = value
                     else:
                         if (sa := profile['shortAbilities']) == '-':
