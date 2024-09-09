@@ -51,10 +51,12 @@ FILE_DIALOG_KWARGS = {
 class LocalscribeGUI(ttk.Frame):
     master: tkinter.Tk
     _status_msg_widget: tkinter.Message
+    _preview: tkinter.Toplevel | None
     _filepath: Path | None
     _server: multiprocessing.Process
     """Running server process."""
     _run_btn_text: tkinter.StringVar
+    _preview_btn_text: tkinter.StringVar
     _code: tkinter.StringVar
     _stats_inv_fnp: tkinter.BooleanVar
     _indent_weapon_profiles: tkinter.BooleanVar
@@ -102,6 +104,8 @@ class LocalscribeGUI(ttk.Frame):
         self._show_keywords = tkinter.StringVar()
         self._status = tkinter.StringVar()
         self._run_btn_text = tkinter.StringVar(value='Run')
+        self._preview_btn_text = tkinter.StringVar(value='Show Preview')
+        self._preview = None
         self.master.title('Localscribe Enhanced')
         self.master.minsize(290, 310)
         self.master.columnconfigure(0, weight=1)
@@ -180,6 +184,12 @@ class LocalscribeGUI(ttk.Frame):
             value='',
             variable=self._show_keywords,
         ).grid(columnspan=2, sticky=tkc.W)
+        options.grid(padx=20, sticky=FILL)
+        ttk.Button(
+            self,
+            textvariable=self._preview_btn_text,
+            command=self.toggle_preview
+        ).grid(padx=20)
         ttk.Button(
             frame, textvariable=self._run_btn_text, command=self.toggle_server
         ).grid(columnspan=2, sticky=HORZ)
@@ -568,6 +578,41 @@ class LocalscribeGUI(ttk.Frame):
         else:
             atexit.unregister(self._server.terminate)
             return True
+
+    def toggle_preview(self) -> None:
+        if self._preview:
+            self._preview.destroy()
+            self._preview = None
+            self._preview_btn_text.set('Show Preview')
+        elif (roster_json := self.create_json()):
+            self._preview = tkinter.Toplevel()
+            self._preview.title('Roster Preview')
+            self._preview.minsize(350, 250)
+            self._preview.columnconfigure(0, weight=1)
+            self._preview.rowconfigure(0, weight=1)
+            tree = ttk.Treeview(self._preview, columns=('Number',))
+            tree.column('Number', width=60, stretch=False, anchor=tkc.CENTER)
+            tree.heading('#0', text='Name')
+            tree.heading('Number', text='Number')
+            for iid, unit in roster_json['armyData'].items():
+                tree.insert('', 'end', iid=iid, text=unit['name'])
+                for model_iid, model in unit['models']['models'].items():
+                    tree.insert(
+                        iid,
+                        'end',
+                        iid=model_iid,
+                        text=model['name'],
+                        values=(model['number'],),
+                    )
+                    for weapon in model['weapons']:
+                        tree.insert(
+                            model_iid,
+                            'end',
+                            text=weapon['name'],
+                            values=(weapon['number'],)
+                        )
+            tree.grid(sticky=FILL, padx=6, pady=6)
+            self._preview_btn_text.set('Hide Preview')
 
     def _check_file_code(self, file: StrPath = AUTOSAVE) -> bool:
         """Compare the current code with the code in the provided file.
