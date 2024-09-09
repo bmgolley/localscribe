@@ -79,20 +79,6 @@ class LocalscribeGUI(ttk.Frame):
         ) -> None:
         kwargs['padding'] = (10, 6)
         super().__init__(master, **kwargs)
-        if (code or code == 0) and filepath:
-            messagebox.showwarning(
-                'Invalid Arguments',
-                'Cannot simultaneously use code and file path.',
-            )
-        elif (code or code == 0) and not lse.validate_code(code):
-            messagebox.showwarning('Invalid Argument', 'Invalid code.')
-        elif filepath and not validate_filepath(filepath):
-            messagebox.showwarning('Invalid Argument', 'Invalid file path.')
-        if code or code == 0:
-            if isinstance(code, int):
-                code = f'{code:08x}'
-            self.code = code
-        self.filepath = filepath
         self._debug = debug
         self._code = tkinter.StringVar()
         self._stats_inv_fnp = tkinter.BooleanVar()
@@ -113,72 +99,75 @@ class LocalscribeGUI(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.grid(sticky=FILL)
-        frame = ttk.Frame(self)
+        options = ttk.Frame(self)
+        options.columnconfigure(0, weight=1)
+        options.columnconfigure(1, weight=1)
+        options.rowconfigure(0, weight=1)
         ttk.Button(
-            frame, text='Select File', command=self.select_file
+            options, text='Select File', command=self.select_file
         ).grid(column=0, sticky=HORZ)
         ttk.Button(
-            frame, text='Save File', command=self.save_file
+            options, text='Save File', command=self.save_file
         ).grid(column=1, row=0, sticky=HORZ)
-        ttk.Label(frame, text='Enter Code').grid(columnspan=2)
-        code_box = ttk.Entry(frame, textvariable=self._code)
+        ttk.Label(options, text='Enter Code').grid(columnspan=2)
+        code_box = ttk.Entry(options, textvariable=self._code)
         code_box.bind(
             '<Button-3>', lambda _: self._set_code(code_box.clipboard_get()))
         code_box.grid(columnspan=2, sticky=HORZ)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('stats_inv_fnp'),
             text='Show Invuln/FNP in stat line',
             variable=self._stats_inv_fnp,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('indent_weapon_profiles'),
             text='Indent weapon profiles',
             variable=self._indent_weapon_profiles,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('shorten_weapon_abilities'),
             text='Shorten weapon abilities',
             variable=self._shorten_weapon_abilities,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('separate_abilities'),
             text='Seperate model and unit abilities',
             variable=self._separate_abilities,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('add_weapon_to_name'),
             text='Add special weapons to model names',
             variable=self._add_weapons_to_names,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Checkbutton(
-            frame,
+            options,
             command=lambda: self.update_config('clean_profiles'),
             text='Remove duplicate model profile entries',
             variable=self._clean_profiles,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Label(
-            frame, text='Show keywords in unit tooltip:').grid(columnspan=2)
+            options, text='Show keywords in unit tooltip:').grid(columnspan=2)
         ttk.Radiobutton(
-            frame,
+            options,
             command=lambda: self.update_config('show_keywords'),
             text='All',
             value='all',
             variable=self._show_keywords,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            frame,
+            options,
             command=lambda: self.update_config('show_keywords'),
             text='Filtered',
             value='filtered',
             variable=self._show_keywords,
         ).grid(columnspan=2, sticky=tkc.W)
         ttk.Radiobutton(
-            frame,
+            options,
             command=lambda: self.update_config('show_keywords'),
             text='None',
             value='',
@@ -191,9 +180,24 @@ class LocalscribeGUI(ttk.Frame):
             command=self.toggle_preview
         ).grid(padx=20)
         ttk.Button(
-            frame, textvariable=self._run_btn_text, command=self.toggle_server
-        ).grid(columnspan=2, sticky=HORZ)
-        frame.grid(padx=20, sticky=FILL)
+            self, textvariable=self._run_btn_text, command=self.toggle_server
+        ).grid(padx=20, sticky=HORZ)
+        if (code or code == 0):
+            if filepath:
+                messagebox.showwarning(
+                    'Invalid Arguments',
+                    'Cannot simultaneously use code and file path.',
+                )
+            elif not lse.validate_code(code):
+                messagebox.showwarning('Invalid Argument', 'Invalid code.')
+            elif isinstance(code, int):
+                self.code = f'{code:08x}'
+            else:
+                self.code = code
+        elif filepath and not validate_filepath(filepath):
+            messagebox.showwarning('Invalid Argument', 'Invalid file path.')
+        else:
+            self.filepath = filepath
         self.read_config()
 
     @property
@@ -212,9 +216,6 @@ class LocalscribeGUI(ttk.Frame):
         ) -> None:
         if not code and code != 0:
             code = ''
-        # elif not lse.validate_code(code):
-        #     self.status = 'Error: invalid code'
-        #     return
         elif isinstance(code, int):
             code = f'{code:08x}'
             if clear_filepath:
@@ -234,7 +235,11 @@ class LocalscribeGUI(ttk.Frame):
         self._set_filepath(value)
 
     def _set_filepath(
-            self, filepath: StrPath | None, *, clear_code: bool = True):
+            self,
+            filepath: StrPath | None,
+            *,
+            clear_code: bool = True
+        ) -> None:
         if filepath is not None:
             if not validate_filepath(filepath):
                 self.status = 'Error: invalid file path'
@@ -632,7 +637,7 @@ class LocalscribeGUI(ttk.Frame):
         return self.code == roster.get('code')
 
     @override
-    def destroy(self):
+    def destroy(self) -> None:
         self.stop_server()
         return super().destroy()
 
