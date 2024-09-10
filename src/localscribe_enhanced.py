@@ -35,6 +35,7 @@ import functools
 import json
 import re
 import socketserver
+import string
 import urllib.parse
 import urllib.request
 from collections import Counter
@@ -737,6 +738,10 @@ def add_weapons_to_names(
     for unit in roster['armyData'].values():
         for model, weapon in find_unique_weapons(unit, default_weapons):
             model['name'] = f'{model['name']} |\N{NBSP}{weapon}'
+        for model in unit['models']['models'].values():
+            name, _, gear = model['name'].partition(' |\N{NBSP}')
+            if gear:
+                model['name'] = f'{name} |\N{NBSP}{string.capwords(gear)}'
 
 
 def clean_profiles(roster: Roster) -> None:
