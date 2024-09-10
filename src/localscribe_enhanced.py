@@ -19,6 +19,8 @@ options:
 """
 from __future__ import annotations
 
+from roster import ModelWeapon, WeaponProfile
+
 
 __all__ = (
     'create_filter',
@@ -633,7 +635,8 @@ def modify_weapons(
                         if (sa := profile['shortAbilities']) == '-':
                             profile['shortAbilities'] = key
                         else:
-                            profile['shortAbilities'] = update_abilities(key, sa)
+                            profile['shortAbilities'] = update_abilities(
+                                key, sa)
                         mod_ability = f'{key}: {value}'
                         if profile['abilities'] == '-':
                             profile['abilities'] = (
@@ -645,7 +648,8 @@ def modify_weapons(
                                 if key in abilities:
                                     continue
                                 else:
-                                    abilities = update_abilities(key, abilities)
+                                    abilities = update_abilities(
+                                        key, abilities)
                                     if desc_str:
                                         abilities = f'{abilities}\n{desc_str}'
                             elif desc_str:
@@ -665,8 +669,15 @@ def modify_weapons(
                             profile['abilities'] = abilities
 
 
-def get_weapon_name(name: str) -> str:
-    return name.partition(' - ')[0].strip()
+def weapon_base_name(weapon: ModelWeapon | WeaponProfile) -> str:
+    return weapon['name'].partition(' - ')[0].strip()
+
+
+def model_base_name(model: Model | ModelProfile) -> str:
+    return (
+        model['name'].partition('w/')[0].partition('|')[0].partition('(')[0]
+        .strip()
+    )
 
 
 def find_unique_weapons(
@@ -680,7 +691,7 @@ def find_unique_weapons(
         key = unit_key(unit)
         unit_defaults = set(
             chain.from_iterable(
-                (get_weapon_name(w).casefold() for w in weapons)
+                (w.casefold() for w in weapons)
                 for filters, weapons in default_weapons.items()
                 if not filters or any(k <= key for k in filters)
             )
@@ -689,7 +700,7 @@ def find_unique_weapons(
             del models[0]
         count = Counter(
             chain.from_iterable(
-                (get_weapon_name(weapon['name']),)*model['number']
+                (weapon_base_name(weapon),)*model['number']
                 for model in models for weapon in model['weapons'])
         )
         model_weapons = tuple(
@@ -697,7 +708,7 @@ def find_unique_weapons(
                 model,
                 set(
                     name for weapon in model['weapons']
-                    if (name := get_weapon_name(weapon['name'])).casefold()
+                    if (name := weapon_base_name(weapon)).casefold()
                         not in unit_defaults
                     and count[name] < half
                 ),
@@ -743,10 +754,10 @@ def clean_profiles(roster: Roster) -> None:
                 if (
                         (base := profile.rpartition(' w/ ')[0])
                         and (base_profile := unit['modelProfiles'].get(base))
+                        and base_profile is not unit['modelProfiles'][profile]
                         and all(
-                            unit['modelProfiles'][profile][k]
-                                == base_profile[k]
-                            for k in base_profile if k != 'name'
+                            unit['modelProfiles'][profile][k] == v
+                            for k, v in base_profile.items() if k != 'name'
                         )
                     ):
                     del unit['modelProfiles'][profile]
@@ -755,11 +766,12 @@ def clean_profiles(roster: Roster) -> None:
 def rename_models(
         roster: Roster, naming: Literal['base', 'decorative'] | None) -> None:
     def _rename_base(name: str) -> str:
-        name = name.partition('|')[0].partition('(')[0].strip()
+        name = ' '.join(
+            (name.partition('(')[0].strip(), name.rpartition(')')[1].strip()))
         return name
 
     def _rename_decorative(name: str) -> str:
-        name = re.sub(r'^.+ \((.+)\)(?=\s*\\w|\s*\||$)', r'\1', name)
+        name = re.sub(r'^.+?\s+\((.+)\)(.*)', r'\1\2', name)
         return name
 
     if not naming:
