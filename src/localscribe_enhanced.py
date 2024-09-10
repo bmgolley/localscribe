@@ -241,8 +241,8 @@ def validate_code(code: str | int | None) -> bool:
                 f'{code.__class__.__name__!r} is not a valid code type')
 
 
-type KeywordFilters = frozenset[frozenset[str]]
-type AbilityChanges = Mapping[KeywordFilters, Mapping[str, str]]
+type KeywordFilter = frozenset[frozenset[str]]
+type AbilityChanges = Mapping[KeywordFilter, Mapping[str, str]]
 type UnitModelWeapon = tuple[str | None, str | None, str]
 class LSOptions(TypedDict, total=False):
     uiHeight: str | int
@@ -416,23 +416,10 @@ def shorten_weapon_abilities(roster: Roster) -> None:
                 for a in abilities.partition('\n')[0].split(',')
                 if (ab := WEAPON_P.fullmatch(a.strip()))
             ]
-            if (n := short_list.count('*')) > 1:
-                for _ in range(n - 1):
-                    short_list.remove('*')
+            for _ in range(short_list.count('*') - 1):
+                short_list.remove('*')
             short_list.sort(key=lambda x: x == '*')
             weapon['shortAbilities'] = ','.join(short_list).replace(' ', '')
-
-
-def get_names(source: Unit | ModelProfile) -> set[str]:
-    names = {source['name']}
-    if (name_m := re.match(r'(.+)\s\((.+)\)$', source['name'])):
-        names.update(name_m.groups())
-    return names
-
-
-def unit_key(unit: Unit) -> set[str]:
-    key = get_names(unit).union(unit['factionKeywords'], unit['keywords'])
-    return key
 
 
 def modify_abilities(
@@ -440,7 +427,7 @@ def modify_abilities(
         *,
         add: AbilityChanges | None = None,
         replace: AbilityChanges | None = None,
-        hide: Mapping[KeywordFilters, Iterable[str]] | None = None
+        hide: Mapping[KeywordFilter, Iterable[str]] | None = None
     ) -> None:
     if not any((add, replace, hide)):
         return
@@ -495,8 +482,8 @@ def separate_abilities(roster: Roster) -> None:
             model['modelAbilities'] = []
             continue
         abilities = list(unit['abilities'])
-        all_abilities: set[str] = set.union(
-            *(set(m['abilities']) for m in models))
+        all_abilities: set[str] = set(
+            chain.from_iterable(m['abilities'] for m in models))
         try:
             core_abilities = unit['abilities']['Core']['desc'].split(', ')
         except KeyError:
@@ -525,21 +512,6 @@ def separate_abilities(roster: Roster) -> None:
                 set(model['abilities']) - unit_abilities,
                 key=model['abilities'].index
             )
-
-
-def split_dice_str(value: str):
-    if '+' in value:
-        dice, _, mod = value.partition('+')
-    elif 'D' in value:
-        dice, mod = value, 0
-    else:
-        dice, mod = '', value
-    num, _, size = dice.partition('D')
-    if not num:
-        num = 0
-    if not size:
-        size = 0
-    return int(num), int(size), int(mod)
 
 
 def modify_weapons(
@@ -619,7 +591,8 @@ def modify_weapons(
                                 value = profile[cikey] + int(value)
                             else:
                                 prev: str = profile[cikey]
-                                prev_num, prev_size, prev_mod = split_dice_str(prev)
+                                prev_num, prev_size, prev_mod = split_dice_str(
+                                    prev)
                                 num, size, mod = split_dice_str(value)
                                 if size and prev_size and size != prev_size:
                                     print(f'Weapon {unit_name}.{weapon_name} changed property {key} mod value {value} conflicts with current value {prev}')
@@ -670,20 +643,9 @@ def modify_weapons(
                             profile['abilities'] = abilities
 
 
-def weapon_base_name(weapon: ModelWeapon | WeaponProfile) -> str:
-    return weapon['name'].partition(' - ')[0].strip()
-
-
-def model_base_name(model: Model | ModelProfile) -> str:
-    return (
-        model['name'].partition('w/')[0].partition('|')[0].partition('(')[0]
-        .strip()
-    )
-
-
 def find_unique_weapons(
         unit: Unit,
-        default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
+        default_weapons: Mapping[KeywordFilter, Iterable[str]] | None = None
     ) -> Iterator[tuple[Model, str]]:
     if not default_weapons:
         default_weapons = {}
@@ -730,7 +692,7 @@ def find_unique_weapons(
 
 def add_weapons_to_names(
         roster: Roster,
-        default_weapons: Mapping[KeywordFilters, Iterable[str]] | None = None
+        default_weapons: Mapping[KeywordFilter, Iterable[str]] | None = None
     ) -> None:
 
     if not default_weapons:
@@ -742,6 +704,44 @@ def add_weapons_to_names(
             name, _, gear = model['name'].partition(' |\N{NBSP}')
             if gear:
                 model['name'] = f'{name} |\N{NBSP}{string.capwords(gear)}'
+
+
+def get_names(source: Unit | ModelProfile) -> set[str]:
+    names = {source['name']}
+    if (name_m := re.match(r'(.+)\s\((.+)\)$', source['name'])):
+        names.update(name_m.groups())
+    return names
+
+
+def unit_key(unit: Unit) -> set[str]:
+    key = get_names(unit).union(unit['factionKeywords'], unit['keywords'])
+    return key
+
+
+def split_dice_str(value: str):
+    if '+' in value:
+        dice, _, mod = value.partition('+')
+    elif 'D' in value:
+        dice, mod = value, 0
+    else:
+        dice, mod = '', value
+    num, _, size = dice.partition('D')
+    if not num:
+        num = 0
+    if not size:
+        size = 0
+    return int(num), int(size), int(mod)
+
+
+def weapon_base_name(weapon: ModelWeapon | WeaponProfile) -> str:
+    return weapon['name'].partition(' - ')[0].strip()
+
+
+def model_base_name(model: Model | ModelProfile) -> str:
+    return (
+        model['name'].partition('w/')[0].partition('|')[0].partition('(')[0]
+        .strip()
+    )
 
 
 def clean_profiles(roster: Roster) -> None:

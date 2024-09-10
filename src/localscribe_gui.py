@@ -402,9 +402,9 @@ class LocalscribeGUI(ttk.Frame):
             ignored_keywords = []
         add_abilities: lse.AbilityChanges = {}
         replace_abilities: lse.AbilityChanges = {}
-        hide_abilities: dict[lse.KeywordFilters, set[str]] = {}
+        hide_abilities: dict[lse.KeywordFilter, set[str]] = {}
         modify_weapons: dict[lse.UnitModelWeapon, dict[str, str]] = {}
-        default_weapons: dict[lse.KeywordFilters, set[str]] = {}
+        default_weapons: dict[lse.KeywordFilter, set[str]] = {}
         for section, values in self._config.items():
             if not values:
                 continue
