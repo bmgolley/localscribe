@@ -595,6 +595,7 @@ class LocalscribeGUI(ttk.Frame):
             self._preview.minsize(350, 250)
             self._preview.columnconfigure(0, weight=1)
             self._preview.rowconfigure(0, weight=1)
+            self._preview.geometry('500x400')
             tree = ttk.Treeview(self._preview, columns=('Number',))
             tree.column('Number', width=60, stretch=False, anchor=tkc.CENTER)
             tree.heading('#0', text='Name')
