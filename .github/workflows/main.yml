@@ -1,0 +1,40 @@
+name: Create Release
+run-name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: powershell
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Create Executable
+        id: pyinstaller
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: 3.12
+          spec: .github/workflows/LocalscribeEnhanced.spec
+      - name: Create Archive
+        run: |
+          New-Item -ItemType Directory -Path LocalscribeEnhanced
+          New-Item -ItemType Directory -Path "LocalscribeEnhanced\TTS Save"
+          Copy-Item -Path README.md -Destination LocalscribeEnhanced
+          Copy-Item -Path LICENSE -Destination LocalscribeEnhanced
+          Copy-Item -Path src -Destination LocalscribeEnhanced -Recurse
+          Remove-Item -Path LocalscribeEnhanced\src\* -Include "*backup*", "*test*", "token*creator*", "update*" -Recurse
+          Copy-Item -Path ${{ steps.pyinstaller.outputs.executable_path }}\LocalscribeEnhanced.exe -Destination LocalscribeEnhanced
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LocalscribeEnhanced-${{ inputs.version }}
+          path: LocalscribeEnhanced
+          overwrite: True
