@@ -1,0 +1,819 @@
+{
+    "SaveName": "Localscribe Enhanced",
+    "EpochTime": 1688308813,
+    "Date": "8/11/2023 9:41:00 PM",
+    "VersionNumber": "v13.2.2",
+    "GameMode": "Sandbox",
+    "GameType": "",
+    "GameComplexity": "",
+    "Tags": [],
+    "Gravity": 0.5,
+    "PlayArea": 0.5,
+    "Table": "Table_RPG",
+    "Sky": "Sky_Regal",
+    "Note": "",
+    "TabStates": {
+        "0": {
+            "title": "Rules",
+            "body": "",
+            "color": "Grey",
+            "visibleColor": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5
+            },
+            "id": 0
+        },
+        "1": {
+            "title": "White",
+            "body": "",
+            "color": "White",
+            "visibleColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0
+            },
+            "id": 1
+        },
+        "2": {
+            "title": "Brown",
+            "body": "",
+            "color": "Brown",
+            "visibleColor": {
+                "r": 0.443,
+                "g": 0.231,
+                "b": 0.09
+            },
+            "id": 2
+        },
+        "3": {
+            "title": "Red",
+            "body": "",
+            "color": "Red",
+            "visibleColor": {
+                "r": 0.856,
+                "g": 0.1,
+                "b": 0.094
+            },
+            "id": 3
+        },
+        "4": {
+            "title": "Orange",
+            "body": "",
+            "color": "Orange",
+            "visibleColor": {
+                "r": 0.956,
+                "g": 0.392,
+                "b": 0.113
+            },
+            "id": 4
+        },
+        "5": {
+            "title": "Yellow",
+            "body": "",
+            "color": "Yellow",
+            "visibleColor": {
+                "r": 0.905,
+                "g": 0.898,
+                "b": 0.172
+            },
+            "id": 5
+        },
+        "6": {
+            "title": "Green",
+            "body": "",
+            "color": "Green",
+            "visibleColor": {
+                "r": 0.192,
+                "g": 0.701,
+                "b": 0.168
+            },
+            "id": 6
+        },
+        "7": {
+            "title": "Blue",
+            "body": "",
+            "color": "Blue",
+            "visibleColor": {
+                "r": 0.118,
+                "g": 0.53,
+                "b": 1.0
+            },
+            "id": 7
+        },
+        "8": {
+            "title": "Teal",
+            "body": "",
+            "color": "Teal",
+            "visibleColor": {
+                "r": 0.129,
+                "g": 0.694,
+                "b": 0.607
+            },
+            "id": 8
+        },
+        "9": {
+            "title": "Purple",
+            "body": "",
+            "color": "Purple",
+            "visibleColor": {
+                "r": 0.627,
+                "g": 0.125,
+                "b": 0.941
+            },
+            "id": 9
+        },
+        "10": {
+            "title": "Pink",
+            "body": "",
+            "color": "Pink",
+            "visibleColor": {
+                "r": 0.96,
+                "g": 0.439,
+                "b": 0.807
+            },
+            "id": 10
+        },
+        "11": {
+            "title": "Black",
+            "body": "",
+            "color": "Black",
+            "visibleColor": {
+                "r": 0.25,
+                "g": 0.25,
+                "b": 0.25
+            },
+            "id": 11
+        }
+    },
+    "Grid": {
+        "Type": 0,
+        "Lines": false,
+        "Color": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 0.0
+        },
+        "Opacity": 0.75,
+        "ThickLines": false,
+        "Snapping": false,
+        "Offset": false,
+        "BothSnapping": false,
+        "xSize": 2.0,
+        "ySize": 2.0,
+        "PosOffset": {
+            "x": 0.0,
+            "y": 1.0,
+            "z": 0.0
+        }
+    },
+    "Lighting": {
+        "LightIntensity": 0.54,
+        "LightColor": {
+            "r": 1.0,
+            "g": 0.9804,
+            "b": 0.8902
+        },
+        "AmbientIntensity": 1.3,
+        "AmbientType": 0,
+        "AmbientSkyColor": {
+            "r": 0.5,
+            "g": 0.5,
+            "b": 0.5
+        },
+        "AmbientEquatorColor": {
+            "r": 0.5,
+            "g": 0.5,
+            "b": 0.5
+        },
+        "AmbientGroundColor": {
+            "r": 0.5,
+            "g": 0.5,
+            "b": 0.5
+        },
+        "ReflectionIntensity": 1.0,
+        "LutIndex": 0,
+        "LutContribution": 1.0
+    },
+    "Hands": {
+        "Enable": true,
+        "DisableUnused": false,
+        "Hiding": 0
+    },
+    "ComponentTags": {
+        "labels": [
+            {
+                "displayed": "agendaManager",
+                "normalized": "agendaManager"
+            }
+        ]
+    },
+    "Turns": {
+        "Enable": false,
+        "Type": 0,
+        "TurnOrder": [],
+        "Reverse": false,
+        "SkipEmpty": false,
+        "DisableInteractions": false,
+        "PassTurns": true,
+        "TurnColor": ""
+    },
+    "DecalPallet": [],
+    "LuaScript": "Global.setVar(\"isYMBS2TTS\", true)",
+    "LuaScriptState": "",
+    "XmlUI": "<!-- Xml UI. See documentation: https://api.tabletopsimulator.com/ui/introUI/ -->",
+    "ObjectStates": [
+        {
+            "GUID": "45cd3f",
+            "Name": "Custom_Tile",
+            "Transform": {
+                "posX": 30.13541,
+                "posY": 3.62151551,
+                "posZ": 20.1013069,
+                "rotX": -1.88585784e-06,
+                "rotY": 179.999954,
+                "rotZ": 2.83097819e-07,
+                "scaleX": 0.864919245,
+                "scaleY": 1.0,
+                "scaleZ": 0.864919245
+            },
+            "Nickname": "Agenda Selector",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0
+            },
+            "Tags": [
+                "agendaManager"
+            ],
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": false,
+            "Grid": true,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "CustomImage": {
+                "ImageURL": "https://steamusercontent-a.akamaihd.net/ugc/1756947677547247989/7CD781BF36FE292E96E43AB532172AE260567239/",
+                "ImageSecondaryURL": "https://steamusercontent-a.akamaihd.net/ugc/1756947677547247989/7CD781BF36FE292E96E43AB532172AE260567239/",
+                "ImageScalar": 1.0,
+                "WidthScale": 0.0,
+                "CustomTile": {
+                    "Type": 2,
+                    "Thickness": 0.1,
+                    "Stackable": false,
+                    "Stretch": false
+                }
+            },
+            "LuaScript": "function none() end\r\n\r\nlocal battleSizes = {\"Combat Patrol\", \"Incursion\", \"Strike Force\", \"Onslaught\"}\r\nlocal buttonHeight,displayWidth,smallButtonWidth,buttonFontSize,inputFontSize,inputHeight,inputWidth = 400,2000,375,175,225,280,3000\r\nlocal yOffset,zOffset,sideOffset = 0.2,-0.5,2.6\r\nlocal UNIT_ID_TAG_PATTERN = \"^uuid_(%x+)$\"\r\n\r\n\r\nlocal associateModelsButton = {\r\n    label=\"Associate Models\", click_function=\"associateModels\", function_owner=self,\r\n    position={0,yOffset,0}, height=buttonHeight, width=displayWidth, font_size=buttonFontSize,\r\n    color={0,150/255,0}, font_color={1,1,1}\r\n}\r\n\r\n\r\nlocal battleSizeDisplay = {\r\n    label=battleSizes[3], click_function=\"none\", function_owner=self,\r\n    position={0,yOffset,zOffset}, height=buttonHeight, width=displayWidth, font_size=buttonFontSize\r\n}\r\nlocal battleSizeRight = {\r\n    label=\"->\", click_function=\"battleSizeIncrement\", function_owner=self,\r\n    position={sideOffset,yOffset,zOffset}, height=buttonHeight, width=smallButtonWidth, font_size=buttonFontSize,\r\n    font_color={1,1,1}, color={0,0,0}\r\n}\r\nlocal battleSizeLeft = {\r\n    label=\"<-\", click_function=\"battleSizeDecrement\", function_owner=self,\r\n    position={-sideOffset,yOffset,zOffset}, height=buttonHeight, width=smallButtonWidth, font_size=buttonFontSize,\r\n    font_color={1,1,1}, color={0,0,0}\r\n}\r\n\r\n--local agenda1 = {\r\n--    label=leftGear[1], click_function=\"none\", function_owner=self,\r\n--    position={0,yOffset,zOffset}, height=buttonHeight, width=displayWidth, font_size=buttonFontSize\r\n--}\r\n\r\n\r\n\r\nlocal acceptBattleSizeButton = {\r\n    label=\"Accept\", click_function=\"acceptBattleSize\", function_owner=self,\r\n    position={0,yOffset,-zOffset}, height=buttonHeight, width=1410, font_size=buttonFontSize,\r\n    font_color={1,1,1}, color={0,150/255,0}\r\n}\r\n\r\nlocal acceptAgendasButton = {\r\n    label=\"Accept\", click_function=\"acceptAgendas\", function_owner=self,\r\n    height=buttonHeight, width=1410, font_size=buttonFontSize,\r\n    font_color={1,1,1}, color={0,150/255,0}\r\n}\r\n\r\nlocal currentBattleSize  ---@type integer\r\nlocal associatingModels = false\r\nlocal units = {}  ---@type table<string, table<string, integer>>\r\nlocal agendas = {}  ---@type table<string, integer>\r\n\r\n\r\n\r\n--[[ EVENT HANDLERS ]]--\r\n\r\n\r\nfunction onLoad(savedState)\r\n    local decodedState = JSON.decode(savedState)\r\n\r\n    -- if not self.hasTag(\"am_\"..self.guid) then self.addTag(\"am_\"..self.guid) end\r\n\r\n    if decodedState ~= nil and decodedState.units ~= nil then\r\n        currentBattleSize = decodedState.battleSize\r\n        agendas = decodedState.agendaNames\r\n        units = decodedState.units\r\n\r\n        acceptAgendas()\r\n    else\r\n        reset()\r\n    end\r\n\r\n    self.addContextMenuItem(\"Reset\", reset, false)\r\nend\r\n\r\n\r\nfunction onSave()\r\n    local state = {\r\n        units = units,\r\n        battleSize = currentBattleSize,\r\n        agendaNames = agendas\r\n    }\r\n\r\n    return JSON.encode(state)\r\nend\r\n\r\n---@param player_color PlayerColor\r\n---@param picked_up_object object\r\nfunction onObjectPickUp(player_color, picked_up_object)\r\n    if associatingModels and\r\n            player_color == associatingPlayer and\r\n            not picked_up_object.hasTag('agendaManager') and\r\n            not picked_up_object.hasTag(\"am_\"..self.guid) then\r\n\r\n        -- if units == nil then units = {} end\r\n\r\n        local uuid  ---@type string\r\n\r\n        for _,tag in pairs(picked_up_object.getTags()) do\r\n            uuid = tag:match(UNIT_ID_TAG_PATTERN)  --[[@as string]]\r\n\r\n            if uuid then break end\r\n        end\r\n\r\n        if uuid then\r\n            if units[uuid] == nil then units[uuid] = {} end\r\n\r\n            picked_up_object.highlightOn({0,1,0})\r\n            picked_up_object.addTag(\"am_\"..self.guid)\r\n        else\r\n            picked_up_object.highlightOn({1,0,0}, 2)\r\n        end\r\n    end\r\nend\r\n\r\n\r\n\r\n--[[ HANDLE ASSOCIATING MODELS ]]--\r\n\r\n\r\nfunction associateModels(owner, playerColor)\r\n    if not associatingModels then\r\n\r\n        associatingModels = true\r\n        associatingPlayer = playerColor\r\n\r\n        self.editButton({\r\n            index = 0,\r\n            label = \"Finish\",\r\n            color = {1,0,0}\r\n        })\r\n    else\r\n        associatingModels = false\r\n        associatingPlayer = nil\r\n        if units and #units > 0 then\r\n            for _,object in pairs(getObjectsWithTag(\"am_\"..self.guid)) do\r\n                object.highlightOff()\r\n            end\r\n            self.highlightOff()\r\n\r\n            showBattleSizeSelection()\r\n        else\r\n\r\n            self.editButton({\r\n                index = 0,\r\n                label = \"Associate Models\",\r\n                color = {0,150/255,0}\r\n            })\r\n        end\r\n    end\r\nend\r\n\r\n\r\n\r\n\r\n\r\n--[[ HANDLE AGENDAS ]]--\r\n\r\n\r\nfunction acceptAgendas()\r\n    ---if agendas == nil then\r\n    if #agendas == 0 then\r\n        local agendaNames = {}  ---@type string[]\r\n\r\n        for _, input in pairs(self.getInputs()) do\r\n            table.insert(agendaNames, input.value)\r\n        end\r\n\r\n        for unitID, unitAgendas in pairs(units) do\r\n            unitAgendas[\"Kills\"] = 0\r\n\r\n            for _, agendaName in ipairs(agendaNames) do\r\n                unitAgendas[agendaName] = 0\r\n            end\r\n        end\r\n\r\n        agendas = agendaNames\r\n    end\r\n\r\n    self.clearButtons()\r\n    self.clearInputs()\r\n\r\n    for num=1,#agendas do\r\n        self.createButton({\r\n                label=agendas[num], click_function=\"none\", function_owner=self,\r\n                position={0,yOffset,(zOffset*1.5)*(2-num)}, height=inputHeight, width=inputWidth, font_size=inputFontSize\r\n            })\r\n    end\r\nend\r\n\r\n---@param unitID string Unit UUID\r\nfunction getTalliesForUnit(unitID)\r\n    if units then return clone(units[unitID]) end\r\nend\r\n\r\nfunction updateTallyForUnit(params)\r\n    units[params.unitID][params.tally] = units[params.unitID][params.tally] + params.mod\r\n\r\n    return units[params.unitID][params.tally]\r\nend\r\n\r\n\r\n\r\n\r\n\r\n--[[ HANDLE BATTLE SIZE ]]--\r\n\r\n\r\nfunction showBattleSizeSelection()\r\n    -- currentBattleSize = 2\r\n    -- acceptBattleSize()\r\n\r\n\r\n    self.clearButtons()\r\n\r\n    self.createButton(battleSizeDisplay)\r\n    self.createButton(battleSizeRight)\r\n    self.createButton(battleSizeLeft)\r\n\r\n    self.createButton(acceptBattleSizeButton)\r\nend\r\n\r\nfunction battleSizeIncrement()\r\n    local modded = currentBattleSize + 1\r\n\r\n    currentBattleSize = modded > #battleSizes and 1 or modded\r\n\r\n    self.editButton({ index=0, label=battleSizes[currentBattleSize] })\r\nend\r\n\r\nfunction battleSizeDecrement()\r\n    local modded = currentBattleSize - 1\r\n\r\n    currentBattleSize = modded < 1 and #battleSizes or modded\r\n\r\n    self.editButton({ index=0, label=battleSizes[currentBattleSize] })\r\nend\r\n\r\nfunction acceptBattleSize()\r\n    self.clearButtons()\r\n\r\n    for num=1,currentBattleSize do\r\n        self.createInput({\r\n                label=\"Agenda \"..num, input_function=\"none\", function_owner=self,\r\n                position={0,yOffset,(zOffset*1.5)*(2-num)}, height=inputHeight, width=inputWidth, font_size=inputFontSize,\r\n                alignment=3, tab=2\r\n            })\r\n\r\n        acceptAgendasButton.position = {0,yOffset,(zOffset*1.5)*(1-num)}\r\n    end\r\n\r\n    self.createButton(acceptAgendasButton)\r\nend\r\n\r\n\r\n--[[ EXTERNAL ACCESS FUNCTIONS ]]--\r\n\r\n\r\nfunction getAgendas()\r\n    if self.getButtons() then return nil end\r\n\r\n    local agendaTable = {}  ---@type table<integer, string>\r\n    -- local inputs = self.getInputs()\r\n\r\n    -- for idx=1, #inputs do\r\n    for _, input in ipairs(self.getInputs()) do\r\n        table.insert(agendaTable, input.value)\r\n    end\r\n\r\n    return agendaTable\r\nend\r\n\r\n\r\n\r\n\r\n--[[ UTILITY FUNCTIONS ]]--\r\n\r\n\r\nfunction clone(original)\r\n    local orig_type = type(original)\r\n    local copy\r\n    if orig_type == 'table' then\r\n        copy = {}\r\n        for orig_key, orig_value in next, original, nil do\r\n            copy[clone(orig_key)] = clone(orig_value)\r\n        end\r\n        setmetatable(copy, clone(getmetatable(original)))\r\n    else -- number, string, boolean, etc\r\n        copy = original\r\n    end\r\n    return copy\r\nend\r\n\r\n-- function len(t)\r\n--     local count = 0\r\n\r\n--     for _,_ in pairs(t) do\r\n--         count = count + 1\r\n--     end\r\n\r\n--     return count\r\n-- end\r\n\r\n\r\n\r\nfunction reset()\r\n    self.clearButtons()\r\n    self.clearInputs()\r\n    self.createButton(associateModelsButton)\r\n\r\n    for unitID, _ in pairs(units) do\r\n        for _, model in ipairs(getObjectsWithTag(\"uuid_\"..unitID)) do\r\n            model.removeTag(\"am_\"..self.guid)\r\n        end\r\n    end\r\n\r\n    currentBattleSize = 3\r\n    -- units = nil\r\n    units = {}\r\n    -- agendas = nil\r\n    agendas = {}\r\n    associatingModels = false\r\nend",
+            "LuaScriptState": "{\"battleSize\":3}"
+        },
+        {
+            "GUID": "f33dff",
+            "Name": "ScriptingTrigger",
+            "Transform": {
+                "posX": -42.497097,
+                "posY": 3.51113486,
+                "posZ": -2.78300071,
+                "rotX": 0.0,
+                "rotY": 359.6668,
+                "rotZ": 0.0,
+                "scaleX": 82.8436661,
+                "scaleY": 21.07176,
+                "scaleZ": 133.745026
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 0.509803951
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": true,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "43ecc1",
+            "Name": "BlockSquare",
+            "Transform": {
+                "posX": -0.838816464,
+                "posY": 0.40041852,
+                "posZ": 0.00218732632,
+                "rotX": 9.252272e-06,
+                "rotY": 359.944,
+                "rotZ": -4.83700242e-05,
+                "scaleX": 1.0,
+                "scaleY": 1.0,
+                "scaleZ": 1.0
+            },
+            "Nickname": "Yellow Storage",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 1.0,
+                "g": 0.8141257,
+                "b": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": true,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "LuaScript": "function none()\r\n\r\nend",
+            "LuaScriptState": "",
+            "XmlUI": "<!--\r\n    PLEASE NOTE:\r\n        there is no use of Defaults and classes here to enable easier backwards compatibility and\r\n        compatibility with other global UI. I hate the verbiosity just as much as the next person\r\n-->\r\n<Panel id=\"ym-container\" visibility=\"hidden\" unit-id=\"\">\r\n    <VerticalLayout id=\"crusadeCard\" height=\"726\" width=\"1000\" padding=\"3\" childAlignment=\"TopLeft\" allowDragging=\"true\" returnToOriginalPositionWhenReleased=\"false\" color=\"#ffffff\" childForceExpandHeight=\"false\" visibility=\"hidden\" animationDuration=\"0.1\" showAnimation=\"FadeIn\" hideAnimation=\"FadeOut\" >\r\n        <Panel preferredHeight=\"30\" childForceExpandWidth=\"false\">\r\n            <Panel rectAlignment=\"UpperRight\" height=\"30\" width=\"30\">\r\n                <Button transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" height=\"30\" width=\"30\" color=\"Red\" textColor=\"#ffffff\" id=\"crusadeCardCloseButton\">X</Button>\r\n            </Panel>\r\n        </Panel>\r\n        <VerticalLayout childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" spacing=\"25\">\r\n            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\">\r\n                <TableLayout childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" preferredWidth=\"650\" columnWidths=\"200 0\" cellPadding=\"0\">\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <!-- putting an empty text cell to create padding is clearly not preferrable,\r\n                            but for whatever reason it didnt want to override the global padding for the cells -->\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">UNIT NAME:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccUnitName\" placeholder=\"Personalized Name\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">BATTLEFIELD ROLE:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccBattlefieldRole\" placeholder=\"HQ, Troops, etc.\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">CRUSADE FACTION:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccCrusadeFaction\" placeholder=\"Imperium, Chaos, etc.\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">SELECTABLE KEYWORDS:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccSelectableKeywords\" placeholder=\"&#60;Chapter&#62;, &#60;Dynasty&#62;, etc.\" /></Cell>\r\n                    </Row>\r\n                </TableLayout>\r\n                <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" flexibleWidth=\"1\" /> <!-- empty layout for spacing -->\r\n                <TableLayout childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" preferredWidth=\"325\" cellPadding=\"0\">\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"74\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">POWER&#xD;&#xA;LEVEL</Text></Cell>\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">EXPERIENCE&#xD;&#xA;POINTS</Text></Cell>\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">CRUSADE&#xD;&#xA;POINTS</Text></Cell>\r\n                    </Row>\r\n                    <Row preferredHeight=\"74\" dontUseTableRowBackground=\"true\" color=\"White\">\r\n                        <Cell>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" spacing=\"4\" childAlignment=\"MiddleCenter\">\r\n                                <Button id=\"plDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"pl\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"20\" textColor=\"Black\">0</Text>\r\n                                <Button id=\"plUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </Cell>\r\n                        <Cell>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" spacing=\"4\" childAlignment=\"MiddleCenter\">\r\n                                <Button id=\"xpDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"xp\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"20\">0</Text>\r\n                                <Button id=\"xpUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </Cell>\r\n                        <Cell>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" spacing=\"4\" childAlignment=\"MiddleCenter\">\r\n                                <Button id=\"clDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"cl\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"20\">0</Text>\r\n                                <Button id=\"clUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </Cell>\r\n                    </Row>\r\n                </TableLayout>\r\n            </HorizontalLayout>\r\n            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\">\r\n                <TableLayout childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" flexibleWidth=\"1\" columnWidths=\"200 0\" cellPadding=\"0\">\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">UNIT TYPE:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccUnitType\" placeholder=\"Datasheet\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">EQUIPMENT:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccEquipment\" placeholder=\"Wargear\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">PSYCHIC POWERS:</Text></Cell>\r\n                        <!-- have to put a space at the end or it gets read as \"No placeholder\" -->\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccPsychicPowers\" placeholder=\"None&#160;\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">WARLORD TRAIT:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccWarlordTrait\" placeholder=\"None&#160;\" /></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">RELIC:</Text></Cell>\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccRelic\" placeholder=\"None&#160;\" /></Cell>\r\n                    </Row>\r\n                </TableLayout>\r\n                <TableLayout childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" preferredWidth=\"375\" cellPadding=\"0\">\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"37\">\r\n                        <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">OTHER UPGRADES AND SELECTABLE ABILITIES</Text></Cell>\r\n                    </Row>\r\n                    <Row dontUseTableRowBackground=\"true\" preferredHeight=\"148\">\r\n                        <Cell><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccOtherUpgrades\" placeholder=\"Litanies, Exarch Powers, etc.\" lineType=\"MultiLineNewLine\" /></Cell>\r\n                    </Row>\r\n                </TableLayout>\r\n            </HorizontalLayout>\r\n            <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\">\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"35\">\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\" columnSpan=\"3\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">COMBAT TALLIES</Text></Cell>\r\n                </Row>\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"35\">\r\n                    <Cell>\r\n                        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" spacing=\"20\">\r\n                            <Text fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">TOTAL UNITS KILLED:</Text>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" flexibleWidth=\"1\" spacing=\"10\">\r\n                                <Button id=\"totalKillsDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"totalKills\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">0</Text>\r\n                                <Button id=\"totalKillsUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </HorizontalLayout>\r\n                    </Cell>\r\n                    <Cell>\r\n                        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" spacing=\"20\">\r\n                            <Text fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">BATTLES PLAYED:</Text>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" flexibleWidth=\"1\" spacing=\"10\">\r\n                                <Button id=\"playedDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"played\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">0</Text>\r\n                                <Button id=\"playedUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </HorizontalLayout>\r\n                    </Cell>\r\n                    <Cell>\r\n                        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" spacing=\"20\">\r\n                            <Text fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">BATTLES SURVIVED:</Text>\r\n                            <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" flexibleWidth=\"1\" spacing=\"10\">\r\n                                <Button id=\"survivedDown\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"-\" />\r\n                                <Text id=\"survived\" fontStyle=\"Bold\" color=\"#000000\" fontSize=\"16\">0</Text>\r\n                                <Button id=\"survivedUp\" transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" text=\"+\" />\r\n                            </HorizontalLayout>\r\n                        </HorizontalLayout>\r\n                    </Cell>\r\n                </Row>\r\n            </TableLayout>\r\n            <TableLayout childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"0 35 0 35 0 35 0 35\" cellPadding=\"0\">\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"35\">\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\" columnSpan=\"8\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">RANK</Text></Cell>\r\n                </Row>\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"35\">\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">BLOODED</Text></Cell>\r\n                    <Cell><ToggleButton colors=\"#ffffff|#aaaaaa|#aaaaaa|#bbbbbb\" id=\"ccBlooded\" /></Cell>\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">BATTLE-HARDENED</Text></Cell>\r\n                    <Cell><ToggleButton colors=\"#ffffff|#aaaaaa|#aaaaaa|#bbbbbb\" id=\"ccBattleHardened\" /></Cell>\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">HEROIC</Text></Cell>\r\n                    <Cell><ToggleButton colors=\"#ffffff|#aaaaaa|#aaaaaa|#bbbbbb\" id=\"ccHeroic\" /></Cell>\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleCenter\"><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleCenter\" fontStyle=\"Bold\">LEGENDARY</Text></Cell>\r\n                    <Cell><ToggleButton colors=\"#ffffff|#aaaaaa|#aaaaaa|#bbbbbb\" id=\"ccLegendary\" /></Cell>\r\n                </Row>\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"70\">\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">BATTLE HONORS:</Text></Cell>\r\n                    <Cell columnSpan=\"7\"><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccBattleHonors\" placeholder=\"None&#160;\" lineType=\"MultiLineNewLine\" /></Cell>\r\n                </Row>\r\n                <Row dontUseTableRowBackground=\"true\" preferredHeight=\"70\">\r\n                    <Cell color=\"Black\" dontUseTableCellBackground=\"true\" alignment=\"MiddleLeft\" childForceExpandWidth=\"false\"><Text preferredWidth=\"10\"></Text><Text fontSize=\"16\" textColor=\"White\" color=\"#ffffff\" alignment=\"MiddleLeft\" fontStyle=\"Bold\" flexibleWidth=\"1\">BATTLE SCARS:</Text></Cell>\r\n                    <Cell columnSpan=\"7\"><InputField fontSize=\"20\" onEndEdit=\"\" id=\"ccBattleScars\" placeholder=\"None&#160;\" lineType=\"MultiLineNewLine\" /></Cell>\r\n                </Row>\r\n            </TableLayout>\r\n        </VerticalLayout>\r\n    </VerticalLayout>\r\n\r\n    <VerticalLayout childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" id=\"dataCard\" height=\"390\" width=\"700\" color=\"White\" allowDragging=\"true\" returnToOriginalPositionWhenReleased=\"false\">\r\n        <Panel preferredHeight=\"40\" childForceExpandWidth=\"false\" color=\"#ffffff\">\r\n            <Text id=\"data-unitName\" fontStyle=\"Bold\" fontSize=\"26\" color=\"#000000\" alignment=\"MiddleCenter\" />\r\n            <Panel rectAlignment=\"UpperRight\" height=\"30\" width=\"30\">\r\n                <Button transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" height=\"30\" width=\"30\" color=\"Red\" textColor=\"#ffffff\" id=\"dataCardCloseButton\">X</Button>\r\n            </Panel>\r\n        </Panel>\r\n        <VerticalLayout color=\"#ffffff\">\r\n            <VerticalScrollView flexibleHeight=\"1\" childForceExpandHeight=\"false\" scrollSensitivity=\"40\"><!-- not setting a preferred height, hopefully it expands properly -->\r\n                <VerticalLayout height=\"1000\" padding=\"10\" horizontalOverflow=\"Wrap\" spacing=\"30\" id=\"dataCardContentContainer\">\r\n                    <VerticalLayout id=\"keywordContainer\" preferredHeight=\"70\">\r\n                        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" spacing=\"2\" preferredHeight=\"35\">\r\n                            <Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleLeft\" preferredWidth=\"93\">Faction: </Text><Text resizeTextForBestFit=\"true\" resizeTextMinSize=\"6\" resizeTextMaxSize=\"20\" preferredHeight=\"20\" fontStyle=\"Bold\" id=\"factionKeywords\" alignment=\"MiddleLeft\" horizontalOverflow=\"Wrap\" preferredWidth=\"400\" />\r\n                        </HorizontalLayout>\r\n                        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" id=\"keywordList\" spacing=\"3\" preferredHeight=\"35\">\r\n                            <Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleLeft\" preferredWidth=\"93\">Keywords:  </Text><Text resizeTextForBestFit=\"true\" resizeTextMinSize=\"6\" resizeTextMaxSize=\"20\" preferredHeight=\"20\" fontStyle=\"Bold\" id=\"keywords\" horizontalOverflow=\"Wrap\" flexibleHeight=\"1\" alignment=\"MiddleLeft\" preferredWidth=\"400\" />\r\n                        </HorizontalLayout>\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout id=\"powersKnownContainer\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 70 70 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">WC</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Range</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Description</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"powersKnown\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 70 70 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" id=\"psykerProfilesContainer\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 70 70 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Cast</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Deny</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Can Know</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"psykerProfiles\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 70 70 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout id=\"modelsTable9e\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0 0 0 0 0 0 0 0 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">M</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">WS</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">BS</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">S</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">T</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">W</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">A</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Ld</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Sv</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"models9e\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0 0 0 0 0 0 0 0 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout id=\"modelsTable10e\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0 0 0 0 0 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">M</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">T</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Sv</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">W</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">LD</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">OC</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"models10e\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0 0 0 0 0 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout id=\"weaponsTable9e\" childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"225 70 120 80 80 80 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Range</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Type</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">S</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">AP</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">D</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Abilities</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"weapons9e\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"225 70 120 80 80 80 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout id=\"weaponsTable10e\" childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" active=\"false\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"225 70 70 70 70 70 70 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Name</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Range</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">A</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">BS/WS</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">S</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">AP</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">D</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"18\" color=\"#000000\" alignment=\"MiddleCenter\">Abilities</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"weapons10e\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"225 70 70 70 70 70 70 0\" />\r\n                    </VerticalLayout>\r\n\r\n                    <VerticalLayout childForceExpandHeight=\"false\" childAlignment=\"TopLeft\">\r\n                        <TableLayout cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0\">\r\n                            <Row color=\"#999999\" preferredHeight=\"40\" dontUseTableRowBackground=\"true\">\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"26\" color=\"#000000\" alignment=\"MiddleCenter\">Abilities</Text></Cell>\r\n                                <Cell><Text fontStyle=\"Bold\" fontSize=\"26\" color=\"#000000\" alignment=\"MiddleCenter\">Description</Text></Cell>\r\n                            </Row>\r\n                        </TableLayout>\r\n                        <TableLayout id=\"abilities\" cellPadding=\"5\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" horizontalOverflow=\"Wrap\" columnWidths=\"200 0\" />\r\n                    </VerticalLayout>\r\n\r\n                </VerticalLayout>\r\n            </VerticalScrollView>\r\n        </VerticalLayout>\r\n        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" color=\"#ffffff00\" spacing=\"3\" padding=\"7 0 0 0\" preferredHeight=\"27\" id=\"highlightButtonsContainer\" />\r\n    </VerticalLayout>\r\n\r\n\r\n    <VerticalLayout id=\"tallyCard\" height=\"180\" width=\"350\" allowDragging=\"true\" returnToOriginalPositionWhenReleased=\"false\" color=\"#ffffff88\" visibility=\"hidden\" animationDuration=\"0.1\" showAnimation=\"FadeIn\" hideAnimation=\"FadeOut\" childForceExpandHeight=\"false\" childAlignment=\"TopLeft\">\r\n        <HorizontalLayout childForceExpandWidth=\"false\" childForceExpandHeight=\"false\" childAlignment=\"MiddleLeft\" preferredHeight=\"35\" color=\"#ffffff\" resizeTextForBestFit=\"true\">\r\n            <Text id=\"tally-UnitName\" flexibleWidth=\"1\" fontSize=\"20\" fontStyle=\"Bold\" color=\"#000000\" alignment=\"MiddleCenter\" />\r\n            <Button transition=\"None\" preferredHeight=\"24\" preferredWidth=\"24\" padding=\"3 3 3 3\" resizeTextForBestFit=\"true\" textAlignment=\"MiddleCenter\" height=\"30\" width=\"30\" color=\"Red\" textColor=\"#ffffff\" id=\"tallyCardCloseButton\">X</Button>\r\n        </HorizontalLayout>\r\n        <VerticalLayout childForceExpandHeight=\"false\" childAlignment=\"TopLeft\" spacing=\"5\" padding=\"0 0 5 5\" id=\"tallyContainer\" />\r\n    </VerticalLayout>\r\n</Panel>"
+        },
+        {
+            "GUID": "46ccee",
+            "Name": "BlockSquare",
+            "Transform": {
+                "posX": 0.161653131,
+                "posY": 0.4004048,
+                "posZ": -1.71980915e-07,
+                "rotX": 7.42326e-05,
+                "rotY": 0.000128269545,
+                "rotZ": -0.000136235045,
+                "scaleX": 1.0,
+                "scaleY": 1.0,
+                "scaleZ": 1.0
+            },
+            "Nickname": "Yellow Machine",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 1.0,
+                "g": 0.8141257,
+                "b": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": true,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "LuaScript": "---@diagnostic disable: need-check-nil\n\nlocal DEBUG = false\n\n---@diagnostic disable: duplicate-doc-field, duplicate-set-field\n---@class RosterData\n---@field edition string\n---@field order string[]\n---@field armyData table<string, Unit>\n---@field uiHeight string\n---@field uiWidth string\n---@field decorativeNames bool\n---@field baseScript string\n---@field height any\n---@field xml any\n---@field err? any\n---@field showKeywords? 'all'|'filter'\n---@field ignoredKeywords? string[]\n---@field statsInvFNP? bool\n---@field shortenWeaponAbilites? bool\n---@field indentWeaponProfiles? bool\n\n---@class Unit\n---@field name string\n---@field decorativeName? string\n---@field factionKeywords string[]\n---@field keywords string[]\n---@field abilities { [string]: { name: string, desc: string } }\n---@field models Models\n---@field modelProfiles { [string]: ModelProfile }\n---@field weapons  { [string]: WeaponProfile }\n---@field isSingleModel bool\n---@field uuid string\n---@field rules any[]\n---@field unassignedWeapons any[]\n---@field modelsPerRow? int\n---@field footprint? { height: int, width: int }\n---@field woundTrack? table\n---@field unitAbilities? string[]\n\n---@class Models\n---@field models { [string]: Model }\n---@field totalNumberOfModels int\n\n---@class Model\n---@field name string\n---@field abilities string[]\n---@field weapons { name: string, number: int }[]\n---@field number int\n---@field node table\n---@field associatedModels? { [string]: var }[]\n---@field associatedModelBounds? Bounds\n---@field modelAbilities? string[]\n\n---@class YMButton\n---@field unit string\n---@field model string\n---@field buttonID string\n\n---@class TableObject<T>: { [integer]: T }\nlocal TableObject = {}\n---@generic T\n---@param o T[]?\n---@return TableObject\nfunction TableObject:new(o)\n    o = o or {}\n    setmetatable(o, self)\n    self.__index = self\n    return o\nend\nTableObject.concat = table.concat\nTableObject.insert = table.insert\nTableObject.remove = table.remove\nTableObject.sort = table.sort\n---@return integer\nfunction TableObject:len()\n    local i = 0\n    for _ in pairs(self) do\n        i = i + 1\n    end\n    return i\nend\nfunction TableObject:find(obj)\n    for i, value in ipairs(self) do\n        if value == obj then\n            return i\n        end\n    end\n    return -1\nend\n\n---@generic K, V\n---@param self TableObject<K, V>\n---@param obj any\n---@return K?\nfunction TableObject:findkey(obj)\n    for key, value in pairs(self) do\n        if value == obj then\n            return key\n        end\n    end\n    return nil\nend\n\nfunction TableObject:contains(obj)\n    return self:find(obj) > 0\nend\n---@param ... any[]\nfunction TableObject:extend(...)\n    for _, list in ipairs(...) do\n        for _, obj in ipairs(list) do\n            self:insert(obj)\n        end\n    end\nend\n---@diagnostic enable: duplicate-doc-field, duplicate-set-field\n\nlocal loadedData ---@type RosterData\nlocal originalLoadedOrder, uiHeight, uiWidth, decorativeNames  ---@type string[], string, string, bool\nlocal url = 'http://localhost:40000'\n\nlocal ignoredKeywords = {\n    -- Unit class\n    -- ['Infantry'] = true,\n    -- ['Vehicle'] = true,\n    -- ['Monster'] = true,\n\n    -- Unit category\n    -- ['Aircraft'] = true,\n    -- ['Walker'] = true,\n    ['Battleline'] = true,\n    ['Epic Hero'] = true,\n    ['Dedicated Transport'] = true,\n\n    -- Faction specific\n    ['Imperium'] = true,\n\n    ['Rhino'] = true,\n    ['Land Raider'] = true,\n\n    ['Crusader'] = true,\n    ['Redeemer'] = true,\n    ['Banisher'] = true,\n\n    ['Cerastus'] = true,\n    ['Dominus'] = true,\n\n    ['Retinue'] = true,\n    ['Navis Imperialis'] = true,\n    -- ['Anathema Psykana'] = true,\n\n    -- ['Militarum Tempestus'] = true,\n    ['Cadian'] = true,\n    ['Command Squad'] = true,\n    ['Loyal Protector'] = true,\n\n    ['Great Devourer'] = true,\n    ['Vanguard Invader'] = true,\n\n    ['Ethereal'] = true\n}\n\nlocal uiTemplates = {\n    UNIT_CONTAINER = [[ <VerticalLayout class=\"transparent\" childForceExpandHeight=\"false\">\n                            <Text class=\"unitName\">${unitName}</Text>\n                            <VerticalLayout class=\"unitContainer\" childForceExpandHeight=\"false\" preferredHeight=\"${height}\" spacing=\"20\">\n                                ${unitData}\n                            </VerticalLayout>\n                        </VerticalLayout> ]],\n    MODEL_CONTAINER = [[<VerticalLayout preferredWidth=\"500\" childForceExpandHeight=\"false\" class=\"modelContainer\" id=\"${unitID}|${modelID}\" preferredHeight=\"${height}\">\n                            <Text class=\"modelDataName\">${numberString}${modelName}</Text>\n                            ${weapons}\n                            ${abilities}\n                        </VerticalLayout> ]],\n    MODEL_DATA = [[ <VerticalLayout childForceExpandHeight=\"false\" childForceExpandWidth=\"false\">\n                        <Text height=\"15\"><!-- spacer --></Text>\n                        <Text class=\"modelDataTitle\">${dataType}</Text>\n                        <Text class=\"modelData\" preferredHeight=\"${height}\">${data}</Text>\n                    </VerticalLayout> ]],\n\n    MODEL_GROUPING_CONTAINER = [[ <HorizontalLayout class=\"groupingContainer\">${modelGroups}</HorizontalLayout> ]]\n}\n\n--[[ UNIT SCRIPTING DATA ]]--\n--[[ everything in this section is meant to be a string because this is what we\nare inputting into created models ]]--\n\nlocal UNIT_SPECIFIC_DATA_TEMPLATE = [[--[[ UNIT-SPECIFIC DATA ${endBracket}--\nunitData = {\n    unitName = \"${unitName}\",\n    unitDecorativeName = \"${unitDecorativeName}\",\n    factionKeywords = \"${factionKeywords}\",\n    keywords = \"${keywords}\",\n    abilities = {\n        ${abilities}\n    },\n    models = {\n        ${models}\n    },\n    weapons = {\n        ${weapons}\n    },\n    uuid = \"${uuid}\"${singleModel},\n    uiHeight = ${height},\n    uiWidth = ${width}\n}]]\nlocal RANGED_WEAPON_TEMPLATE_10E = [[[c6c930]${name}[-]\n${range} A:${a} BS:${bs} S:${s} AP:${ap} D:${d}]]\nlocal MELEE_WEAPON_TEMPLATE_10E = [[[c6c930]${name}[-]\nA:${a} WS:${ws} S:${s} AP:${ap} D:${d}]]\nlocal ABILITITY_STRING_TEMPLATE = '{ name = [[${name}]], desc = [=[${desc}]=] }'\nlocal WEAPON_ENTRY_TEMPLATE_10E = '{ name=\"${name}\", range=[[${range}]], a=\"${a}\", bsws=\"${bsws}\", s=\"${s}\", ap=\"${ap}\", d=\"${d}\", abilities=[[${abilities}]], shortabilities=[[${shortAbilities}]] }'\n\nlocal YELLOW_STORAGE_GUID = \"43ecc1\"\nlocal ARMY_BOARD_GUID = \"2955a6\"\nlocal DELETION_ZONE_GUID = \"f33dff\"\nlocal AGENDA_MANAGER_GUID = \"45cd3f\"\nlocal IS_IN_HOME_MOD\nlocal yellowStorage, YELLOW_STORAGE_XML, YELLOW_STORAGE_SCRIPT, armyBoard ---@type object, any, string, object --, uiHeight, uiWidth, edition\nlocal army  ---@type table<string, Unit>\nlocal SLOT_POINTS = {slot={}, boundingBox={}, placed={}, models={}}\nlocal SLOTS_TO_DISPLAY = {\n    \"slot\",\n    \"boundingBox\",\n    \"placed\",\n    \"models\"\n}\nlocal DEFAULT_MODEL_SPACING = 0.15\nlocal DEFAULT_FOOTPRINT_PADDING = 0.5\nlocal BOUNDING_BOX_RATIO = 2\nlocal MODEL_PLACEMENT_Y = 5.4\nlocal ARMY_PLACEMENT_STARTING_X = -5\nlocal ARMY_PLACEMENT_STARTING_Z = -7\n\nlocal CREATE_ARMY_BUTTON = {\n    label=\"CREATE ARMY\", click_function=\"createArmy\", function_owner=self,\n    position={0.5, 1.5, 0}, rotation={180, 0, 180}, height=550, width=2750, font_size=220, font_style = \"Bold\",\n    font_color={1, 1, 1}, color={0, 150/255, 0}\n}\nlocal ON_BUTTON = {\n    label=\"LOAD ROSTER\", click_function=\"moveToLoadingScreen\", function_owner=self,\n    position={0, 0.52, 0}, rotation={180, 0, 180}, height=550, width=2750, font_size=220, font_style = \"Bold\",\n    font_color={1, 1, 1}, color={0, 150/255, 0}\n}\nlocal modelAssociations = {}\nlocal activeButtons = {}  ---@type YMButton[]\n-- local numAssociatedObjects, firstModelAssociation = 0, true\nlocal ERROR_RED = { 1, 0.25, 0.25 }\n\nlocal RELOAD_BUTTON = {\n    label=\"RELOAD ROSTER\", click_function=\"moveToLoadingScreen\", function_owner=self,\n    position={0, 3.65, -20}, rotation={180, 0, 180}, height=550, width=2750, font_size=220, font_style = \"Bold\",\n    font_color={1, 1, 1}, color={0, 150/255, 0}\n}\n\n-- Hopefully-temporary code to deal with the outbreak of a TTS virus\n\nlocal sillySpaces = string.rep(\"  \", 90)\nlocal naiveRemovalPattern = string.format(\"(%s.+)$\", sillySpaces)\n---@param obj object\n---@return boolean\n---@return string\nfunction detectSillySpaces(obj)\n    local script = obj.getLuaScript()\n    if script:find(sillySpaces) then\n        return true, script\n    else\n        return false, script\n    end\nend\n\n---@param obj object\n---@param debugNote string\nfunction clean(obj, debugNote)\n    Wait.stopAll()\n    local hasSillySpaces, script = detectSillySpaces(obj)\n    if hasSillySpaces then\n        local cleanedScript = script:gsub(naiveRemovalPattern, \"\")\n        obj.setLuaScript(cleanedScript)\n        print(\"One or more of the models you just spawned in contained malicious code. Yellowscribe has deleted it and the model is now safe to use, but you should contact the source of the model to get them to fix it.\")\n    end\nend\n\nfunction onObjectSpawn(obj)\n    clean(obj, \"onObjectSpawn\")\nend\n\nfunction onObjectLeaveContainer(container, obj)\n    clean(obj, \"onObjectLeaveContainer\")\nend\n\n-- End virus handling code\n\n\nfunction moveToLoadingScreen()\n    UI.hide(\"welcomeWindow\")\n    UI.show(\"loading\")\n    local xml = self.UI.getXmlTable()\n    clearXMLTagRecursive(xml, 'loadedContainer')\n    self.UI.setXmlTable(xml)\n    Wait.time(|| sendRequest(), 0.2)\n    Wait.time(function () -- delay so that animations dont blend\n        Wait.condition(function ()\n            if loadedData.err == nil then\n                loadEditedArmy(loadedData)\n            else\n                UI.hide(\"loading\")\n                -- wait because sometimes the response comes back before the loading screen even shows up\n                Wait.time(function ()\n                    broadcastToAll(loadedData.err, ERROR_RED)\n                    UI.show(\"welcomeWindow\")\n                end, 0.2)\n            end\n        end,\n        function () return loadedData ~= nil end,\n        20,\n        function ()\n            UI.hide(\"loading\")\n            broadcastToAll(\"Something has gone horribly wrong! Please try again.\", ERROR_RED)\n            UI.show(\"welcomeWindow\")\n        end)\n    end, 0.15)\n    self.createButton(RELOAD_BUTTON)\nend\n\nfunction sendRequest()\n    WebRequest.get(url, handleResponse)\nend\n\n---@param response WebRequestInstance\nfunction handleResponse(response)\n    -- Check if the request failed to complete e.g. if your Internet connection dropped out.\n    if response.is_error then\n        broadcastToAll('Server error: '..response.error, ERROR_RED)\n        log(response.text)\n        return\n    end\n    loadedData = JSON.decode(response.text)  --[[@as RosterData]]\n    YELLOW_STORAGE_SCRIPT = loadedData.baseScript\n    if loadedData.ignoredKeywords ~= nil then\n        ignoredKeywords = {}\n        for _, keyword in ipairs(loadedData.ignoredKeywords) do\n            ignoredKeywords[keyword] = true\n        end\n    end\nend\n\n-- function acceptEditedArmy()\n--     UI.hide(\"mainPanel\")\n--     loadEditedArmy({ -- args sent as table because this used to be Global and I'm too lazy to rewrite it\n--         data = loadedData,\n--         order = originalLoadedOrder,\n--         uiHeight = uiHeight,\n--         uiWidth = uiWidth,\n--         decorativeNames = decorativeNames\n--     })\n-- end\n\n-- function turnOnYellowMachine()\n--     showWindow(\"welcomeWindow\")\n-- end\n\n\n\n--[[ EVENT HANDLERS ]]--\n\nfunction onLoad()\n    IS_IN_HOME_MOD = Global.getVar(\"isYMBS2TTS\") ~= nil\n\n    yellowStorage = getObjectFromGUID(YELLOW_STORAGE_GUID)  --[[@as object]]\n    if not yellowStorage then\n        if IS_IN_HOME_MOD then\n            broadcastToAll(\"Error: storage object missing.\")\n        end\n        self.destruct()\n        return\n    end\n    YELLOW_STORAGE_XML = yellowStorage.getData().XmlUI  ---@type string\n    YELLOW_STORAGE_SCRIPT = yellowStorage.getLuaScript()\n\n    if not IS_IN_HOME_MOD then\n        getObjectFromGUID(AGENDA_MANAGER_GUID).destruct()\n        getObjectFromGUID(DELETION_ZONE_GUID).destruct()\n        yellowStorage.destruct()\n\n        self.setPosition{x=0, y=4, z=0}\n        self.createButton(ON_BUTTON)\n        self.setLock(false)\n\n        CREATE_ARMY_BUTTON.position = {0, 0.6, 0}\n    else\n        moveToLoadingScreen()\n    end\nend\n\nfunction onScriptingButtonDown(index, player_color)\n    --slotPoints = { {5, 1, 5}, {-5, 1, -5} }\n    if DEBUG then\n        Global.setVectorLines(SLOT_POINTS[SLOTS_TO_DISPLAY[index]])\n    end\nend\n\n---comment\n---@param player player\n---@param action Action\n---@param targets object[]\nfunction onPlayerAction(player, action, targets)\n    if action == Player.Action.PickUp and #activeButtons > 0 then\n        makeSureObjectsAreAttached(targets)\n\n        local intendedTargets  ---@type object[]\n\n        if #player.getSelectedObjects() == 0 then\n            intendedTargets = { player.getHoverObject() }\n        else\n            intendedTargets = player.getSelectedObjects()\n\n            if not includes(intendedTargets, player.getHoverObject()) then\n                table.insert(intendedTargets, player.getHoverObject())\n            end\n        end\n\n        local targetsData = map(intendedTargets, function (target)\n            local data = target.getData()\n\n            data.States = nil\n\n            return data\n        end)\n\n        for _, activeButton in pairs(activeButtons) do\n            local buttonModel = army[activeButton.unit].models.models[activeButton.model]\n            buttonModel.associatedModels = targetsData\n            -- its ok if we overwrite this every time, we only ever need one and they shooould be all the same\n            buttonModel.associatedModelBounds = intendedTargets[1].getBoundsNormalized()\n            self.UI.setAttributes(activeButton.buttonID, {\n                color = \"#33ff33\"\n            })\n        end\n\n        for _, target in ipairs(intendedTargets) do\n            target.highlightOn({ r=51/255, g=1, b=51/255 }, 2)\n        end\n\n        activeButtons = {}\n    end\nend\n\n\n\n--[[ MODEL SELECTION ]]--\n\n---@param player any\n---@param _ any\n---@param unitAndModelID string\nfunction selectModelGroup(player, _, unitAndModelID)\n    local idValues = split(unitAndModelID, \"|\")\n    local unitID, modelID = idValues[1], idValues[2]\n    local sameButtonIndex = find(map(activeButtons, |button| button.buttonID), unitAndModelID)\n\n    if sameButtonIndex > 0 then\n        if army[unitID].models.models[modelID].associatedModels then\n            for _, modelData in ipairs(army[unitID].models.models[modelID].associatedModels) do\n                pcall(|model| getObjectFromGUID(modelData.GUID).highlightOff(), modelData)\n                -- getObjectFromGUID(modelData.GUID).highlightOff()\n            end\n        end\n        army[unitID].models.models[modelID].associatedModels = nil\n        table.remove(activeButtons, sameButtonIndex)\n        self.UI.setAttribute(unitAndModelID, \"color\", \"White\")\n    else\n        table.insert(activeButtons, { unit = unitID, model = modelID, buttonID = unitAndModelID })\n        self.UI.setAttribute(unitAndModelID, \"color\", \"#ff00ca\")\n\n        if #activeButtons == 1 then -- if it's the first button selected\n            broadcastToAll(\"Pick up a model or models to represent your selection!\", {r=1, g=0, b=202/255})\n        end\n    end\nend\n\nfunction showAssociatedModel(_, _, button)\n    highlightAssociatedModel(button, true)\nend\n\nfunction hideAssociatedModel(_, _, button)\n    highlightAssociatedModel(button, false)\nend\n\nfunction highlightAssociatedModel(unitAndModelID, on)\n    local idValues = split(unitAndModelID, \"|\")\n    local buttonModel = army[idValues[1]].models.models[idValues[2]]\n\n    if buttonModel.associatedModels ~= nil and #buttonModel.associatedModels > 0 then\n        for _, associatedModel in ipairs(buttonModel.associatedModels) do\n            local object = getObjectFromGUID(associatedModel.GUID)\n\n            if object ~= nil then\n                if on then\n                    object.highlightOn({ r=51/255, g=1, b=51/255 })\n                else\n                    object.highlightOff()\n                end\n            end\n        end\n    end\nend\n\n\n---@param objects Object[]\nfunction makeSureObjectsAreAttached(objects)\n    for _, attachmentSet in ipairs(getObjectsToAttach(filter(objects, |object| #object.getJoints() > 0))) do\n        for _, jointedObj in pairs(attachmentSet.toAttach) do\n            if attachmentSet.lowestObj ~= jointedObj then\n                attachmentSet.lowestObj.addAttachment(jointedObj)\n            end\n        end\n    end\nend\n\n\n---@param objects Object[]\nfunction getObjectsToAttach(objects)\n    local toAttach = {}\n\n    for _, object in ipairs(objects) do\n        local attachmentSet = getObjectsToAttachRecursive(object, {}, {\n            lowestY = object.getPosition().y,\n            lowestObj = object,\n            toAttach = { [object.getGUID()]=object }\n        })\n\n        for guid, _ in pairs(attachmentSet.toAttach) do\n            for _, set in ipairs(toAttach) do\n                if set.toAttach[guid] ~= nil then\n                    mergeAttachmentSets(attachmentSet, set)\n                    goto afterInsert\n                end\n            end\n        end\n\n        table.insert(toAttach, attachmentSet)\n        ::afterInsert::\n    end\n    return toAttach\nend\n\n\n---@alias AttachmentSet { lowestY: integer, lowestObj: object, toAttach: { [string]: object } }\n\n---comment\n---@param object object\n---@param found { [string]: bool }\n---@param toAttachTable AttachmentSet\n---@return AttachmentSet\nfunction getObjectsToAttachRecursive(object, found, toAttachTable)\n    for _, joint in ipairs(object.getJoints()) do\n        if found[joint.joint_object_guid] == nil then\n            local jointedObj = getObjectFromGUID(joint.joint_object_guid)  ---@cast jointedObj -nil\n            local jointedObjY = jointedObj.getPosition().y\n\n            found[joint.joint_object_guid] = true\n            toAttachTable.toAttach[joint.joint_object_guid] = jointedObj\n\n            if jointedObjY < toAttachTable.lowestY then\n                toAttachTable.lowestY = jointedObjY\n                toAttachTable.lowestObj = jointedObj\n            end\n\n            getObjectsToAttachRecursive(jointedObj, found, toAttachTable)\n        end\n    end\n\n    return toAttachTable\nend\n\n\n---@param setToMerge AttachmentSet\n---@param mergeIntoSet AttachmentSet\nfunction mergeAttachmentSets(setToMerge, mergeIntoSet)\n    for guid, obj in pairs(setToMerge.toAttach) do\n        if mergeIntoSet.toAttach[guid] == nil then\n            mergeIntoSet.toAttach[guid] = obj\n        end\n    end\n\n    if setToMerge.lowestY < mergeIntoSet.lowestY then\n        mergeIntoSet.lowestY = setToMerge.lowestY\n        mergeIntoSet.lowestObj = setToMerge.lowestObj\n    end\nend\n\n\n--[[ ARMY CREATION ]]--\n\n-- formats and creates the army based on selected models\nfunction createArmy()\n    -- we only want to create models for ones that have a model selected\n    local unitsToCreate = filter(army, function (unit)\n        unit.models.models = filter(unit.models.models, function (model)\n            if model.associatedModels == nil or #model.associatedModels == 0 then\n                -- make sure we are spawning thr right number of models if only part of a unit is beign spawned\n                unit.models.totalNumberOfModels = unit.models.totalNumberOfModels - model.number\n            end\n\n            return model.associatedModels ~= nil and #model.associatedModels > 0\n        end)\n\n        return len(unit.models.models) > 0\n    end)\n\n    if len(unitsToCreate) == 0 then\n        broadcastToAll(\"You haven't selected any models!\", ERROR_RED)\n        return\n    end\n\n    -- delete anything that might get in the way in the future\n    deleteAllObjectsInCreationZone()\n\n    -- this feels so inefficient to go through the array so many times,\n    -- but at this point, the array really shouldn't be that long,\n    -- so I dont have to worry too much about big-O\n    unitsToCreate = table.sort(map(unitsToCreate, function (unit)\n        unit.models.models = table.sort(unit.models.models, |modelA, modelB| modelA.number < modelB.number)\n\n        --[[ for _, model in ipairs(unit.models.models) do\n            model.associatedModel = getObjectFromGUID(model.associatedModel)\n        end --]]\n\n        unit.footprint = determineFootprint(unit)\n\n        return unit\n    end), function (unitA, unitB)\n        if unitA.footprint.width == unitB.footprint.width then\n            return unitB.footprint.height < unitA.footprint.height\n        end\n\n        return unitA.footprint.width > unitB.footprint.width\n    end)  --[[@as { [string]: Unit }]]\n\n    local selfPosition = self.getPosition()\n\n    -- at this point, we should have a list of units sorted by width then height of their footprints\n    placeArmy(unitsToCreate, ARMY_PLACEMENT_STARTING_X + selfPosition.x, ARMY_PLACEMENT_STARTING_Z + selfPosition.z, selfPosition.y)\nend\n\n---@param unitMap { [string]: Unit }\n---@param startingX int\n---@param startingZ int\n---@param startingY int\nfunction placeArmy(unitMap, startingX, startingZ, startingY)\n    local emptySlots = {} ---@type { x: int, z: int, h: int, w: int}[]\n    local boundingBox = { h=0, w=0 }\n\n    for _, unit in pairs(unitMap) do\n        local placedInEmptySlot = false\n\n        -- try to place at an origin\n        for idx, slot in ipairs(emptySlots) do\n            if unit.footprint.height <= slot.h and unit.footprint.width <= slot.w then\n                placeUnit(unit, startingX-slot.x, startingZ+slot.z, startingY)\n\n                if DEBUG then\n                    table.insert(SLOT_POINTS.placed, { points= {\n                        {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z},\n                        {startingX-slot.x-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+slot.z},\n                        {startingX-slot.x-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                        {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                        {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z}\n                    },\n                    color = {0, 0, 0}})\n                end\n\n                table.remove(emptySlots, idx)\n\n                -- slot to the side should be filled first if possible\n                -- so insert the top one first\n                if (slot.h - unit.footprint.height) >= 1 then\n                    if DEBUG then\n                        table.insert(SLOT_POINTS.slot, {points= {\n                            {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                            {startingX-slot.x-slot.w, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                            {startingX-slot.x-slot.w, MODEL_PLACEMENT_Y+1, startingZ+slot.z+slot.h},\n                            {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z+slot.h},\n                            {startingX-slot.x, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height}\n                        },\n                        color = {0, 1, 0}})\n                    end\n\n                    table.insert(emptySlots, {\n                        x = slot.x,\n                        z = slot.z + unit.footprint.height,\n                        h = slot.h - unit.footprint.height,\n                        w = slot.w\n                    })\n                end\n\n                if (slot.w - unit.footprint.width) >= 1 then\n                    if DEBUG then\n                        table.insert(SLOT_POINTS.slot, { points = {\n                            {startingX-slot.x-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+slot.z},\n                            {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+slot.z},\n                            {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                            {startingX-slot.x-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+slot.z+unit.footprint.height},\n                            {startingX-slot.x-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+slot.z}\n                        },\n                        color = {0, 0, 1}})\n                    end\n\n                    table.insert(emptySlots, {\n                        x = slot.x + unit.footprint.width,\n                        z = slot.z,\n                        w = slot.w - unit.footprint.width,\n                        h = unit.footprint.height\n                    })\n                end\n                -- >= 1 because we dont want to make additional tiny slots that will never be filled\n\n                placedInEmptySlot = true\n                break;\n            end\n        end\n\n        if placedInEmptySlot then -- do nothing\n\n        -- if expanding upward makes sense\n        elseif (boundingBox.h + unit.footprint.height) < (boundingBox.w * BOUNDING_BOX_RATIO) then\n            placeUnit(unit, startingX, startingZ + boundingBox.h, startingY)\n\n            if DEBUG then\n                table.insert(SLOT_POINTS.placed, { points= {\n                    {startingX, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                    {startingX-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                    {startingX-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h+unit.footprint.height},\n                    {startingX, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h+unit.footprint.height},\n                    {startingX, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h}\n                },\n                color = {0, 0, 0}})\n            end\n\n            if (boundingBox.w - unit.footprint.width >= 1) then\n                if DEBUG then\n                    table.insert(SLOT_POINTS.slot, { points= {\n                        {startingX-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                        {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                        {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h+unit.footprint.height},\n                        {startingX-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h+unit.footprint.height},\n                        {startingX-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h}\n                    },\n                    color = {1, 0, 1}})\n                end\n\n                table.insert(emptySlots, {\n                    x = unit.footprint.width,\n                    z = boundingBox.h,\n                    h = unit.footprint.height,\n                    w = boundingBox.w - unit.footprint.width\n                })\n            end\n\n            boundingBox.h = boundingBox.h + unit.footprint.height\n\n        -- else place at far left\n        else\n            placeUnit(unit, startingX - boundingBox.w, startingZ, startingY)\n\n            if DEBUG then\n                table.insert(SLOT_POINTS.placed, { points= {\n                    {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ},\n                    {startingX-boundingBox.w-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ},\n                    {startingX-boundingBox.w-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+unit.footprint.height},\n                    {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+unit.footprint.height},\n                    {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ}\n                },\n                color = {0, 0, 0}})\n            end\n\n            if boundingBox.h - unit.footprint.height >= 1 then\n                if DEBUG then\n                    table.insert(SLOT_POINTS.slot, { points= {\n                        {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+unit.footprint.height},\n                        {startingX-boundingBox.w-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+unit.footprint.height},\n                        {startingX-boundingBox.w-unit.footprint.width, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                        {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                        {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+unit.footprint.height}\n                    },\n                    color = {0, 0, 0}})\n                end\n\n                table.insert(emptySlots, {\n                    x = boundingBox.w,\n                    z = unit.footprint.height,\n                    h = boundingBox.h - unit.footprint.height,\n                    w = unit.footprint.width\n                })\n            end\n\n            boundingBox.w = boundingBox.w + unit.footprint.width\n\n            if boundingBox.h == 0 then boundingBox.h = unit.footprint.height end -- handle first unit\n        end\n    end\n\n    if DEBUG then\n        SLOT_POINTS.boundingBox = {{\n            points= {\n                {startingX, MODEL_PLACEMENT_Y+1, startingZ},\n                {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ},\n                {startingX-boundingBox.w, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                {startingX, MODEL_PLACEMENT_Y+1, startingZ+boundingBox.h},\n                {startingX, MODEL_PLACEMENT_Y+1, startingZ},\n            },\n            color = {0, 0, 0}\n        }}\n    end\n\n    local boardPosition = { x=startingX-(boundingBox.w*0.5), y=5+startingY, z=startingZ+(boundingBox.h * 0.5) }\n    local boardScale = { x=(0.5*boundingBox.w), y=1, z=(0.5*boundingBox.h)}\n\n    if armyBoard == nil then\n        armyBoard = spawnObject{\n            type = \"Custom_Tile\",\n            sound = false,\n            position = boardPosition,\n            scale = boardScale\n        }\n        armyBoard.setCustomObject{\n            image = \"https://steamusercontent-a.akamaihd.net/ugc/1698405413696745750/BC055E0445A3CEC1A0A0754CF4F1646977612B09/\",\n            thickness = 0.37\n        }\n        armyBoard.setLock(true)\n    else\n        armyBoard.setScale(boardScale)\n        armyBoard.setPosition(boardPosition)\n    end\nend\n\n---@param unit Unit\n---@param startX int\n---@param startZ int\n---@param startY int\nfunction placeUnit(unit, startX, startZ, startY)\n    -- cheap way of determining a \"sergeant\" model:\n    -- sort by number, pick the first, hope for the best\n    local isFirstModel = true\n    local xOffset = startX - DEFAULT_FOOTPRINT_PADDING -- left is negative\n    local zOffset = startZ + DEFAULT_FOOTPRINT_PADDING -- up is positive\n    local modelSize\n    local currentRowHeight, currentModelsInRow = 0, 0\n    local keys = {}  ---@type string[]\n    for k in pairs(unit.weapons) do keys[#keys+1] = k end\n    table.sort(keys, |weaponA, weaponB|weaponSort(unit.weapons[weaponA], unit.weapons[weaponB]))\n    local weaponList = {}  ---@type { [string]: WeaponProfile }\n    for _, weapon in ipairs(keys) do weaponList[weapon] = unit.weapons[weapon] end\n    -- log(weaponList)\n    unit.weapons = weaponList\n    for _, weapon in pairs(unit.weapons) do\n        if weapon.name:find('%s%-%s') and not weapon.name:find('\\u{25ba}') and not weapon.name:lower():find('melee$') and not weapon.name:lower():find('ranged$') then\n            weapon.name = '\\u{25ba} '..weapon.name\n        end\n        if weapon.range:lower():find('^n/a') then\n            weapon.range = 'N/A'\n        end\n    end\n    local leaderData = formatLeaderScript(unit)\n    for _, model in pairs(unit.models.models) do\n        --local currentModelObj = getObjectFromGUID(model.associatedModel)\n        -- I dont remember why I'm passing the data as an object instead of just as arguments\n        local modelProfile = getProfileForModel(model, unit)\n        if not modelProfile then\n            print('invalid model data')\n            return\n        end\n        local modelDescription = buildModelDescription(model, unit, modelProfile)\n        local modelNickname = (modelProfile ~= nil and (\"[00ff16]\"..modelProfile.w..\"/\"..modelProfile.w..\"[-] \") or \"\")\n                                ..getModelDisplayName(model, unit)\n        local modelTags = getModelTags(model, unit)\n        ---@diagnostic disable-next-line: assign-type-mismatch\n        local modelData = formatModelData( ---@type { [string]: var }[]\n            model.associatedModels, modelDescription, modelNickname, modelTags)\n        modelSize = model.associatedModelBounds.size\n        --log(model)\n\n        if currentRowHeight < modelSize.z then currentRowHeight = modelSize.z end\n        for _=1, model.number do\n            local spawned_model = createModelFromData(\n                chooseRandomModel(modelData),  ---@diagnostic disable-line: param-type-mismatch\n                --unit.decorativeName and unit.decorativeName or unit.name,\n                xOffset - (modelSize.x*0.5),\n                startY,\n                zOffset + (modelSize.z*0.5),\n                leaderData\n            )\n            spawned_model.addTag('leaderModel')\n            spawned_model.setTable('unitLeaderTags', {'uuid_'..unit.uuid, 'lsModel', 'leaderModel'})\n            table.insert(SLOT_POINTS.models, { points = {\n                {xOffset, MODEL_PLACEMENT_Y+1, zOffset},\n                {xOffset-modelSize.x, MODEL_PLACEMENT_Y+1, zOffset},\n                {xOffset-modelSize.x, MODEL_PLACEMENT_Y+1, zOffset+modelSize.z},\n                {xOffset, MODEL_PLACEMENT_Y+1, zOffset+modelSize.z},\n                {xOffset, MODEL_PLACEMENT_Y+1, zOffset}\n            },\n            color = {0, 0, 1}})\n            leaderData = nil\n            currentModelsInRow = currentModelsInRow + 1\n            if currentModelsInRow == unit.modelsPerRow then\n                currentModelsInRow = 0\n                xOffset = startX - DEFAULT_FOOTPRINT_PADDING\n                zOffset = zOffset + currentRowHeight + DEFAULT_MODEL_SPACING\n            else\n                xOffset = xOffset - (modelSize.x + DEFAULT_MODEL_SPACING)\n            end\n        end\n    end\nend\n\n-- determines how much space a unit should take up once it is created\n---@param unit Unit\n---@return { width: int, height: int }\nfunction determineFootprint(unit)\n    -- determine models per row\n    local modelsPerRow = unit.models.totalNumberOfModels\n    local currentModelsInRow, currentWidth, footprintWidth, footprintHeight, modelsLeft = 0, 0, 0, 0, 0\n    local currentRow = 1\n    local currentHeights = {}\n    local currentModelBounds\n\n    if modelsPerRow > 5 then\n        if modelsPerRow < 20 and modelsPerRow % 3 == 0 then\n            if modelsPerRow < 12 then modelsPerRow = 3\n            else modelsPerRow = modelsPerRow / 3 end\n        elseif modelsPerRow < 20 and modelsPerRow % 5 == 0 then\n            modelsPerRow = 5\n        elseif modelsPerRow > 10 then\n            modelsPerRow = 10\n        end\n    end\n\n    unit.modelsPerRow = modelsPerRow\n\n    -- I realize that this is doing almost exactly what we will do later when actually creating the models\n    -- unfortunately, this is the only way that I can think of to guarantee the footprint of a unit\n    -- with models of different sizes\n    for _, model in pairs(unit.models.models) do\n        currentModelBounds = model.associatedModelBounds.size\n\n        if currentHeights[currentRow] == nil or currentModelBounds.z > currentHeights[currentRow] then\n            currentHeights[currentRow] = currentModelBounds.z\n        end\n\n        if (currentModelsInRow + model.number) >= modelsPerRow then\n            currentWidth = currentWidth + ((modelsPerRow - currentModelsInRow) * (currentModelBounds.x + DEFAULT_MODEL_SPACING))\n\n            if currentWidth > footprintWidth then footprintWidth = currentWidth end\n\n            modelsLeft = model.number - (modelsPerRow - currentModelsInRow)\n            currentRow = currentRow + 1\n\n            while modelsLeft >= modelsPerRow do\n                table.insert(currentHeights, currentModelBounds.z + DEFAULT_MODEL_SPACING)\n                currentRow = currentRow + 1\n                modelsLeft = modelsLeft - modelsPerRow\n                currentWidth = (currentModelBounds.x + DEFAULT_MODEL_SPACING) * modelsPerRow\n            end\n\n            if modelsLeft > 0 then\n                table.insert(currentHeights, currentModelBounds.z + DEFAULT_MODEL_SPACING)\n                currentModelsInRow = modelsLeft\n            end\n\n            if currentWidth > footprintWidth then footprintWidth = currentWidth end\n\n            currentWidth = currentModelsInRow * (currentModelBounds.x + DEFAULT_MODEL_SPACING)\n        else\n            currentWidth = currentWidth + (model.number * (currentModelBounds.x + DEFAULT_MODEL_SPACING))\n            currentModelsInRow = currentModelsInRow + model.number\n        end\n    end\n\n    --if footprintHeight == 0 then footprintHeight = currentHeight end -- in case it hasnt been set yet (usually only because a row hasnt been filled)\n    for _, height in ipairs(currentHeights) do\n        footprintHeight = footprintHeight + height\n    end\n\n    return { width = footprintWidth+(2*DEFAULT_FOOTPRINT_PADDING), height = footprintHeight+(2*DEFAULT_FOOTPRINT_PADDING) }\nend\n\n---@generic T : { [string]: var }[]\n---formats both the leader and follower model data from a given model\n---@param associatedModels T\n---@param description string\n---@param nickname string\n---@param tags string[]\n---@return T\nfunction formatModelData(associatedModels, description, nickname, tags)\n    for _, modelData in ipairs(associatedModels) do\n        modelData.Description = description\n        modelData.Nickname = nickname\n        modelData.Tags = tags\n        -- make sure base data doesnt include any xml or luascript\n        modelData.XmlUI = \"\"\n        modelData.LuaScript = \"\"\n        modelData.LuaScriptState = nil\n    end\n    return associatedModels\nend\n\n\n---@param unit Unit\n---@return string\nfunction formatLeaderScript(unit)\n    return interpolate(UNIT_SPECIFIC_DATA_TEMPLATE, {\n        unitName = unit.name,\n        unitDecorativeName = (unit.decorativeName ~= nil and unit.decorativeName ~= \"\") and unit.decorativeName:gsub('\"', '\\\\\"') or unit.name,\n        factionKeywords = table.concat(unit.factionKeywords, \", \"), -- dont break xml   --map(unit.factionKeywords, |keyword| (keyword:gsub(\">\", \"＞\"):gsub(\"<\", \"＜\")))\n        keywords = table.concat(unit.keywords, \", \"), -- dont break xml   --map(unit.keywords, |keyword| (keyword:gsub(\">\", \"＞\"):gsub(\"<\", \"＜\")))\n        abilities = getFormattedAbilities(unit.abilities, unit.rules),\n        models = table.concat(map(unit.modelProfiles, tableToFlatString), \", \\n\\t\\t\"),\n        weapons = table.concat(map(unit.weapons, function (weapon) return interpolate(WEAPON_ENTRY_TEMPLATE_10E, weapon) end ), \", \\n\\t\\t\"),\n        endBracket = \"]]\",\n        uuid = unit.uuid,\n        height = uiHeight,\n        width = uiWidth,\n        singleModel = (not unit.isSingleModel) and \"\" or \", \\n\\tisSingleModel = true\",\n    })..YELLOW_STORAGE_SCRIPT\nend\n\n\n---@param model Model\n---@param unit Unit\n---@return string\nfunction getModelDisplayName(model, unit)\n    if unit.isSingleModel or decorativeNames then\n        if unit.decorativeName ~= nil and unit.decorativeName ~= \"\" then\n            return unit.decorativeName\n        else\n            return model.name\n        end\n    end\n\n    return model.name\nend\n\n---@param model Model\n---@param unit Unit\n---@return string[]\nfunction getModelTags(model, unit)\n    local tags = { \"lsModel\", \"uuid_\"..unit.uuid }\n    return tags\nend\n\n---Combine abilities and rules and format them properly to be displayed in a unit's datasheet\n---@param abilities { [string]: { name: string, desc: string } }\n---@param rules any\n---@return string\nfunction getFormattedAbilities(abilities, rules)\n    local keys = {}  ---@type string[]\n    for k in pairs(abilities) do keys[#keys+1] = k end\n    table.sort(keys, function (abl1, abl2)\n        abl1 = abl1:lower():trim()--match('^%s*(.*)%s*$')\n        abl2 = abl2:lower():trim()--match('^%s*(.*)%s*$')\n        return (abl1 == 'core') or (abl1 == 'faction' and abl2 ~= 'core')\n    end)\n    local abilityList = {}  ---@type { [string]: { name: string, desc: string } }\n    for _, abl in ipairs(keys) do abilityList[abl] = abilities[abl] end\n    abilities = abilityList\n    -- log(abilities)\n    local abilitiesString = table.concat(map(abilities, function (ability)\n        ability.name = ability.name:gsub(\"%[\", \"(\"):gsub(\"%]\", \")\") -- try not to break formatting\n\n        return interpolate(ABILITITY_STRING_TEMPLATE, ability)\n    end), \", \\n\\t\\t\")\n\n    if #rules > 0 then\n        abilitiesString = abilitiesString..\n                            (len(abilities) > 0 and \", \\n\\t\\t\" or \"\")..\n                            interpolate(ABILITITY_STRING_TEMPLATE, {\n                                name=\"Additional Rules\\n(see the books)\",\n                                desc = table.concat(map(rules, |rule| (rule:gsub(\"%[\", \"(\"):gsub(\"%]\", \")\"))), \", \")-- try not to break formatting\n                            })\n    end\n\n    return abilitiesString\nend\n\n---@generic T: { [string]: var }\n-- chooses a random model from the given array\n-- technically this is a general method that could be used for selecting\n-- a random value from any array\n---@param modelArray T[]\n---@return T?\nfunction chooseRandomModel(modelArray)\n    local model\n    if not modelArray or #modelArray == 0 then\n        model = nil\n    elseif #modelArray == 1 then\n        model = modelArray[1]\n    else\n        model = modelArray[math.random(1, #modelArray)] -- both inclusive\n    end\n    return model\nend\n\n-- spawns a model from the given data set\n---@param modelData { [string]: var }\n---@param x float\n---@param z float\n---@param y float\n---@param leaderModelScript string?\n---@return object\nfunction createModelFromData(modelData, x, y, z, leaderModelScript)\n    if leaderModelScript ~= nil then\n        modelData = clone(modelData) -- prevent weird things with tables being treated as references\n        table.insert(modelData.Tags, \"leaderModel\")\n        modelData.XmlUI = YELLOW_STORAGE_XML\n        modelData.LuaScript = leaderModelScript\n    end\n    local spawnData = {\n        data = modelData,\n        position = {\n            x = x,\n            y = MODEL_PLACEMENT_Y+y,\n            z = z\n        },\n        rotation = { x=0, y=180, z=0 }, -- this seems right for most (but not all models)\n    }\n    local model = spawnObjectData(spawnData)\n    return model\nend\n\n---finds the appropriate characteristic profile for the given model in the given unit\n---@param model Model\n---@param unit Unit\n---@return ModelProfile?\nfunction getProfileForModel(model, unit)\n    local model_profile  ---@typr ModelProfile\n    for _, profile in pairs(unit.modelProfiles) do\n        if profile.name == model.name then\n            model_profile = profile\n            goto found\n        end\n    end\n    -- if there arent any exactly matching profiles, try a more fuzzy search\n    for _, profile in pairs(unit.modelProfiles) do\n        local found = profile.name:find(model.name, 1, true) -- search for plain text (ie not pattern)\n        if found ~= nil then\n            model_profile = profile\n            goto found\n        end\n    end\n    -- if there arent any matching profiles, assume theres only one profile for every model in the unit\n    for _, profile in pairs(unit.modelProfiles) do\n        model_profile = profile\n        goto found\n    end\n    -- returns nil if not found\n    ::found::\n    return model_profile\nend\n\n-- gets a model's description\n---@param model Model\n---@param unit Unit\n---@param modelProfile ModelProfile\nfunction buildModelDescription(model, unit, modelProfile)\n    local sections = {\n        formatCharDesc(unit, modelProfile),\n        -- formatWeaponDesc(model, unit, modelProfile ~= nil),\n        -- formatAbilityDesc(model, unit, modelProfile ~= nil),\n        -- formatKeywords(model, unit, modelProfile ~= nil),\n        formatWeaponDesc(model, unit),\n        formatAbilityDesc(model, unit),\n        formatKeywords(model, unit),\n    }\n    local desc = TableObject:new()\n    for _, section in ipairs(sections) do\n        if #section > 0 then\n            desc:insert(section)\n        end\n    end\n    return desc:concat('\\n\\n')\nend\n\n-- formats the characteristics section in a model's description\n---@param unit Unit\n---@param modelProfile ModelProfile\nfunction formatCharDesc(unit, modelProfile)\n    if modelProfile == nil then return \"\" end -- handles the rare case where a model just doesnt have a profile (eg Mekboy Workshop)\n\n    local save = tonumber(modelProfile.sv:match('%d'))\n    local saveStr = ''\n    if loadedData.statsInvFNP then\n        local invStr, fnpStr, inv ---@type string, string, integer\n        for _, ability in pairs(unit.abilities) do\n            if ability.name == 'Core' then\n                invStr = ability.desc:match('Invulnerable (%d)%+')\n                fnpStr = ability.desc:match('Feel No Pain (%d)%+')\n                break\n            end\n        end\n        if invStr then\n            inv = tonumber(invStr)  --[[@as integer]]\n            if inv == save then\n                invStr = '++'\n            else\n                invStr = inv..'++'\n            end\n            saveStr = saveStr..'/[sup]'..invStr..'[/sup]'\n        end\n        if fnpStr then\n            local fnp = tonumber(fnpStr)  --[[@as integer]]\n            if fnp == inv or not inv and fnp == save then\n                fnpStr = '+++'\n            else\n                fnpStr = fnp..'+++'\n            end\n            saveStr = saveStr..'/[sub]'..fnpStr..'[/sub]'\n        end\n        if saveStr:len() > 0 then\n            saveStr = '[cccccc][i]'..saveStr..'[/i][-]'\n        end\n    end\n    saveStr = modelProfile.sv..saveStr\n    local headings = TableObject:new()  --@type TableObject<string>\n    local values = TableObject:new()  ---@type TableObject\n    for heading, value in pairs(modelProfile) do\n        ---@cast heading string\n        ---@cast value string\n        if heading ~= \"name\" then\n            if heading == 'sv' then\n                value = saveStr\n            elseif value == '-' then\n                value = \"  \"..value\n            end\n            values:insert(value)\n            heading = formatHeading(heading, value)\n            headings:insert(heading)\n        end\n    end\n    local headingStr = headings:concat()\n    local valueStr = values:concat('   ')\n    local desc = '[56f442]'..headingStr..'[-]\\n'..valueStr\n    return desc\nend\n\n-- formats the heading line for the characteristics section in a model's description\n-- the spacing is based on the values given so that they line up properly\n---@param heading string\n---@param value string\n---@return string\nfunction formatHeading(heading, value)\n    value = value:gsub(\"\\\\\", \"\"):gsub('%[.-%]', '')\n    local spacing = value:len() - heading:len()\n    if heading == 'sv' and value:len() > 2 then\n        spacing = spacing + 4 + math.floor(0.5*(value:len() - 2))\n    elseif heading == 'ld' then\n        spacing = spacing + 1\n    elseif (heading == 't') and value:len() == 1 then\n        spacing = spacing + 2\n    elseif heading == 't' and value:len() > 1 then\n        spacing = spacing + 3\n    elseif (heading == 'w' or heading == 'oc') and value:len() > 1 then\n        spacing = spacing + 4\n    elseif heading ~= \"m\" then\n        spacing = spacing + 3\n    end\n\n    if (heading == \"m\" and value:len() > 2) then -- or (heading == \"w\" and value:len() > 1)\n        if heading == \"m\" and value:find('%-') ~= nil then\n            spacing = spacing + 3\n        else\n            spacing = spacing + 1\n        end\n    end\n    lspacing = math.floor(spacing/2)\n    rspacing = heading ~= 'oc' and math.max(math.ceil(spacing/2), 3) or 0\n    if heading == 'm' then\n        rspacing = rspacing + 2\n    elseif heading == 'ld' then\n        rspacing = rspacing + 1\n    end\n\n    return (' '):rep(lspacing)..capitalize(heading)..(' '):rep(rspacing)\nend\n\n\n-- decides whether to fully capitalize or (in the case of ld and sv) titlecase a string\n---@param heading string\n---@return string\nfunction capitalize(heading)\n    if heading == \"ld\" or heading == \"sv\" then return titlecase(heading) end\n    return heading:upper()\nend\n\n\n---only use this for changing ld and sv to Ld and Sv\n---@param s string\n---@return string\nfunction titlecase(s)\n    return s:gsub(\"^(%w)\", |a| a:upper())  ---@diagnostic disable-line redundant-return-value\nend\n\n\n-- formats the string for the weapons section in a model's description\n---@param model Model\n---@param unit Unit\n---@param needSpacingBefore? bool\n---@return string\nfunction formatWeaponDesc(model, unit, needSpacingBefore)\n    if #model.weapons == 0 then return \"\" end\n\n    ---@diagnostic disable-next-line: assign-type-mismatch\n    local rangedWeapons = filter(model.weapons, |weapon| unit.weapons[weapon.name].range:lower() ~= \"melee\")  ---@type { name: string, number: int }[]\n    ---@diagnostic disable-next-line: assign-type-mismatch\n    local meleeWeapons = filter(model.weapons, |weapon| unit.weapons[weapon.name].range:lower() == \"melee\")  ---@type { name: string, number: int }[]\n\n    -- local weapons = needSpacingBefore and \"\\n\\n\" or \"\"\n    local weapons = TableObject:new()\n    ---@param weaponList { name: string, number: int }[]\n    ---@param initial string\n    function addSection(weaponList, initial)\n        if #weaponList == 0 then return end\n        formatted = TableObject:new{('[e85545]%s weapons[-]'):format(initial)}\n        local lastName  ---@type string?\n        for _, weapon in ipairs(weaponList) do\n    --         weapons = weapons..\"\\n\"..formatWeapon(unit.weapons[weapon.name], weapon.number, lastName)\n            formatted:insert(formatWeapon(unit.weapons[weapon.name], weapon.number, lastName))\n            lastName = weapon.name\n        end\n        weapons:insert(formatted:concat('\\n'))\n    end\n    addSection(rangedWeapons, 'Ranged')\n    addSection(meleeWeapons, 'Melee')\n\n    -- if #meleeWeapons > 0 then\n    --     if #rangedWeapons > 0 then weapons = weapons .. \"\\n\\n\" end\n    --     weapons = weapons .. \"[e85545]Melee weapons[-]\"\n    --     for _, weapon in ipairs(meleeWeapons) do\n    --         weapons = weapons..\"\\n\"..formatWeapon(unit.weapons[weapon.name], weapon.number)\n    --     end\n    -- end\n\n    return weapons:concat('\\n\\n')\nend\n\n\n---Formats the string for a weapon entry in a model's description\n---@param weaponProfile WeaponProfile\n---@param number int\n---@param lastName? string\n---@return string\nfunction formatWeapon(weaponProfile, number, lastName)\n    local profileName = weaponProfile.name:gsub('%s+%([Mm]elee%)$', ''):gsub('%s+%([Rr]anged%)$', '')\n    profileName = profileName:gsub('%s*%-%s*[Mm]elee$', ''):gsub('%s*%-%s*[Rr]anged$', '')\n    local isProfile = loadedData.indentWeaponProfiles and profileName:find('%s%-%s')\n    if isProfile then\n        local weaponName = profileName:match('(.*)%s%-')  ---@type string\n        weaponName = weaponName:gsub('\\u{25ba}%s', '') ---@type string\n        profileName = profileName:match('%-%s(.*)') ---@type string\n        lastName = lastName and lastName:match('(.*)%s%-')  ---@type string?\n        lastName = lastName and lastName:gsub('\\u{25ba}%s', '')\n        if weaponName ~= lastName then\n            weaponName = number == 1 and weaponName or (number..'\\u{00d7}'..weaponName)\n            profileName = weaponName..'\\n\\u{2514} '..profileName\n        else\n            profileName = '\\u{2514} '..profileName\n        end\n    else\n        profileName = number == 1 and profileName or (number..'\\u{00d7}'..profileName)\n    end\n    local desc  ---@type string\n    local stats = {\n            name = profileName,\n            a = weaponProfile.a,\n            s = weaponProfile.s,\n            ap = weaponProfile.ap,\n            d = weaponProfile.d,\n            -- ability = (not weaponProfile.shortAbilities or weaponProfile.shortAbilities == '-') and '' or 'Ab:' .. weaponProfile.shortAbilities\n            -- ability = (not weaponProfile.shortAbilities or weaponProfile.shortAbilities == '-') and nil or '[7bc596][' .. weaponProfile.shortAbilities..'][-]'\n            abilities = weaponProfile.shortAbilities and weaponProfile.shortAbilities ~= '-' and ('[7bc596][%s][-]'):format(weaponProfile.shortAbilities)\n        }\n    if weaponProfile.range:lower() == \"melee\" then\n        stats.ws = weaponProfile.bsws\n        desc = interpolate(MELEE_WEAPON_TEMPLATE_10E, stats)\n    else\n        stats.bs = weaponProfile.bsws:lower() == 'n/a' and '\\u{2013}' or weaponProfile.bsws\n        stats.range = weaponProfile.range:lower() == 'n/a' and ' \\u{2014}   ' or weaponProfile.range\n        desc = interpolate(RANGED_WEAPON_TEMPLATE_10E, stats):gsub('\\n%s+', '\\n')\n    end\n    if stats.abilities then\n        style = loadedData.shortenWeaponAbilites and ' [sub]%s[/sub]' or '\\n[sup]%s[/sup]'\n        desc = desc..style:format(stats.abilities)\n    end\n    if weaponProfile.abilities:lower():find('psychic') then\n        desc = desc:gsub('c6c930', '5785fe')\n    end\n    desc = desc:trim()\n    if isProfile then\n        desc = desc:gsub('%[%-%]\\n', '%1    '):gsub('%d\\n', '%1    ')\n    end\n    return desc\nend\n\n\n-- formats the string for the abilities section in a model's description\n---@param model Model\n---@param unit Unit\n---@return string\nfunction formatAbilityDesc(model, unit)\n    if #model.abilities == 0 then return \"\" end\n    local abilities = TableObject:new()\n    local abilitiesStr\n    if model.modelAbilities and unit.unitAbilities then\n        if #model.modelAbilities > 0 then\n            local modelAbilities = TableObject:new{'[dc61ed]Model Abilities[-]'}\n            for _, abl in ipairs(model.modelAbilities) do\n                if not abl:find('^[Uu]nit [Cc]omposition$') and (\n                        not loadedData.statsInvFNP\n                        or not abl:find('^Invulnerable %d%+$')\n                        and not abl:find('^Feel No Pain %d%+$')\n                    ) then\n                    modelAbilities:insert(abl)\n                end\n            end\n            abilities:insert(modelAbilities:concat('\\n'))\n        end\n        local unitAbilities = TableObject:new{'[dc61ed]Unit Abilities[-]'}\n        for _, abl in ipairs(unit.unitAbilities) do\n            if not abl:find('^[Uu]nit [Cc]omposition$') and (\n                    not loadedData.statsInvFNP\n                    or not abl:find('^Invulnerable %d%+$')\n                    and not abl:find('^Feel No Pain %d%+$')\n                ) then\n                unitAbilities:insert(abl)\n            end\n        end\n        abilities:insert(unitAbilities:concat('\\n'))\n        abilitiesStr = abilities:concat('\\n\\n')\n    else\n        abilities:insert('[dc61ed]Abilities[-]')\n        for _, abl in ipairs(model.abilities) do\n            if not abl:find('^[Uu]nit [Cc]omposition$') and (\n                    not loadedData.statsInvFNP\n                    or not abl:find('^Invulnerable %d%+$')\n                    and not abl:find('^Feel No Pain %d%+$')\n                ) then\n                abilities:insert(abl)\n            end\n        end\n        abilitiesStr = abilities:concat('\\n')\n    end\n    return abilitiesStr\nend\n\n\n---@param model Model\n---@param unit Unit\n---@param needSpacingBefore? bool\nfunction formatKeywords(model, unit, needSpacingBefore)\n    if not loadedData.showKeywords then return '' end\n    local unitKeywords = TableObject:new()\n    if loadedData.showKeywords == 'all' then\n        unitKeywords:extend(unit.factionKeywords, unit.keywords)\n    else\n        for _, keyword in ipairs(unit.keywords) do\n            if not ignoredKeywords[keyword] and unit.name ~= keyword and not unit.name:match('%('..keyword..'%)$') then\n                table.insert(unitKeywords, keyword)\n            end\n        end\n    end\n    if not #unitKeywords then return '' end\n    local keywords = table.concat(unitKeywords, ', ')\n    keywords = \"[48c9b0]Keywords[-]\\n\"..keywords\n    return keywords\nend\n\n\nfunction deleteAllObjectsInCreationZone()\n    local deletionZone = getObjectFromGUID(DELETION_ZONE_GUID) --[[@as Layout]]\n\n    if deletionZone == nil then return end\n\n    for _, object in ipairs(deletionZone.getObjects()) do\n        if object ~= armyBoard and object.getGUID() ~= YELLOW_STORAGE_GUID then\n            object.setLuaScript('') -- prevent unintended consequences of destruction\n            object.destruct() -- at this point the object is a different object because we reloaded it\n        end\n    end\nend\n\n--[[ INITIALIZATION HELPER FUNCTIONS ]]--\n\n---@param name string\nfunction showWindow(name)\n    -- delay in case of update\n    Wait.frames(function ()\n        UI.setXml(self.UI.getXml())\n\n        Wait.frames(function ()\n            UI.setAttribute(\"mainPanel\", \"active\", true)\n            UI.show(name)\n        end, 2)\n    end, 2)\nend\n\n\n--[[ LOADING FROM GLOBAL UI ]]--\n---@param data RosterData\nfunction loadEditedArmy(data)\n    self.clearButtons()\n    self.createButton(RELOAD_BUTTON)\n\n    army = data.armyData\n    uiHeight = data.uiHeight\n    uiWidth = data.uiWidth\n    decorativeNames = data.decorativeNames\n    --YELLOW_STORAGE_SCRIPT = armyData.baseScript -- yes I know I'm assigning a new value to something I marked as a constant, sue me\n    -- _printTable(data.order)\n    local formattedArmyData = getLoadedArmyXML(data.order)\n\n    if formattedArmyData.totalHeight < 3000 then\n        self.UI.setAttributes(\"loadedScrollContainer\", {\n            noScrollbars = true,\n            width = 2030\n        })\n    else\n        self.UI.setAttributes(\"loadedScrollContainer\", {\n            noScrollbars = false,\n            width = 2050\n        })\n    end\n\n    self.UI.setAttribute(\"loadedContainer\", \"height\", formattedArmyData.totalHeight)--formattedArmyData.totalHeight\n    self.UI.setValue(\"loadedContainer\", formattedArmyData.xml)\n    self.UI.setAttribute(\"postLoading\", \"active\", \"false\")\n    self.UI.hide(\"postLoading\")\n    self.UI.setClass(\"mainPanel\", \"hiddenBigWindow\")\n\n    self.createButton(CREATE_ARMY_BUTTON)\n\n    Wait.frames(function ()\n        UI.hide(\"mainPanel\")\n        self.UI.setAttribute(\"loadedScrollContainer\", \"active\", \"true\")\n        self.UI.setXml(self.UI.getXml())\n    end, 2)\nend\n\n---comment\n---@param xml UITable[]\n---@param tag string\nfunction clearXMLTagRecursive(xml, tag)\n    for _, uitable in ipairs(xml) do\n        if uitable.attributes.id == tag then\n            uitable.children = {}\n        else\n            clearXMLTagRecursive(uitable.children, tag)\n        end\n    end\nend\n\n---@param order string[]\n---@return { xml: string, totalHeight: int }\nfunction getLoadedArmyXML(order)\n    local xmlString = \"\"\n    local modelInUnitCount, modelDataForXML, currentUnitContainerHeight, totalUnitContainerHeight\n    local maxModelHeight, totalHeight = 0, 0\n\n    for _, uuid in ipairs(order) do\n        local unit = army[uuid]\n        local modelGroupString, unitDataString = \"\", \"\"\n\n        modelInUnitCount = 0\n        currentUnitContainerHeight = 0\n        totalUnitContainerHeight = 50 -- name\n\n        for modelID, model in pairs(unit.models.models) do\n            modelInUnitCount = modelInUnitCount + 1\n            modelDataForXML = getModelDataForXML(uuid, modelID, model, unit.weapons)\n            modelGroupString = modelGroupString..interpolate(uiTemplates.MODEL_CONTAINER, modelDataForXML)\n\n            if modelDataForXML.height > maxModelHeight then\n                maxModelHeight = modelDataForXML.height\n                currentUnitContainerHeight = modelDataForXML.height\n            end\n\n            if modelInUnitCount % 4 == 0 then\n                unitDataString = unitDataString..interpolate(uiTemplates.MODEL_GROUPING_CONTAINER, {\n                    modelGroups = modelGroupString,\n                    width = \"1000\",\n                    height = maxModelHeight\n                })\n\n                modelInUnitCount = 0\n                maxModelHeight = 0\n                modelGroupString = \"\"\n                totalUnitContainerHeight = totalUnitContainerHeight + currentUnitContainerHeight + 20 -- spacing\n            end\n        end\n\n        if modelInUnitCount ~= 0 then\n            unitDataString = unitDataString..interpolate(uiTemplates.MODEL_GROUPING_CONTAINER, {\n                modelGroups = modelGroupString,\n                width = tostring(250 * modelInUnitCount),\n                height = maxModelHeight\n            })\n            maxModelHeight = 0\n            totalUnitContainerHeight = totalUnitContainerHeight + currentUnitContainerHeight\n        end\n\n        totalHeight = totalHeight + totalUnitContainerHeight + 100 -- spacing\n\n        xmlString = xmlString..interpolate(uiTemplates.UNIT_CONTAINER, {\n            unitName = unit.decorativeName and unit.decorativeName or unit.name,\n            unitData = unitDataString,\n            height = totalUnitContainerHeight\n        })\n    end\n\n    return { xml = xmlString, totalHeight = totalHeight }\nend\n\n---@param weaponA WeaponProfile\n---@param weaponB WeaponProfile\n---@return bool\nfunction weaponSort(weaponA, weaponB)\n    local aIsCCW = weaponA.name:lower():find(\"close combat weapon\") and 1 or 0\n    local bIsCCW = weaponB.name:lower():find(\"close combat weapon\") and 1 or 0\n    local aIsMelee = weaponA.range:lower():find(\"melee\") and 1 or 0\n    local bIsMelee = weaponB.range:lower():find(\"melee\") and 1 or 0\n    local aHasRange = weaponA.range:lower():find(\"^%d\") and 1 or 0\n    local bHasRange = weaponB.range:lower():find(\"^%d\") and 1 or 0\n    local aIsPistol = weaponA.abilities:lower():find(\"pistol\") and 1 or 0\n    local bIsPistol = weaponB.abilities:lower():find(\"pistol\") and 1 or 0\n    local aIsOneShot = weaponA.abilities:lower():find(\"one.shot\") and 1 or 0\n    local bIsOneShot = weaponB.abilities:lower():find(\"one.shot\") and 1 or 0\n    local aIsExtraAttacks = weaponA.abilities:lower():find(\"extra attacks\") and 1 or 0\n    local bIsExtraAttacks = weaponB.abilities:lower():find(\"extra attacks\") and 1 or 0\n    if aIsCCW ~= bIsCCW then\n        return aIsCCW < bIsCCW\n    elseif aIsExtraAttacks ~= bIsExtraAttacks then\n        return aIsExtraAttacks < bIsExtraAttacks\n    elseif aIsMelee ~= bIsMelee then\n        return aIsMelee < bIsMelee\n    elseif aHasRange ~= bHasRange then\n        return aHasRange < bHasRange\n    elseif aIsPistol ~= bIsPistol then\n        return aIsPistol < bIsPistol\n    elseif aIsOneShot ~= bIsOneShot then\n        return aIsOneShot < bIsOneShot\n    else\n        return false\n        -- return weaponA.name < weaponB.name\n    end\n\nend\n\n\n---comment\n---@param unitID any\n---@param modelID any\n---@param model Model\n---@param characteristicProfiles any\n---@return table\nfunction getModelDataForXML(unitID, modelID, model, characteristicProfiles)\n    local weaponSection, abilitiesSection = \"\", \"\"\n    local totalCardHeight = 40 -- name\n    -- model.weapons = table.sort(model.weapons, |weaponA, weaponB| weaponSort(characteristicProfiles[weaponA.name], characteristicProfiles[weaponB.name]))\n    table.sort(model.weapons, |weaponA, weaponB| weaponSort(characteristicProfiles[weaponA.name], characteristicProfiles[weaponB.name]))\n\n    if model.weapons ~= nil and #model.weapons > 0 then\n        weaponSection = interpolate(uiTemplates.MODEL_DATA, {\n            dataType = \"Weapons:\",\n            data = table.concat(map(model.weapons,\n                                    |weapon| weapon.number == 1 and weapon.name or (weapon.number..\"x \"..weapon.name))\n                                , \"\\n\"),\n            height = 37 * #model.weapons\n        })\n        totalCardHeight = totalCardHeight + (37 * #model.weapons) + (#model.abilities > 0 and 55 or 60) -- title and spacer\n    end\n\n    if #model.abilities > 0 then\n        abilitiesSection = interpolate(uiTemplates.MODEL_DATA, {\n            dataType = \"Abilities:\",\n            data = table.concat(model.abilities, \"\\n\"),\n            height = 37 * #model.abilities\n        })\n        totalCardHeight = totalCardHeight + (37 * #model.abilities) + 60 -- title and spacer\n    end\n\n    return {\n        modelName = model.name,\n        numberString = model.number > 1 and (tostring(model.number)..\"x \") or \"\",\n        weapons = weaponSection,\n        abilities = abilitiesSection,\n        unitID = unitID,\n        modelID = modelID,\n        height = totalCardHeight\n    }\nend\n\n\n\n\n--[[ UTILITY FUNCTIONS ]]--\n\n---Populates a template string from provided key-value pairs\n---@param templateString string\n---@param replacementValues { [string]: string|integer }\n---@return string\nfunction interpolate(templateString, replacementValues)\n    return (templateString:gsub('($%b{})', |w| replacementValues[w:sub(3, -2)] or w)) -- extra parenthesis to prevent double return from gsub\nend\n\nfunction clone(orig)\n    local orig_type = type(orig)\n    local copy\n    if orig_type == 'table' then\n        copy = {}\n        for orig_key, orig_value in next, orig, nil do\n            copy[clone(orig_key)] = clone(orig_value)\n        end\n        setmetatable(copy, clone(getmetatable(orig)))\n    else -- number, string, boolean, etc\n        copy = orig\n    end\n    return copy\nend\n\n---comment\n---@param s string\n---@param delimiter string\n---@return string[]\nfunction split(s, delimiter)\n    local result = {}\n    for match in (s..delimiter):gmatch(\"(.-)%\"..delimiter) do\n        table.insert(result, match)\n    end\n    return result\nend\n\n---comment\n---@generic K: any\n---@generic V: any\n---@param t table<K, V>\n---@param filterFunc fun(table, K, V): bool\n---@return table<K, V>\nfunction filter(t, filterFunc)\n    local out = {}\n\n    for k, v in pairs(clone(t)) do\n        if filterFunc(v, k, t) then table.insert(out, v) end\n    end\n\n    return out\nend\n\nfunction includes(tab, val, checkKey)\n    for _, value in ipairs(tab) do\n        if checkKey ~= nil then\n            if value[checkKey] == val[checkKey] then\n                return true\n            end\n        else\n            if value == val then\n                return true\n            end\n        end\n    end\n\n    return false\nend\n\nfunction find(tab, val)\n    for index, value in ipairs(tab) do\n        if value == val then\n            return index\n        end\n    end\n\n    return -1\nend\n\nfunction map(t, mapFunc)\n    local out = {}\n\n    for k, v in pairs(clone(t)) do\n        table.insert(out, mapFunc(v, k))\n    end\n\n    return out\nend\n\n---@param t table\n---@return integer\nfunction len(t)\n    local count = 0\n    for _, _ in pairs(t) do\n        count = count + 1\n    end\n    return count\nend\n\n\n---@param s string\nfunction string.trim(s)  ---@diagnostic disable-line duplicate-set-field\n    return s:gsub('^%s+', ''):gsub('%s+$', '')\nend\n\n\n-- this should only ever be used with one dimensional tables\nfunction tableToFlatString(t)\n    return tableToString(t, \", \")\nend\n\n-- this is not a particularly robust solution, it is only really for my purposes in this script\n-- thus, I very much do not recommend anyone copy this\n-- note to self: can make it recursive to traverse multi-dimensional tables but eh\n-- warnings:\n--      this assumes a table is array-like if the key \"1\" exists,\n--      this assumes all values are strings\nfunction tableToString(t, delimiter, bracketsOnNewLine, extraTabbing, tabBeforeFirstElement)\n    local out = \"{ \"\n    local arrayLike = t[1] ~= nil\n\n    if bracketsOnNewLine ~= nil and bracketsOnNewLine then\n        out = out..\"\\n\"..(tabBeforeFirstElement ~= nil and tabBeforeFirstElement or \"\")\n    end\n\n    out = out..table.concat(map(t, function (v, k)\n        if arrayLike then return v end\n        return k..'=\"'..v:gsub('\"', '\\\\\"')..'\"'\n    end), delimiter)\n\n    if bracketsOnNewLine ~= nil and bracketsOnNewLine then\n        return out..\"\\n\"..(extraTabbing ~= nil and extraTabbing or \"\")..\"}\"\n    end\n\n    return out..\" }\"\nend\n\n---@param t table<any, any>\n---@param i? int\nfunction _printTable(t, i)\n    if not i then\n        i = 0\n    end\n    for key, value in pairs(t) do\n        if type(value) == 'table' then\n            local contents = false\n            for _ in pairs(value) do\n                contents = true\n                break\n            end\n            if contents then\n                log(('%s%s = {'):format((' '):rep(i), tostring(key)))\n                _printTable(value, i + 2)\n                log((' '):rep(i)..'}')\n            else\n                log(('%s%s = {}'):format((' '):rep(i), tostring(key)))\n            end\n        else\n            log(('%s%s = %s'):format((' '):rep(i), tostring(key), tostring(value)))\n        end\n    end\nend",
+            "LuaScriptState": "",
+            "XmlUI": "<Defaults>\r\n    <Button class=\"unassignedWeapon\" fontSize=\"18\" />\r\n    <Text class=\"ym-resizing20Bold\" fontStyle=\"Bold\" fontSize=\"20\" />\r\n    <HorizontalLayout childForceExpandHeight=\"false\" childForceExpandWidth=\"false\" childAlignment=\"MiddleCenter\" />\r\n    <Panel class=\"mainWindow\" height=\"700\" width=\"1200\" color=\"#e1e9a5\" childAlignment=\"MiddleCenter\" />\r\n    <Panel class=\"hiddenBigWindow\" color=\"#ffffff00\" height=\"4000\" childForceExpandHeight=\"false\" />\r\n    <VerticalLayout class=\"panelContainer\" childForceExpandHeight=\"false\" childForceExpandWidth=\"false\" childAlignment=\"MiddleCenter\"\r\n                    showAnimation=\"FadeIn\" hideAnimation=\"FadeOut\" animationDuration=\"0.2\" />\r\n    <VerticalLayout class=\"transparent\" color=\"#ffffff00\" />\r\n    <VerticalLayout class=\"modelContainer\" shadow=\"Black\" childForceExpandWidth=\"false\" preferredWidth=\"400\" onClick=\"selectModelGroup\" padding=\"10\" color=\"White\" onMouseEnter=\"showAssociatedModel\" onMouseExit=\"hideAssociatedModel\" />\r\n    <Text alignment=\"UpperLeft\" />\r\n    <Text class=\"smallText\" fontSize=\"18\" horizontalOverflow=\"Overflow\" />\r\n    <Text class=\"unitName\" color=\"White\" fontSize=\"48\" alignment=\"MiddleCenter\" resizeTextForBestFit=\"true\" resizeTextMaxSize=\"48\" />\r\n    <Text class=\"modelData\" resizeTextForBestFit=\"true\" resizeTextMaxSize=\"30\" preferredWidth=\"500\" horizontalOverflow=\"Overflow\"  />\r\n    <Text class=\"modelDataTitle\" fontSize=\"30\" preferredWidth=\"500\" fontStyle=\"Bold\" horizontalOverflow=\"Overflow\" />\r\n    <Text class=\"modelDataName\" preferredWidth=\"500\" preferredHeight=\"30\" alignment=\"MiddleCenter\" fontStyle=\"Bold\" resizeTextForBestFit=\"true\" resizeTextMaxSize=\"30\" />\r\n    <VerticalScrollView scrollSensitivity=\"40\" />\r\n    <HorizontalScrollView scrollSensitivity=\"40\" />\r\n    <Button class=\"unassignedWeapon\" preferredHeight=\"24\" flexibleWidth=\"1\" resizeTextForBestFit=\"true\" resizeTextMinSize=\"10\" resizeTextMaxSize=\"18\" />  <!--fontSize=\"18\"-->\r\n    <Button class=\"assignedWeapon\" preferredHeight=\"24\" flexibleWidth=\"1\" resizeTextForBestFit=\"true\" resizeTextMinSize=\"10\" resizeTextMaxSize=\"18\" colors=\"White|#fdb7c2|Red|White\" />\r\n    <Button class=\"assignAllButton\" preferredHeight=\"24\" fontSize=\"14\" preferredWidth=\"40\" />\r\n    <Button class=\"unassignAllButton\" preferredHeight=\"24\" fontSize=\"14\" preferredWidth=\"40\" colors=\"White|#fdb7c2|Red|White\" />\r\n    <HorizontalLayout class=\"groupingContainer\" childAlignment=\"UpperCenter\" spacing=\"10\" childForceExpandHeight=\"false\" childForceExpandWidth=\"false\" flexibleWidth=\"1\" />\r\n</Defaults>\r\n\r\n<Panel id=\"mainPanel\" class=\"mainWindow\" hideAnimation=\"FadeOut\" animationDuration=\"0.2\" active=\"false\">\r\n    <VerticalLayout id=\"loading\" class=\"panelContainer\" padding=\"70\" spacing=\"15\" visibility=\"hidden\" childForceExpandWidth=\"false\">\r\n        <Text id=\"loadingText\" fontSize=\"30\" fontStyle=\"Bold\">The Techpriests are currently chanting their hymns over your army list</Text>\r\n        <Text id=\"loadingText\" fontSize=\"30\" fontStyle=\"Bold\">please allow them to finish their sacred task</Text>\r\n        <!--<Text id=\"loadingDots\" fontSize=\"60\" fontStyle=\"Bold\"></Text>-->\r\n    </VerticalLayout>\r\n    <VerticalLayout id=\"welcomeWindow\" class=\"panelContainer\" padding=\"10 10 35 10\" spacing=\"20\" color=\"#e1e9a5\" active=\"false\" visibility=\"hidden\">\r\n        <VerticalLayout spacing=\"5\" childAlignment=\"LowerCenter\" height=\"200\" childForceExpandHeight=\"false\" childForceExpandWidth=\"false\">\r\n            <Text fontSize=\"40\" fontStyle=\"Bold\">Welcome to Yellowscribe v2!</Text>\r\n            <Text fontSize=\"20\">To get started, upload your Battlescribe Roster file to yellowscribe.xyz</Text>\r\n            <Text fontSize=\"20\" color=\"#FF0000\">Do NOT go to yellowscribe.net - that site is dead now!</Text>\r\n            <Text fontSize=\"20\">Then enter the code you received below:</Text>\r\n        </VerticalLayout>\r\n\r\n        <InputField id=\"armyInput\" onEndEdit=\"46ccee/updateArmyInputText\" lineType=\"SingleLine\" preferredHeight=\"103\" flexibleWidth=\"1\" fontSize=\"80\" color=\"White\" textAlignment=\"MiddleCenter\" placeholder=\"Copy and paste your code here!\" />\r\n        <Button preferredHeight=\"40\" preferredWidth=\"200\" color=\"Green\" textColor=\"White\" text=\"Submit\" fontSize=\"20\" fontStyle=\"Bold\" onClick=\"46ccee/moveToLoadingScreen()\" />\r\n    </VerticalLayout>\r\n    <Panel height=\"30\" width=\"30\" childForceExpandWidth=\"false\" ignoreLayout=\"true\" position=\"600 350 0\" pivot=\"1 1\">\r\n        <Panel rectAlignment=\"UpperRight\" height=\"30\" width=\"30\">\r\n            <Button color=\"Red\" textColor=\"White\" onClick=\"46ccee/closeWelcomeWindow\" fontStyle=\"Bold\">X</Button>\r\n        </Panel>\r\n    </Panel>\r\n    <VerticalLayout id=\"postLoading\" class=\"panelContainer\" visibility=\"hidden\">\r\n        <VerticalScrollView flexibleHeight=\"1\" flexibleWidth=\"1\" childForceExpandHeight=\"false\" color=\"#999999\">\r\n            <TableLayout id=\"loadedArmyContainer\" spacing=\"10\" childForceExpandHeight=\"false\" autoCalculateHeight=\"true\" cellSpacing=\"15\" color=\"#999999\" />\r\n        </VerticalScrollView>\r\n        <HorizontalLayout preferredHeight=\"45\">\r\n            <Button preferredHeight=\"40\" preferredWidth=\"200\" color=\"Green\" textColor=\"White\" text=\"Submit\" fontSize=\"20\" fontStyle=\"Bold\" onClick=\"46ccee/acceptEditedArmy()\" />\r\n        </HorizontalLayout>\r\n    </VerticalLayout>\r\n</Panel>\r\n<VerticalScrollView id=\"loadedScrollContainer\" scale=\"1.2 1.2 1.2\" width=\"2030\" height=\"3000\" active=\"false\" color=\"#ffffff00\" position=\"1545 0 -150\" verticalScrollbarVisibility=\"AutoHideAndExpandViewport\">\r\n    <VerticalLayout childForceExpandHeight=\"false\" spacing=\"60\" class=\"transparent\" flexibleWidth=\"1\" id=\"loadedContainer\" childForceExpandWidth=\"false\" childAlignment=\"MiddleCenter\" />\r\n</VerticalScrollView>",
+            "JointFixed": {
+                "ConnectedBodyGUID": "43ecc1",
+                "EnableCollision": false,
+                "Axis": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "Anchor": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "ConnectedAnchor": {
+                    "x": 1.00046718,
+                    "y": -1.29042128e-05,
+                    "z": -0.00316529721
+                },
+                "BreakForce": "Infinity",
+                "BreakTorgue": "Infinity"
+            }
+        },
+        {
+            "GUID": "1bbe8d",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": -15.1107731,
+                "posY": 4.81034231,
+                "posZ": -20.1076221,
+                "rotX": 0.0,
+                "rotY": 0.0,
+                "rotZ": 0.0,
+                "scaleX": 11.7719851,
+                "scaleY": 9.174497,
+                "scaleZ": 4.871238
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.856,
+                "g": 0.09999997,
+                "b": 0.09399996,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Red",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "9a4e93",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": -30.2150211,
+                "posY": 4.81034231,
+                "posZ": 10.17524,
+                "rotX": 0.0,
+                "rotY": 90.0,
+                "rotZ": 0.0,
+                "scaleX": 11.6554289,
+                "scaleY": 9.174497,
+                "scaleZ": 4.91995144
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.905,
+                "g": 0.898,
+                "b": 0.171999961,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Yellow",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "f99102",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": 30.2511711,
+                "posY": 4.81034231,
+                "posZ": 9.59069252,
+                "rotX": 0.0,
+                "rotY": 270.0,
+                "rotZ": 0.0,
+                "scaleX": 11.6554213,
+                "scaleY": 9.174497,
+                "scaleZ": 4.91995144
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.627,
+                "g": 0.124999978,
+                "b": 0.941,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Purple",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "792f7b",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": 15.4749184,
+                "posY": 4.81034231,
+                "posZ": 19.8365288,
+                "rotX": 0.0,
+                "rotY": 179.8,
+                "rotZ": 0.0,
+                "scaleX": 11.7719746,
+                "scaleY": 9.174497,
+                "scaleZ": 4.87124
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.117999978,
+                "g": 0.53,
+                "b": 1.0,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Blue",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "e879d5",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": 15.1961212,
+                "posY": 4.81034231,
+                "posZ": -20.1400986,
+                "rotX": 0.0,
+                "rotY": 0.0,
+                "rotZ": 0.0,
+                "scaleX": 11.7719707,
+                "scaleY": 9.174499,
+                "scaleZ": 4.871238
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "White",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "b89482",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": -15.1927719,
+                "posY": 4.81034231,
+                "posZ": 19.787817,
+                "rotX": 0.0,
+                "rotY": 180.0,
+                "rotZ": 0.0,
+                "scaleX": 11.7719707,
+                "scaleY": 9.174497,
+                "scaleZ": 4.871238
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.191999972,
+                "g": 0.701,
+                "b": 0.167999953,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Green",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "fa7dda",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": 30.1035728,
+                "posY": 4.81034231,
+                "posZ": -8.449126,
+                "rotX": 0.0,
+                "rotY": 270.0,
+                "rotZ": 0.0,
+                "scaleX": 11.6554184,
+                "scaleY": 9.174497,
+                "scaleZ": 4.91995144
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.96,
+                "g": 0.438999981,
+                "b": 0.807,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Pink",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        },
+        {
+            "GUID": "b07a97",
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": -30.247818,
+                "posY": 4.81034231,
+                "posZ": -8.822588,
+                "rotX": 0.0,
+                "rotY": 90.0,
+                "rotZ": 0.0,
+                "scaleX": 11.6554317,
+                "scaleY": 9.174497,
+                "scaleZ": 4.91995144
+            },
+            "Nickname": "",
+            "Description": "",
+            "GMNotes": "",
+            "AltLookAngle": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "ColorDiffuse": {
+                "r": 0.9559999,
+                "g": 0.39199996,
+                "b": 0.112999953,
+                "a": 0.0
+            },
+            "LayoutGroupSortIndex": 0,
+            "Value": 0,
+            "Locked": true,
+            "Grid": false,
+            "Snap": true,
+            "IgnoreFoW": false,
+            "MeasureMovement": false,
+            "DragSelectable": true,
+            "Autoraise": true,
+            "Sticky": true,
+            "Tooltip": true,
+            "GridProjection": false,
+            "HideWhenFaceDown": false,
+            "Hands": false,
+            "FogColor": "Orange",
+            "LuaScript": "",
+            "LuaScriptState": "",
+            "XmlUI": ""
+        }
+    ]
+}
