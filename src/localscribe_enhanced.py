@@ -211,7 +211,7 @@ def validate_code(code: str | int | None) -> bool:
 
     This does not check if there is currently a roster with this code,
     only if the entry is an 8-character hexidecimal string or a positive
-    integer of with 8 or fewer hexidecimal digits.
+    integer with 8 or fewer hexidecimal digits.
 
     Args:
         code (str | int | None): Code to check.
@@ -250,7 +250,9 @@ class LSOptions(TypedDict, total=False):
     uiWidth: str | int
     """UI width in pixels."""
     decorativeNames: bool
-    """"""
+    """Use decorative names instead of actual names.
+
+    Legacy for Battlescribe, unused for Rosterizer."""
     statsInvFNP: bool
     """Add invulnerable saves and Feel No Pains to the stats line."""
     indentWeaponProfiles: bool
@@ -269,27 +271,47 @@ class LSOptions(TypedDict, total=False):
     ignoredKeywords: list[str]
     """Keywords to ignore on a unit tooltip."""
     addAbilities: AbilityChanges
-    """"""
+    """Add abilities to units that match the filter."""
     replaceAbilities: AbilityChanges
-    """"""
-    hideAbilities: Mapping[KeywordFilters, Iterable[str]]
-    """"""
+    """Replace ability descriptions for units that match the filter."""
+    hideAbilities: Mapping[KeywordFilter, Iterable[str]]
+    """Hide abilities from the model tooltip for units that match the
+    filter.
+    """
     modifyWeapons: Mapping[UnitModelWeapon, Mapping[str, str]]
     """"""
     addWeaponsToNames: bool
-    defaultWeapons: Mapping[KeywordFilters, Iterable[str]]
+    """Append a model's special weapon to its displayed name."""
+    defaultWeapons: Mapping[KeywordFilter, Iterable[str]]
+    """"""
     cleanProfiles: bool
+    """Remove duplicate model profiles where the only difference is
+    wargear appended to the model name.
+    """
     renameModels: Literal['base', 'decorative'] | None
+    """"""
 
 
-def create_filter(filter_str: str) -> KeywordFilters:
-    """_summary_
+def create_filter(filter_str: str) -> KeywordFilter:
+    """Create filters for keyword matching.
+
+    Filter strings have AND keywords separeted by `&` and OR keywords
+    separated by `,`. Spaces between keywords and separators are
+    ignored.
+
+    Filters are frozensets of AND keywords inside sets of OR keywords.
+    Because they are frozensets they can be used as mapping keys.
+
+    Example:
+        'Keyword 1, Keyword 2 & Keyword 3' means the unit must have
+        either 'Keyword 1' or both 'Keyword 2' and 'Keyword 3'.
 
     Args:
-        filter_str (str): _description_
+        filter_str (str): String containing keywords with separators.
 
     Returns:
-        frozenset[frozenset[str]]: _description_
+        frozenset[frozenset[str]]: AND keyword sets inside OR keyword \
+            sets.
     """
     keywords = frozenset(
         frozenset(ks for k in fs.split('&') if (ks := k.strip()))
@@ -313,20 +335,20 @@ def create_json(
         ignoredKeywords: list[str] = ...,
         addAbilities: AbilityChanges = ...,
         replaceAbilities: AbilityChanges = ...,
-        hideAbilities: Mapping[KeywordFilters, Iterable[str]] = ...,
+        hideAbilities: Mapping[KeywordFilter, Iterable[str]] = ...,
         modifyWeapons: Mapping[UnitModelWeapon, Mapping[str, str]] = ...,
         addWeaponsToNames: bool = ...,
-        defaultWeapons: Mapping[KeywordFilters, Iterable[str]] = ...,
+        defaultWeapons: Mapping[KeywordFilter, Iterable[str]] = ...,
         cleanProfiles: bool = ...,
         renameModels: Literal['base', 'decorative'] | None = ...,
     ) -> Roster:
-    """_summary_
+    """Create and modify JSON from raw bytes.
 
     Args:
-        roster (bytes): _description_
-        uiHeight (str | int, optional): UI height in pixels.
-        uiWidth (str, optional): UI width in pixels.
-        decorativeNames (bool, optional): _description_. Defaults to ....
+        roster (bytes): Raw data.
+        uiHeight (str | int, optional): Overwrite UI height in pixels.
+        uiWidth (str, optional): Overwrite UI width in pixels.
+        decorativeNames (bool, optional): Override decorativeNames flag.
         statsInvFNP (bool, optional): Add invulnerable saves and Feel \
             No Pains to the stats line.
         indentWeaponProfiles (bool, optional): Display multi-profile \
@@ -340,18 +362,24 @@ def create_json(
             Show all or a filtered list or keywords on a unit tooltip.
         ignoredKeywords (list[str], optional): Keywords to ignore on a \
             unit tooltip.
-        addAbilities (AbilityChanges, optional): _description_. Defaults to ....
-        replaceAbilities (AbilityChanges, optional): _description_. Defaults to ....
-        hideAbilities (Mapping[FilterKeywords, Iterable[str]], optional): _description_. Defaults to ....
-        modifyWeapon (Mapping[tuple[str  |  None, str], Mapping[str, str]], optional): _description_. Defaults to ....
-        addWeaponsToNames (bool, optional): _description_. Defaults to ....
-        cleanProfiles (bool, optional): _description_. Defaults to ....
-
-    Raises:
-        ValueError: _description_
+        addAbilities (AbilityChanges, optional): Add abilities to \
+            units that match the filter.
+        replaceAbilities (AbilityChanges, optional): Replace ability \
+            descriptions for units that match the filter.
+        hideAbilities (Mapping[FilterKeywords, Iterable[str]], optional): \
+            Hide abilities from the model tooltip for units that match \
+            the filter.
+        modifyWeapons (Mapping[UnitModelWeapon, Mapping[str, str]], optional): _description_. Defaults to ....
+        addWeaponsToNames (bool, optional): Append a model's special \
+            weapon to its displayed name.
+        defaultWeapons (Mapping[KeywordFilter, Iterable[str]], optional): _description_. Defaults to ....
+        cleanProfiles (bool, optional): Remove duplicate model \
+            profiles where the only difference is wargear appended to \
+            the model name.
+        renameModels (Literal['base', 'decorative'] | None, optional): _description_. Defaults to ....
 
     Returns:
-        Roster: _description_
+        Roster: JSON to save to file or host on server.
     """
 @overload
 def create_json(roster: bytes, **kwargs: Unpack[LSOptions]) -> Roster: ...
