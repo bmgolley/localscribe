@@ -72,7 +72,7 @@ ROSTER_REPLACE: tuple[tuple[str, str], ...] = (
     # Fix missing number for Rapid Fire weapons
     (r'(?<=bilities": ")(.*?Rapid Fire)(?! \d)', r'\1 1'),
     # Remove extranious quote for range of N/A
-    (r'"range": "N/A″"', r'"range": "N/A"'),
+    (r'"range": "N/A\W"', r'"range": "N/A"'),
 )
 """Tuple of string replacements"""
 
