@@ -26,10 +26,10 @@ jobs:
       - name: Create Archive
         run: |
           New-Item -ItemType Directory -Path LocalscribeEnhanced
-          New-Item -ItemType Directory -Path "LocalscribeEnhanced\TTS Save"
           Copy-Item -Path README.md -Destination LocalscribeEnhanced
           Copy-Item -Path LICENSE -Destination LocalscribeEnhanced
           Copy-Item -Path src -Destination LocalscribeEnhanced -Recurse
+          Copy-Item -Path "TTS Save" -Destination LocalscribeEnhanced -Recurse
           Remove-Item -Path LocalscribeEnhanced\src\* -Include "*backup*", "*test*", "token*creator*", "update*" -Recurse
           Copy-Item -Path ${{ steps.pyinstaller.outputs.executable_path }}\LocalscribeEnhanced.exe -Destination LocalscribeEnhanced
       - name: Upload Artifact

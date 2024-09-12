@@ -13,7 +13,7 @@ saves_dir = Path(
 
 
 def update():
-    with open(saves_dir/'40k/LocalscribeEnhanced.json') as f:
+    with open(f'{__file__}/../../TTS Save/LocalscribeEnhanced.json') as f:
         localscribe: TTSMod = json.load(f)
     with open(f'{__file__}/../Yellow Machine.lua') as f:
         script = f.read()
@@ -25,6 +25,8 @@ def update():
     except StopIteration:
         raise ValueError("'Yellow Machine' object is missing")
     ym['LuaScript'] = script
+    with open(f'{__file__}/../../TTS Save/LocalscribeEnhanced.json', 'w') as wf:
+        json.dump(localscribe, wf, ensure_ascii=False, indent=4)
     with open(saves_dir/'40k/LocalscribeEnhanced.json', 'w') as wf:
         json.dump(localscribe, wf, ensure_ascii=False, indent=4)
 
