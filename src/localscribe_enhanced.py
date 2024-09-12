@@ -19,8 +19,6 @@ options:
 """
 from __future__ import annotations
 
-from roster import ModelWeapon, WeaponProfile
-
 
 __all__ = (
     'create_filter',
@@ -49,7 +47,8 @@ from urllib.error import HTTPError
 
 
 if TYPE_CHECKING:
-    from roster import Model, ModelProfile, Roster, Unit
+    from roster import (
+        Model, ModelProfile, ModelWeapon, Roster, Unit, WeaponProfile)
 
 
 YS = 'https://yellowscribe.xyz'
